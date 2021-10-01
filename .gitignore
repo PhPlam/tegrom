@@ -1,0 +1,3 @@
+**/.vscode/*
+**/models/*/__pycache__/*
+**/test/*/.ipynb_checkpoints
