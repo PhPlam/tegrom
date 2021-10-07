@@ -1,4 +1,4 @@
-# Name: Philipp Plamper
+# Name: Philipp Plamper 
 # Date: 18. June 2021
 
 # be sure your neo4j instance is up and running
