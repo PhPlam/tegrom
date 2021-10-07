@@ -1,48 +1,52 @@
 # Name: Philipp Plamper
-# Date: 18. June 2021
+# Date: 07. october 2021
 
+import pandas as pd
 from py2neo import Graph
 from C000_path_variables_create import host, user, passwd, db_name_parallel
 from C000_path_variables_create import int_change_path, path_prefix, written_transformations_file_path
 from C000_path_variables_create import lower_limit, upper_limit
-import pandas as pd
 
 
 ##################################################################################
-#configure settings###############################################################
+#settings#########################################################################
 ##################################################################################
 
-# establish connection 
+# credentials 
 host = host
 user = user
 passwd = passwd
 
-# select database name
+# select database
 db_name = db_name_parallel
 
-
-##################################################################################
-#calculations#####################################################################
-##################################################################################
-
-# set threshold
-# describes what intensity trend is needed to be considered as increasing
-upper_limit = upper_limit
-# describes what intensity trend is needed to be considered as descreasing
+# fault tolerance for intensity trend 
 lower_limit = lower_limit
-
-# initiate connection
-calc_transformations = Graph(host, auth=(user, passwd), name=db_name)
+upper_limit = upper_limit
 
 # set path
-int_change_path = int_change_path
+int_change_path = int_change_path # calculated occurring transformations
+
+# some transformation are defined as not relevant
+# normally they are removed in preprocessing but can be here removed to 
+# 1 = check for not relevant, 0 = do not check for not relevant (default = 0)
+check_for_not_relevant = 0
 
 
-def incr_int():
-    # calculate possible transformations of molecule with increasing intensity
-    # problem if not every molecule exists in every measurement, creates gaps
-    # -> don't know how to handle (decreasing or not existing)
-    incr_int_df = calc_transformations.run("""
+##################################################################################
+#define functions to calculate occurring transformations (RelIdent-Algorithm)#####
+##################################################################################
+
+# establish connection to the database
+def get_database_connection():
+    database_connection = Graph(host, auth=(user, passwd), name=db_name)
+    print('done: establish database connection')
+    return database_connection
+
+# calculate occurring transformations
+def calculate_occurring_transformations(call_graph):
+    graph = call_graph
+    increasing_intensity_df = graph.run("""
         MATCH (t1:Measurement)-[:MEASURED_IN]-(m1:Molecule)-[s:SAME_AS]-(m2:Molecule)-[:MEASURED_IN]-(t2:Measurement)
         WHERE s.intensity_trend > """ + str(upper_limit) + """ AND t1.point_in_time = t2.point_in_time - 1
         WITH m2, t1, t2, s
@@ -55,18 +59,16 @@ def incr_int():
         C, H, O, N, S, s2.tendency_weight as tendency_weight_lose, s.tendency_weight as tendency_weight_gain,
         s2.tendency_weight_conn as tendency_weight_lose_conn, s.tendency_weight_conn as tendency_weight_gain_conn
     """).to_data_frame()
-    # print(incr_int_df)
-    # export dataframe
-    incr_int_df.to_csv(int_change_path, sep=',', encoding='utf-8', index=False)
-    print('done: get possible transformations')
 
+    # export calculated occurring transformations to csv
+    increasing_intensity_df.to_csv(int_change_path, sep=',', encoding='utf-8', index=False)
+    print('done: calculate occurring transformations')
 
-# create strings of transformation unit
-def calc_func_groups():
+# take calculated occurring transformations and create strings of transformation units
+def calculate_transformation_units():
     data = pd.read_csv(int_change_path)
     tu_list = []
 
-    #for index, row in data.iterrows():
     for row in data.itertuples(): # index=False
         tu_string = ""
 
@@ -90,18 +92,75 @@ def calc_func_groups():
         elif row.S > 0: tu_string = tu_string + "S" + str(row.S) + " "
         else: tu_string
 
-        # print(tu_string)
         tu_string = tu_string.rstrip()
         tu_list.append(tu_string)
     
     data['transformation_unit'] = tu_list
-    data.to_csv(int_change_path, sep=',', encoding='utf-8', index=False)
-    # print(data.head())
-    print('done: calculate transformation unit names')
 
+    # add strings of transformation units to csv with calculated occurring transformations 
+    data.to_csv(int_change_path, sep=',', encoding='utf-8', index=False)
+    print('done: calculate transformation unit strings')
+
+# calculate combined and connected weight
+def calculate_weights():
+    data = pd.read_csv(int_change_path)    
+    
+    conn_weight_list = []
+    comb_weight_list = []
+
+    for row in data.itertuples():
+        comb_erg = (row.tendency_weight_lose + row.tendency_weight_gain)
+        conn_erg = (row.tendency_weight_lose_conn + row.tendency_weight_gain_conn)
+        
+        comb_weight_list.append(comb_erg)
+        conn_weight_list.append(conn_erg)
+        
+    data['weight_combined'] = comb_weight_list
+    data['weight_connected'] = conn_weight_list
+
+    # add weights to csv with calculated occurring transformations 
+    data.to_csv(int_change_path, sep=',', encoding='utf-8', index=False)
+    print('done: calculate combined and connected weight')
+
+# create relationship HAS_TRANSFORMED_INTO with calculated occurring transformations
+def create_relationship_has_transformed_into(call_graph):
+    graph = call_graph
+    graph.run("""
+        LOAD CSV WITH HEADERS FROM 'file:///""" + int_change_path + """' AS row
+        MATCH (m1:Molecule), (m2:Molecule)
+        WHERE m1.formula_string = row.from_molecule
+        AND m1.sample_id = row.from_mid
+        AND m2.formula_string = row.to_molecule
+        AND m2.sample_id = row.to_mid
+        CREATE (m1)-[:HAS_TRANSFORMED_INTO {C: toInteger(row.C), H: toInteger(row.H), O: toInteger(row.O), N: toInteger(row.N), S: toInteger(row.S), transformation_unit: row.transformation_unit, combined_weight: toFloat(row.weight_combined), connected_weight: toFloat(row.weight_connected)}]->(m2)
+    """)
+    print('done: create HAS_TRANSFORMED_INTO relationship')
+
+# normalize incoming combined and connected weight
+def normalize_weights(call_graph):
+    graph = call_graph
+    graph.run("""
+        MATCH (:Molecule)-[t:HAS_TRANSFORMED_INTO]->(m:Molecule)
+        WITH m.formula_string as fs, m.sample_id as mid, sum(t.connected_weight) as sum_weight
+        MATCH (:Molecule)-[t1:HAS_TRANSFORMED_INTO]->(m1:Molecule)
+        WHERE m1.formula_string = fs AND m1.sample_id = mid
+        SET t1.normalized_connected_weight = apoc.math.round(t1.connected_weight/sum_weight, 3)
+        RETURN fs, mid, sum_weight
+    """)
+
+    graph.run("""
+        MATCH (:Molecule)-[t:HAS_TRANSFORMED_INTO]->(m:Molecule)
+        WITH m.formula_string as fs, m.sample_id as mid, sum(t.combined_weight) as sum_weight
+        MATCH (:Molecule)-[t1:HAS_TRANSFORMED_INTO]->(m1:Molecule)
+        WHERE m1.formula_string = fs AND m1.sample_id = mid
+        SET t1.normalized_combined_weight = apoc.math.round(t1.combined_weight/sum_weight, 3)
+        RETURN fs, mid, sum_weight
+    """)
+    print('done: normalize weights')
 
 # optional: remove not relevant transformations ##################################
-
+# some transformation are defined as not relevant
+# normally they are removed in preprocessing but can be here removed to 
 def remove_not_relevant():
     calc_df = pd.read_csv(int_change_path)
     given_data = pd.read_csv(written_transformations_file_path)
@@ -117,65 +176,18 @@ def remove_not_relevant():
     calc_df.to_csv(int_change_path, sep=',', encoding='utf-8', index=False)
     print('done: remove not relevant transformations')
 
+##################################################################################
+#call functions###################################################################
+##################################################################################
 
-# calc combined weight
-def calc_weights():
-    data = pd.read_csv(int_change_path)    
-    
-    conn_weight_list = []
-    comb_weight_list = []
+# establish connection to graph
+call_graph = get_database_connection()
 
-    for row in data.itertuples():
-        comb_erg = (row.tendency_weight_lose + row.tendency_weight_gain)
-        conn_erg = (row.tendency_weight_lose_conn + row.tendency_weight_gain_conn)
-        
-        comb_weight_list.append(comb_erg)
-        conn_weight_list.append(conn_erg)
-        
-    data['weight_combined'] = comb_weight_list
-    data['weight_connected'] = conn_weight_list
-    data.to_csv(int_change_path, sep=',', encoding='utf-8', index=False)
-
-    print('done: calculate weights of relationships')
-
-# create relationship HAS_TRANSFORMED_INTO between transforming nodes over time
-def create_temporal_transformations():
-    calc_transformations.run("""
-        LOAD CSV WITH HEADERS FROM 'file:///""" + int_change_path + """' AS row
-        MATCH (m1:Molecule), (m2:Molecule)
-        WHERE m1.formula_string = row.from_molecule
-        AND m1.sample_id = row.from_mid
-        AND m2.formula_string = row.to_molecule
-        AND m2.sample_id = row.to_mid
-        CREATE (m1)-[:HAS_TRANSFORMED_INTO {C: toInteger(row.C), H: toInteger(row.H), O: toInteger(row.O), N: toInteger(row.N), S: toInteger(row.S), transformation_unit: row.transformation_unit, combined_weight: toFloat(row.weight_combined), connected_weight: toFloat(row.weight_connected)}]->(m2)
-    """)
-    print('done: creating HAS_TRANSFORMED_INTO Relationship')
-
-# normalize outgoing hti transformations
-def normalize_weights():
-    calc_transformations.run("""
-        MATCH (:Molecule)-[t:HAS_TRANSFORMED_INTO]->(m:Molecule)
-        WITH m.formula_string as fs, m.sample_id as mid, sum(t.connected_weight) as sum_weight
-        MATCH (:Molecule)-[t1:HAS_TRANSFORMED_INTO]->(m1:Molecule)
-        WHERE m1.formula_string = fs AND m1.sample_id = mid
-        SET t1.normalized_connected_weight = apoc.math.round(t1.connected_weight/sum_weight, 3)
-        RETURN fs, mid, sum_weight
-    """)
-
-    calc_transformations.run("""
-        MATCH (:Molecule)-[t:HAS_TRANSFORMED_INTO]->(m:Molecule)
-        WITH m.formula_string as fs, m.sample_id as mid, sum(t.combined_weight) as sum_weight
-        MATCH (:Molecule)-[t1:HAS_TRANSFORMED_INTO]->(m1:Molecule)
-        WHERE m1.formula_string = fs AND m1.sample_id = mid
-        SET t1.normalized_combined_weight = apoc.math.round(t1.combined_weight/sum_weight, 3)
-        RETURN fs, mid, sum_weight
-    """)
-    print('done: normalize weights')
-
-# call functions
-incr_int()
-calc_func_groups()
-#remove_not_relevant() # probably redundant
-calc_weights()
-create_temporal_transformations()
-normalize_weights()
+# calculate and add occurring transformations (RelIdent-Algorithm)
+calculate_occurring_transformations(call_graph)
+calculate_transformation_units()
+if check_for_not_relevant == 1: 
+    remove_not_relevant()
+calculate_weights()
+create_relationship_has_transformed_into(call_graph)
+normalize_weights(call_graph)
