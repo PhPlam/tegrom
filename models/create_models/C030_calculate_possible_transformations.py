@@ -176,6 +176,7 @@ def remove_not_relevant():
     calc_df.to_csv(int_change_path, sep=',', encoding='utf-8', index=False)
     print('done: remove not relevant transformations')
 
+
 ##################################################################################
 #call functions###################################################################
 ##################################################################################
