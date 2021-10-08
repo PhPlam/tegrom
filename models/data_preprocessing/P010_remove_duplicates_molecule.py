@@ -2,7 +2,7 @@
 # Date: 08. october 2021
 
 import pandas as pd
-from P000_path_variables_preprocess import raw_data, export_path_preprocess, cleaned_file_path
+from P000_path_variables_preprocess import raw_data_csv, export_path_preprocess, cleaned_file_path
 
 
 ##################################################################################
@@ -39,7 +39,7 @@ def export_file(data, export_path):
 ##################################################################################
 
 # define data
-original_data = raw_data
+original_data = raw_data_csv
 
 #calculate 
 filled_data = fill_null_values(original_data)

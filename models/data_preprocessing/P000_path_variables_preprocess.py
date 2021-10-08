@@ -26,7 +26,7 @@ path_prefix = path_prefix.replace('\\', '/') # necessary for application in Wind
 try:
     load_file = 'ufz_all_formulas_raw.csv'
     raw_file_path = path_prefix + load_file
-    raw_data = pd.read_csv(raw_file_path, sep=';')
+    raw_data_csv = pd.read_csv(raw_file_path, sep=';')
 except FileNotFoundError:
     print('info: cannot load file with raw molecule data')
     pass
@@ -56,7 +56,7 @@ except FileNotFoundError:
 try:
     formulas_file = 'unique_formula_strings.csv'
     formulas_path = path_prefix + formulas_file
-    formula_strings = pd.read_csv(formulas_path)
+    formula_strings_csv = pd.read_csv(formulas_path)
 except FileNotFoundError:
     print('info: cannot load file with unique formula strings')
     pass
@@ -65,7 +65,7 @@ except FileNotFoundError:
 try:
     transformation_unit_file = 'transformations_handwritten.csv'
     groups_path = path_prefix + transformation_unit_file
-    transformation_unit = pd.read_csv(groups_path)
+    transformation_unit_csv = pd.read_csv(groups_path)
 except FileNotFoundError:
     print('info: cannot load file with transformation units')
     pass
@@ -87,7 +87,7 @@ except FileNotFoundError:
 try: 
     sample_meta_name = 'ufz_sample_meta_raw.csv'
     sample_meta_path = path_prefix + sample_meta_name
-    sample_meta_file = pd.read_csv(sample_meta_path, sep=';')
+    sample_meta_file_csv = pd.read_csv(sample_meta_path, sep=';')
 except FileNotFoundError:
     print('info: cannot load file with metadata')
     pass
@@ -97,7 +97,7 @@ except FileNotFoundError:
 try:
     sample_join_name = 'ufz_sample_join_raw.csv'
     sample_join_path = path_prefix + sample_join_name
-    sample_join_file = pd.read_csv(sample_join_path, sep=';')
+    sample_join_file_csv = pd.read_csv(sample_join_path, sep=';')
 except FileExistsError:
     print('info: cannot load file with ID mapping')
     pass
@@ -116,16 +116,16 @@ except FileNotFoundError:
 ##################################################################################
 
 def testPhoto():
-    return list(raw_data)
+    return list(raw_data_csv)
 
 def testUnique():
-    return list(formula_strings)
+    return list(formula_strings_csv)
 
 def testFunctional():
-    return list(transformation_unit)
+    return list(transformation_unit_csv)
 
 def testMeta():
-    return list(sample_meta_file)
+    return list(sample_meta_file_csv)
 
 def testJoin():
-    return list(sample_join_file)
+    return list(sample_join_file_csv)

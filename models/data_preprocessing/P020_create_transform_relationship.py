@@ -1,33 +1,23 @@
 # Name: Philipp Plamper
-# Date: 11. may 2021
+# Date: 08. october 2021
 
 import pandas as pd
 from progress.bar import Bar
-from P000_path_variables_preprocess import formula_strings, transformation_unit, export_path_create
+from P000_path_variables_preprocess import formula_strings_csv, transformation_unit_csv, export_path_create
 
-
-#variables
-formula_strings = formula_strings
-transformation_unit = transformation_unit
 
 ##################################################################################
-#create csv with transformations##################################################
+#calculate possible transformations###############################################
 ##################################################################################
 
-# calculate both directions of transformations
-# enables possibility to define important transformation_units in both ways
-
-def new_calculate_transformations():
-
-    # calculation: formula - transformation_unit = new_formula
+# calculate new molecules from given molecules and transformation units in direction: photoaddition
+def calculate_new_formulas_photoaddition(formula_strings, transformation_unit):
     formula_list = []
-    bar_one = Bar('calculate new formulas:', max = len(formula_strings.index))
+    # initiate progress bar
+    bar_calculate_new_formulas_photoaddition = Bar('calculate new formulas photoaddition:', max = len(formula_strings.index))
 
-
-    # calculate new formulas #########################################################
-    # file with unique formula strings
     for row1 in formula_strings.itertuples():
-        bar_one.next()
+        bar_calculate_new_formulas_photoaddition.next()
         # file with all transformation_units
         for row2 in transformation_unit.itertuples():
             # choose if transformation is useful in this model
@@ -39,7 +29,8 @@ def new_calculate_transformations():
             # initiate atoms per formula with 0
             new_C = new_H = new_O = new_N = new_S = 0
 
-            # calculate possible new atom count in molecule
+            # calculate possible new molecule
+            # calculation: formula - transformation_unit = new_formula
             # skip if count < 0
             new_C = row1.C - row2.C if row1.C - row2.C >= 0 else -1
             if new_C == -1: continue
@@ -70,14 +61,18 @@ def new_calculate_transformations():
             # append dictionary to list
             formula_list.append(formula_dict)
 
-    bar_one.finish()
+    bar_calculate_new_formulas_photoaddition.finish()
+    print('done: calculate new molecules photoaddition')
+    return formula_list
 
-    
-    # test ##############################################################################
-    bar_onehalf = Bar('calculate new formulas:', max = len(formula_strings.index))
+# calculate new molecules from given molecules and transformation units in direction: photosecession
+def calculate_new_formulas_photosecession(formula_strings, transformation_unit):
+    formula_list = []
+    # initiate progress bar
+    bar_calculate_new_formulas_photosecession = Bar('calculate new formulas photosecession:', max = len(formula_strings.index))
 
     for row1 in formula_strings.itertuples():
-        bar_onehalf.next()
+        bar_calculate_new_formulas_photosecession.next()
         # file with all transformation_units
         for row2 in transformation_unit.itertuples():
             # choose if transformation is useful in this model
@@ -90,6 +85,7 @@ def new_calculate_transformations():
             new_C = new_H = new_O = new_N = new_S = 0
 
             # calculate possible new atom count in molecule
+            # calculation: formula + transformation_unit = new_formula
             new_C = row1.C + row2.C
             new_H = row1.H + row2.H
             new_O = row1.O + row2.O
@@ -114,21 +110,26 @@ def new_calculate_transformations():
             # append dictionary to list
             formula_list.append(formula_dict)
 
-    bar_onehalf.finish()
-    # test ende ##########################################################################
-    
+    bar_calculate_new_formulas_photosecession.finish()
+    print('done: calculate new molecules photosecession')
+    return formula_list
 
-    # create new dataframe from new list of dictionaries
-    molecule_df = pd.DataFrame(formula_list)
+# concatenate calculated lists of molecules
+def merge_calculated_molecules(calculated_photoaddtion, calculated_photosecession):
+    merged_list = calculated_photoaddtion + calculated_photosecession
+    print('done: concatenate both calculated lists')
+    return merged_list
+
+# create strings from calculated molecules
+def create_strings_from_molecules(merged_molecule_list):
+    molecule_df = pd.DataFrame(merged_molecule_list)
     help_list = []
+    # initiate progress bar
+    bar_build_strings = Bar('build strings from molecules:', max = len(molecule_df.index))
 
-    bar_two = Bar('build new strings:', max = len(molecule_df.index))
-
-    # build new strings ##############################################################
-    # build new molecule from dataframe columns
     # take calculated atoms and append to string -> structure: 'CHNOS'
     for row in molecule_df.itertuples():
-        bar_two.next()
+        bar_build_strings.next()
         new_molecule = ''
         if row.new_C > 0: new_molecule = 'C' + str(row.new_C)
         if row.new_H > 0: new_molecule = new_molecule + ' H' + str(row.new_H)
@@ -138,36 +139,44 @@ def new_calculate_transformations():
 
         # append new formula string to list
         help_list.append(new_molecule)
-
-    bar_two.finish()
-
+    
     # append new formula strings to dataframe
     molecule_df['new_formula'] = help_list
+    bar_build_strings.finish()
+    print('done: create strings from molecules')
+    return molecule_df
 
+# check existence of strings in the molecule data
+def check_existence_of_strings(df_added_strings):
     occurence_list = []
-    bar_three = Bar('check existence:', max = len(molecule_df.index))
+    # initiate progress bar
+    bar_check_existence = Bar('check existence:', max = len(df_added_strings.index))
 
-    # check existence ################################################################
-    # check if molecule transformations exist in molecule table
-    for row in molecule_df.itertuples():
-        bar_three.next()
+    # check if molecule exist in molecule data
+    for row in df_added_strings.itertuples():
+        bar_check_existence.next()
         if row.new_formula in formula_strings['formula_string'].values:
             occurence_list.append(1)
         else:
             occurence_list.append(0)
 
-    bar_three.finish()
+    bar_check_existence.finish()
 
-    molecule_df['occur'] = occurence_list
-    molecule_df.drop(molecule_df[molecule_df.occur == 0].index, inplace=True)
-    molecule_df = molecule_df.drop(columns=['occur'])
+    df_added_strings['occur'] = occurence_list
+    # drop rows with molecules that does not exist
+    df_added_strings.drop(df_added_strings[df_added_strings.occur == 0].index, inplace=True)
+    molecule_df = df_added_strings.drop(columns=['occur'])
+    print('done: check existence of molecules')
+    return molecule_df
 
-
-    # set transformation_unit strings ###################################################
+# create strings from atoms of transformation units
+def create_strings_transformation_unit(df_molecules):
     tu_list = []
+    # initiate progress bar
+    bar_create_strings_transformation_units = Bar('check existence:', max = len(df_molecules.index))
 
-    #for index, row in data.iterrows():
-    for row in molecule_df.itertuples(): # index=False
+    for row in df_molecules.itertuples(): # index=False
+        bar_create_strings_transformation_units.next()
         tu_string = ""
 
         if row.tu_C < 0: tu_string = "-" + tu_string + "C" + str(abs(row.tu_C)) + " "
@@ -193,19 +202,32 @@ def new_calculate_transformations():
         # print(tu_string)
         tu_string = tu_string.rstrip()
         tu_list.append(tu_string)
-    
-    molecule_df['transformation_unit'] = tu_list
-    
-    ##################################################################################
-    #export csv#######################################################################
-    ##################################################################################
 
-    export_path = export_path_create
-    molecule_df.to_csv(export_path, sep=',', encoding='utf-8', index=False, float_format='%.f')
+    bar_create_strings_transformation_units.finish()    
+    df_molecules['transformation_unit'] = tu_list
+    print('done: create strings for transformation unit')
+    return df_molecules
 
+#export to csv
+def export_file(data, export_path):
+    data.to_csv(export_path, sep=',', encoding='utf-8', index=False)
+    print('done: export data to ' + str(export_path))
 
-    ##################################################################################
-    ##################################################################################
-    ##################################################################################
+##################################################################################
+#call functions###################################################################
+##################################################################################
 
-new_calculate_transformations()
+# define data
+formula_strings = formula_strings_csv
+transformation_unit = transformation_unit_csv
+
+# calculate
+calculated_photoaddtion = calculate_new_formulas_photoaddition(formula_strings, transformation_unit)
+calculated_photosecession = calculate_new_formulas_photosecession(formula_strings, transformation_unit)
+merged_molecule_list = merge_calculated_molecules(calculated_photoaddtion, calculated_photosecession)
+df_added_strings = create_strings_from_molecules(merged_molecule_list)
+df_molecules = check_existence_of_strings(df_added_strings)
+calculated_transformations = create_strings_transformation_unit(df_molecules)
+
+#export
+export_file(calculated_transformations,export_path_create)

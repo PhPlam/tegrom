@@ -2,7 +2,7 @@
 # Date: 08. october 2021
 
 import pandas as pd
-from P000_path_variables_preprocess import sample_meta_file, sample_join_file, export_path_metadata
+from P000_path_variables_preprocess import sample_meta_file_csv, sample_join_file_csv, export_path_metadata
 
 
 ##################################################################################
@@ -46,8 +46,8 @@ def export_file(data, export_path):
 ##################################################################################
 
 # define data
-sample_1 = sample_meta_file
-sample_2 = sample_join_file
+sample_1 = sample_meta_file_csv
+sample_2 = sample_join_file_csv
 
 # calculate
 combined_metadata = map_ids(sample_1, sample_2)
