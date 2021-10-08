@@ -11,7 +11,7 @@ Date: 08. october 2021
 1. Download a copy of [Neo4j Desktop](https://neo4j.com/download-center/#desktop)
 2. Run Neo4j Desktop
 3. Create a new project
-4. Add with "Add Database" a new local database (database Version 4.3.3 is supported, see [py2neo docs](https://py2neo.org/2020.1/)) and confirm with "Create"
+4. Add with "Add Database" a new local database (database Version 4.3.3 is supported, see [py2neo docs](https://py2neo.org/2021.1/)) and confirm with "Create"
 5. Install with "Add Plugin" the plugin "APOC"
 6. Click on the three dots next to your database -> Manage -> Settings 
 7. Search for the line "dbms.directories.import=import" and comment it out with "#", then "Apply" (change also [memory settings](https://neo4j.com/developer/guide-performance-tuning/) if needed)
