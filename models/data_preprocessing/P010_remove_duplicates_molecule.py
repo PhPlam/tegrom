@@ -1,52 +1,49 @@
 # Name: Philipp Plamper
-# Date: 19. january 2021
+# Date: 08. october 2021
 
 import pandas as pd
-from P000_path_variables_preprocess import raw_data, export_path_preprocess, raw_file_path, cleaned_file_path
+from P000_path_variables_preprocess import raw_data, export_path_preprocess, cleaned_file_path
 
 
 ##################################################################################
-#preprocess data##################################################################
+#clean data by removing null values###############################################
 ##################################################################################
 
-# get data path 
-data = raw_data
+# fill null values with 0
+def fill_null_values(original_data):
+    data_rm_null = original_data
+    data_rm_null = data_rm_null.fillna(0)
+    data_rm_null['C'] = data_rm_null['C'].astype('Int64')
+    data_rm_null['H'] = data_rm_null['H'].astype('Int64')
+    data_rm_null['O'] = data_rm_null['O'].astype('Int64')
+    data_rm_null['N'] = data_rm_null['N'].astype('Int64')
+    data_rm_null['S'] = data_rm_null['S'].astype('Int64')
+    print('done: fill null values with 0')
+    return data_rm_null
 
-# overwrite raw_data to fill null values with 0
-data_rm_null = data
-data_rm_null = data_rm_null.fillna(0)
-data_rm_null['C'] = data_rm_null['C'].astype('Int64')
-data_rm_null['H'] = data_rm_null['H'].astype('Int64')
-data_rm_null['O'] = data_rm_null['O'].astype('Int64')
-data_rm_null['N'] = data_rm_null['N'].astype('Int64')
-data_rm_null['S'] = data_rm_null['S'].astype('Int64')
+# remove duplicate formula strings
+def delete_duplicates(filled_data):
+    data = filled_data[['measurement_id', 'formula_string', 'formula_class', 'C', 'H', 'O', 'N', 'S']]
+    data = data.drop_duplicates(subset=['formula_string'])
+    print('done: remove duplicate formula strings')
+    return data
 
-# select columns
-data = data[['measurement_id', 'formula_string', 'formula_class', 'C', 'H', 'O', 'N', 'S']]
-# fill nan with zeros and change from float to integer
-data = data.fillna(0)
-data['C'] = data['C'].astype('Int64')
-data['H'] = data['H'].astype('Int64')
-data['O'] = data['O'].astype('Int64')
-data['N'] = data['N'].astype('Int64')
-data['S'] = data['S'].astype('Int64')
-
-# remove duplicates
-data = data.drop_duplicates(subset=['formula_string'])
+def export_file(data, export_path):
+    data.to_csv(export_path, sep=',', encoding='utf-8', index=False)
+    print('done: export data to ' + str(export_path))
 
 
 ##################################################################################
-#export data######################################################################
+#call functions###################################################################
 ##################################################################################
 
-# export unique formula strings
-export_path = export_path_preprocess
-data.to_csv(export_path, sep=',', encoding='utf-8', index=False)
+# set data
+original_data = raw_data
 
-# export cleaned raw formulas with filled null values
-data_clean = data_rm_null
-data_clean.to_csv(cleaned_file_path, sep=',', encoding='utf-8', index=False)
+#calculate 
+filled_data = fill_null_values(original_data)
+removed_duplicate_data = delete_duplicates(filled_data)
 
-##################################################################################
-##################################################################################
-##################################################################################
+# export
+export_file(filled_data, cleaned_file_path)
+export_file(removed_duplicate_data, export_path_preprocess)
