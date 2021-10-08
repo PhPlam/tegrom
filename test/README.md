@@ -1,6 +1,6 @@
-# test
+# Test scripts and notebooks
 
-contains evaluation and tests on models
+Contains different scripts and notebook to evaluate the model and test new functions.
 
 Owner: Philipp Plamper
-Date: 11. may 2021
+Date: 08. october 2021
