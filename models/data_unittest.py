@@ -1,7 +1,5 @@
 # Name: Philipp Plamper
-# Date: 19. january 2021
-
-# contains unittests 
+# Date: 08. october 2021
 
 import unittest
 from data_preprocessing.P000_path_variables_preprocess import testPhoto, testUnique, testFunctional, testMeta, testJoin
@@ -9,11 +7,11 @@ from create_models.C000_path_variables_create import testSample, testRelationshi
 
 
 ##################################################################################
-#write unittest###################################################################
+#unittest#########################################################################
 ##################################################################################
 
-# tests to check existence of files and their columns
-# test to check if db connection exists
+# check existence of files and their columns
+# check db connection
 
 class testData(unittest.TestCase):
     
@@ -58,11 +56,11 @@ class testData(unittest.TestCase):
         print('test file with formula relationships')
         self.assertIn('formula_string', testRelationships())
         self.assertIn('new_formula', testRelationships())
-        self.assertIn('fg_C', testRelationships())
-        self.assertIn('fg_H', testRelationships())
-        self.assertIn('fg_O', testRelationships())
-        self.assertIn('fg_N', testRelationships())
-        self.assertIn('fg_S', testRelationships())
+        self.assertIn('tu_C', testRelationships())
+        self.assertIn('tu_H', testRelationships())
+        self.assertIn('tu_O', testRelationships())
+        self.assertIn('tu_N', testRelationships())
+        self.assertIn('tu_S', testRelationships())
 
     def testMetaExistence(self):
         print('test file with metadata')
@@ -87,8 +85,8 @@ class testData(unittest.TestCase):
         self.assertIn('S', testIntensityCSV())
         self.assertIn('tendency_weight_lose', testIntensityCSV())
         self.assertIn('tendency_weight_gain', testIntensityCSV())
-        self.assertIn('tendency_weight_combined', testIntensityCSV())
-        self.assertIn('fg_group', testIntensityCSV())
+        self.assertIn('weight_combined', testIntensityCSV())
+        self.assertIn('transformation_unit', testIntensityCSV())
 
     def testWeightCSVExistence(self):
         print('test file with tendency weights')
