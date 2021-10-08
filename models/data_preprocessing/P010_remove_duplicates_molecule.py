@@ -28,6 +28,7 @@ def delete_duplicates(filled_data):
     print('done: remove duplicate formula strings')
     return data
 
+# export to csv
 def export_file(data, export_path):
     data.to_csv(export_path, sep=',', encoding='utf-8', index=False)
     print('done: export data to ' + str(export_path))
@@ -37,13 +38,13 @@ def export_file(data, export_path):
 #call functions###################################################################
 ##################################################################################
 
-# set data
+# define data
 original_data = raw_data
 
 #calculate 
 filled_data = fill_null_values(original_data)
 removed_duplicate_data = delete_duplicates(filled_data)
 
-# export
+# export to csv
 export_file(filled_data, cleaned_file_path)
 export_file(removed_duplicate_data, export_path_preprocess)
