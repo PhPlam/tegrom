@@ -2,8 +2,8 @@
 
 Contains the used files to create the graph.
 
-Name: Philipp Plamper
-Owner: Helmholtz-Zentrum für Umweltforschung UFZ
+Name: Philipp Plamper  
+Owner: Helmholtz-Zentrum für Umweltforschung UFZ  
 Date: 08. october 2021
 
 
