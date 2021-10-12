@@ -1,8 +1,9 @@
 # Name: Philipp Plamper
-# Date: 08. october 2021
+# Date: 12. october 2021
 
 import pandas as pd
-from P000_path_variables_preprocess import raw_data_csv, export_path_preprocess, cleaned_file_path
+from P000_path_variables_preprocess import raw_data_csv, meta_file_file_csv
+from P000_path_variables_preprocess import export_path_preprocess, cleaned_file_path
 
 
 ##################################################################################
@@ -21,9 +22,27 @@ def fill_null_values(original_data):
     print('done: fill null values with 0')
     return data_rm_null
 
+# remove molecules with specific atom count greater than ...
+def remove_molecules(filled_data):
+    filled_data = filled_data[filled_data.C <= 99]
+    filled_data = filled_data[filled_data.H <= 99]
+    filled_data = filled_data[filled_data.O <= 99]
+    filled_data = filled_data[filled_data.N <= 99]
+    shrinked_data = filled_data[filled_data.S <= 99]
+    print('done: remove molecules with specific atom count')
+    return shrinked_data
+
+# remove molecules from removed measurements
+def remove_molecules_without_measurement(shrinked_data, metadata):
+    measurement_list = metadata['measurement_id'].to_list()
+    removed_molecules_without_measurement = shrinked_data[shrinked_data.measurement_id.isin(measurement_list)]
+    removed_molecules_without_measurement = removed_molecules_without_measurement.reset_index(drop=True)
+    print('done: remove molecules without measurements')
+    return removed_molecules_without_measurement
+
 # remove duplicate formula strings
-def delete_duplicates(filled_data):
-    data = filled_data[['measurement_id', 'formula_string', 'formula_class', 'C', 'H', 'O', 'N', 'S']]
+def delete_duplicates(removed_molecules_without_measurement):
+    data = removed_molecules_without_measurement[['measurement_id', 'formula_string', 'formula_class', 'C', 'H', 'O', 'N', 'S']]
     data = data.drop_duplicates(subset=['formula_string'])
     print('done: remove duplicate formula strings')
     return data
@@ -40,11 +59,14 @@ def export_file(data, export_path):
 
 # define data
 original_data = raw_data_csv
+metadata = meta_file_file_csv
 
 #calculate 
 filled_data = fill_null_values(original_data)
-removed_duplicate_data = delete_duplicates(filled_data)
+shrinked_data = remove_molecules(filled_data)
+removed_molecules_without_measurement = remove_molecules_without_measurement(shrinked_data, metadata)
+removed_duplicate_data = delete_duplicates(removed_molecules_without_measurement)
 
 # export to csv
-export_file(filled_data, cleaned_file_path)
+export_file(removed_molecules_without_measurement, cleaned_file_path)
 export_file(removed_duplicate_data, export_path_preprocess)

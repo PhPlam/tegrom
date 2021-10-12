@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 07. october 2021
+# Date: 12. october 2021
 
 # be sure your neo4j instance is up and running
 # configure custom filepaths, see requirements (comment out 'dbms.directories.import=import' in neo4j settings)
@@ -33,13 +33,13 @@ measurement_file_path = measurement_file_path # measurements
 ##################################################################################
 
 # create or replace database based on 'db_name' in neo4j instance with help of the initial 'system' database
-def create_database(): 
+def create_database(host, user, passwd, db_name): 
     system_db = Graph(host, auth=(user, passwd), name='system')
     system_db.run("CREATE OR REPLACE DATABASE " + db_name)
     print('done: create or replace database')
 
 # establish connection to the new or replaced database based on 'db_name'
-def get_database_connection():
+def get_database_connection(host, user, passwd, db_name):
     database_connection = Graph(host, auth=(user, passwd), name=db_name)
     print('done: establish database connection')
     return database_connection
@@ -136,8 +136,8 @@ def create_property_intensity_trend(call_graph):
 ##################################################################################
 
 # create database and establish connection
-create_database()
-call_graph = get_database_connection()
+create_database(host, user, passwd, db_name)
+call_graph = get_database_connection(host, user, passwd, db_name)
 
 # create graph
 create_nodes_molecule(call_graph)

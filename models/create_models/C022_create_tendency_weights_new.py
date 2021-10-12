@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 07. october 2021
+# Date: 12. october 2021
 
 import pandas as pd
 from py2neo import Graph
@@ -33,7 +33,7 @@ upper_limit = upper_limit
 ##################################################################################
 
 # establish connection to the database
-def get_database_connection():
+def get_database_connection(host, user, passwd, db_name):
     database_connection = Graph(host, auth=(user, passwd), name=db_name)
     print('done: establish database connection')
     return database_connection
@@ -97,7 +97,7 @@ def add_weights_to_graph(tendency_weight_path, call_graph):
 ##################################################################################
 
 # establish connection to graph
-call_graph = get_database_connection()
+call_graph = get_database_connection(host, user, passwd, db_name)
 
 # calculate weights and add to graph
 tendencies = get_tendencies(call_graph)

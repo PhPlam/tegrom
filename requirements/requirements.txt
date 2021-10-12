@@ -3,3 +3,5 @@
 pandas
 py2neo==2021.1.5
 progress
+numpy
+matplotlib

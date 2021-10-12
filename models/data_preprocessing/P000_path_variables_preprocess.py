@@ -110,6 +110,15 @@ except FileNotFoundError:
     print('print: no file with mapped IDs and metadata found')
     pass
 
+# load file with metadata
+try:
+    meta_file_name = 'sample_metadata.csv'
+    meta_file_path = path_prefix + meta_file_name
+    meta_file_file_csv = pd.read_csv(meta_file_path, sep=',')
+except FileExistsError:
+    print('info: cannot load file with metadata')
+    pass
+
 
 ##################################################################################
 #test functions for unittests#####################################################
