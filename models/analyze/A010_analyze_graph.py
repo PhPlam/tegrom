@@ -1,12 +1,10 @@
 # Name: Philipp Plamper 
 # Date: 12. october 2021
 
-import os
 import matplotlib.pyplot as plt
 import numpy as np
 from py2neo import Graph
-from matplotlib import rc
-from numpy.polynomial.polynomial import polyfit
+import pandas as pd
 from A000_path_variables_analyze import host, user, passwd, db_name_parallel
 from A000_path_variables_analyze import path_prefix
 
@@ -73,9 +71,163 @@ def get_intensity_trend_distribution(call_graph, export_path):
     x = [0,1,2,3,4,5,6,7,8,9,10,11,12]
     plt.xticks(x)
 
-    name = 'intensity_trend_distribution'
+    name = 'graph_intensity_trend_distribution'
     plt.savefig(export_path + name + '.png', bbox_inches='tight')
-    print('done: create image "intensity_trend_distribution"')
+    print('done: create image "intensity trend distribution"')
+    # plt.show()
+
+# outgoing transformations per measurement
+def outgoing_transformations_measurement(call_graph, export_path):
+    or_cti = call_graph.run("""
+        MATCH (t1:Measurement)-[:MEASURED_IN]-(:Molecule)-[c:POTENTIAL_TRANSFORMATION]->(:Molecule)-[:MEASURED_IN]-(t2:Measurement)
+        WHERE t2.point_in_time = t1.point_in_time + 1
+        RETURN t1.point_in_time as time, count(c) as relationships_out
+    """).to_data_frame()
+
+    or_hti = call_graph.run("""
+        MATCH (t1:Measurement)-[:MEASURED_IN]-(:Molecule)-[c:HAS_TRANSFORMED_INTO]->(:Molecule)-[:MEASURED_IN]-(t2:Measurement)
+        WHERE t2.point_in_time = t1.point_in_time + 1
+        RETURN t1.point_in_time as time, count(c) as relationships_out
+    """).to_data_frame()
+
+    get_mol = call_graph.run("""
+        MATCH (m:Molecule)-[]-(t:Measurement)
+        WHERE t.point_in_time < 12
+        RETURN t.point_in_time as time, count(m) as cmol
+    """).to_data_frame()
+
+    plt.figure(figsize=(6, 3))
+
+    plt.suptitle('Ausgehende Transformationskanten je Messpunkt')
+    plt.xlabel('Messpunkt')
+    plt.ylabel('Anzahl ausgehende \n Transformationskanten')
+    plt.bar(or_cti.time, or_cti.relationships_out, color='green')
+    plt.bar(or_hti.time, or_hti.relationships_out, color='orange')
+    plt.plot(get_mol.time, get_mol.cmol, color = 'black', lw=1.5)
+    plt.legend(['Anzahl Molekülknoten', 'PT-Kanten', 'HTI-Kanten'], loc='upper left', bbox_to_anchor=(1, 1))
+    x = [0,1,2,3,4,5,6,7,8,9,10,11]
+    plt.xticks(x)
+
+    name = 'graph_outgoing_transformations_measurement'
+    plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    print('done: create image "outgoing transformations measurement"')
+    # plt.show()
+
+# occurrence oft outgoing transformations
+def outgoing_transformations_occurrence(call_graph, export_path):
+    most_outgoing_relationships = call_graph.run("""
+        MATCH (m:Molecule)-[c:HAS_TRANSFORMED_INTO]->(:Molecule)
+        RETURN m.formula_string as formula_string, m.sample_id as mid, count(c) as rel_out
+        //RETURN m.formula_string as formula_string, count(c) as rel_out
+        ORDER BY count(c) DESC
+    """).to_data_frame() 
+
+    mor_cti = call_graph.run("""
+        MATCH (m:Molecule)-[c:POTENTIAL_TRANSFORMATION]->(:Molecule)
+        RETURN m.formula_string as formula_string, m.sample_id as mid, count(c) as rel_out
+        //RETURN m.formula_string as formula_string, count(c) as rel_out
+        ORDER BY count(c) DESC
+    """).to_data_frame()
+
+    af = {'formula_string':'count'}
+    mor = most_outgoing_relationships.groupby(most_outgoing_relationships['rel_out'], as_index=False).aggregate(af)
+    mor['hti_perc'] = mor.formula_string/mor.formula_string.sum()*100
+
+    af_cti = {'formula_string':'count'}
+    mor_cti = mor_cti.groupby(mor_cti['rel_out'], as_index=False).aggregate(af_cti)
+    mor_cti['cti_perc'] = mor_cti.formula_string/mor_cti.formula_string.sum()*100
+
+    y = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+    x = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+
+    plt.figure(figsize=(9, 3))
+    plt.subplot(1, 2, 1)
+    plt.suptitle('Verteilung der Anzahl der ausgehenden Transformationskanten pro Molekülknoten')
+    plt.bar(mor_cti.rel_out, mor_cti.cti_perc, color='green')
+    plt.xlabel('Anzahl ausgehende PT-Kanten')
+    plt.ylabel('Anteil der Molekülknoten (%)')
+    plt.xticks(y)
+
+    plt.subplot(1, 2, 2)
+    plt.bar(mor.rel_out, mor.hti_perc, color='green')
+    plt.xlabel('Anzahl ausgehende HTI-Kanten')
+    plt.ylabel('Anteil der Molekülknoten (%)')
+    plt.xticks(x)
+
+    plt.tight_layout()
+
+    name = 'graph_outgoing_transformations_occurrence'
+    plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    print('done: create image "outgoing transformations occurrence"')
+    # plt.show()
+
+# most occuring transformations
+def most_occurring_transformations(call_graph, export_path):
+    transform_count_hti = call_graph.run("""
+    MATCH ()-[t:HAS_TRANSFORMED_INTO]->()
+    RETURN t.transformation_unit as funktionelle_Gruppe, count(t.transformation_unit) as Anzahl_HTI_Kanten
+    ORDER BY Anzahl_HTI_Kanten DESC
+    """).to_data_frame()
+
+    transform_count_cti = call_graph.run("""
+    MATCH ()-[t:POTENTIAL_TRANSFORMATION]->()
+    RETURN t.tu_pt as funktionelle_Gruppe, count(t.tu_pt) as Anzahl_CTI_Kanten
+    ORDER BY Anzahl_CTI_Kanten DESC
+    """).to_data_frame()
+
+    df_join = pd.merge(transform_count_hti, transform_count_cti, on=["funktionelle_Gruppe"])
+    df_join['share_hti'] = df_join.Anzahl_HTI_Kanten/df_join.Anzahl_HTI_Kanten.sum()*100
+    df_join['share_cti'] = df_join.Anzahl_CTI_Kanten/df_join.Anzahl_CTI_Kanten.sum()*100
+    df_join['fg'] = ['-CO', '-C', '-CH2', 'O', '-H2', '-C2H2', 'H2O', '+O-CH2', '+O-H2', '-C2H4O', '-CO2', '-C4H4O', 'O2', '-H2O', '+O2-H4', '-O+NH', '+O-NH', '-S', '-SO', '-SO3']
+
+    df_join['diff'] = df_join.share_hti/df_join.share_cti
+
+    labels = ['-CO', '-C', '-CH2', 'O', '-H2', '-C2H2', 'H2O', '+O-CH2', '+O-H2', '-C2H4O', '-CO2', '-C4H4O', 'O2', '-H2O', '+O2-H4', '-O+NH', '+O-NH', '-S', '-SO', '-SO3']
+    x = np.arange(len(labels))
+    height = 0.3
+    plt.figure(figsize=(4, 7))
+    plt.barh(x + height/2, df_join.share_cti, height = 0.3, color='green')
+    plt.barh(x - height/2 , df_join.share_hti, height = 0.3, color='orange')
+    plt.yticks(x, labels = labels)
+    plt.title('Anteil der chemischen Transformationen an Transformationskanten')
+    plt.ylabel('chemische Transformation')
+    plt.xlabel('Anteil an Transformationskanten (%)')
+    plt.legend(['PT-Kanten', 'HTI-Kanten'])
+
+    name = 'graph_most_occurring_transformations'
+    plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    print('done: create image "most occurring transformations"')
+    # plt.show()
+
+# average weight of transformations
+def average_weight_transformations(call_graph, export_path):
+    tch = call_graph.run("""
+    MATCH ()-[t:HAS_TRANSFORMED_INTO]->()
+    RETURN t.transformation_unit as funktionelle_Gruppe, 
+            count(t.transformation_unit) as Anzahl_HTI_Kanten,
+            avg(t.normalized_combined_weight) as avg_combined,
+            avg(t.normalized_connected_weight) as avg_connect
+    ORDER BY Anzahl_HTI_Kanten DESC
+    """).to_data_frame()
+
+    tch.avg_combined = tch.avg_combined
+    tch.avg_connect = tch.avg_connect
+
+    labels = ['-CO', '-C', '-CH2', 'O', '-H2', '-C2H2', 'H2O', '+O-CH2', '+O-H2', '-C2H4O', '-CO2', '-C4H4O', 'O2', '-H2O', '+O2-H4', '-O+NH', '+O-NH', '-S', '-SO', '-SO3']
+    x = np.arange(len(labels))
+    height = 0.3
+    plt.figure(figsize=(4, 7))
+    plt.barh(x + height/2, tch.avg_combined, height = 0.3, color='green', label='CTI-Kanten')
+    plt.barh(x - height/2 , tch.avg_connect, height = 0.3, color='orange', label='HTI-Kanten')
+    plt.yticks(x, labels = labels)
+    plt.title('Durchschnittliches Gewicht der chemischen Transformationen')
+    plt.ylabel('chemische Transformation')
+    plt.xlabel('Durchschnittliches Kantengewicht')
+    plt.legend(['normalisiertes verbundenes Kantengewicht', 'normalisiertes kombiniertes Kantengewicht'], bbox_to_anchor=(1, 1))
+
+    name = 'graph_average_weight_transformation'
+    plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    print('done: create image "average weight transformation"')
     # plt.show()
 
 
@@ -85,6 +237,13 @@ def get_intensity_trend_distribution(call_graph, export_path):
 
 # establish database connection
 call_graph = get_database_connection(host, user, passwd, db_name)
+
+# set export path
 export_path = path_prefix
 
+# functions
 get_intensity_trend_distribution(call_graph, export_path)
+outgoing_transformations_measurement(call_graph, export_path)
+outgoing_transformations_occurrence(call_graph, export_path)
+most_occurring_transformations(call_graph, export_path)
+average_weight_transformations(call_graph, export_path)
