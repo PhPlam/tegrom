@@ -24,11 +24,11 @@ def fill_null_values(original_data):
 
 # remove molecules with specific atom count greater than ...
 def remove_molecules(filled_data):
-    filled_data = filled_data[filled_data.C <= 99]
-    filled_data = filled_data[filled_data.H <= 99]
-    filled_data = filled_data[filled_data.O <= 99]
-    filled_data = filled_data[filled_data.N <= 99]
-    shrinked_data = filled_data[filled_data.S <= 99]
+    filled_data = filled_data[filled_data.C <= 999]
+    filled_data = filled_data[filled_data.H <= 999]
+    filled_data = filled_data[filled_data.O <= 999]
+    filled_data = filled_data[filled_data.N <= 999]
+    shrinked_data = filled_data[filled_data.S <= 999]
     print('done: remove molecules with specific atom count')
     return shrinked_data
 
