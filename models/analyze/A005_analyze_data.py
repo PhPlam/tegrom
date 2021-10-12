@@ -47,6 +47,7 @@ def molecules_per_measurement(molecule_data, export_path):
 
     name = 'data_molecules_per_measurement'
     plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    plt.clf()
     print('done: create image "molecules per measurement"')
     # plt.show()
 
@@ -69,7 +70,28 @@ def sum_relative_intensity(molecule_data, export_path):
 
     name = 'data_sum_relative_intensity'
     plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    plt.clf()
     print('done: create image "sum relative intensity"')
+    # plt.show()
+
+# occurrence of formula class
+def occurrence_formula_class(molecule_data, export_path):
+    test = {'formula_class': ['first','count']}
+    df_class = molecule_data.groupby(molecule_data['formula_class'], as_index=False).aggregate(test)
+    df_class_new = df_class
+    df_class_new['form_class'] = df_class.formula_class['first']
+    df_class_new['occ'] = df_class.formula_class['count']/df_class.formula_class['count'].sum()*100
+
+    plt.figure(figsize=(6, 3))
+    plt.suptitle('Anteil der Formelklasse in den Moleküldaten')
+    plt.bar(df_class_new.form_class, df_class_new.occ, color='green')
+    plt.xlabel('Formelklasse')
+    plt.ylabel('Häufigkeit der Formelklasse (%)')
+
+    name = 'data_occurrence_formula_class'
+    plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    plt.clf()
+    print('done: create image "occurrence formula class"')
     # plt.show()
 
 ##################################################################################
@@ -85,3 +107,4 @@ export_path = path_prefix
 #call functions
 molecules_per_measurement(molecule_data, export_path)
 sum_relative_intensity(molecule_data, export_path)
+occurrence_formula_class(molecule_data, export_path)

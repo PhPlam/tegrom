@@ -73,6 +73,7 @@ def get_intensity_trend_distribution(call_graph, export_path):
 
     name = 'graph_intensity_trend_distribution'
     plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    plt.clf()
     print('done: create image "intensity trend distribution"')
     # plt.show()
 
@@ -110,6 +111,7 @@ def outgoing_transformations_measurement(call_graph, export_path):
 
     name = 'graph_outgoing_transformations_measurement'
     plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    plt.clf()
     print('done: create image "outgoing transformations measurement"')
     # plt.show()
 
@@ -158,6 +160,7 @@ def outgoing_transformations_occurrence(call_graph, export_path):
 
     name = 'graph_outgoing_transformations_occurrence'
     plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    plt.clf()
     print('done: create image "outgoing transformations occurrence"')
     # plt.show()
 
@@ -196,6 +199,7 @@ def most_occurring_transformations(call_graph, export_path):
 
     name = 'graph_most_occurring_transformations'
     plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    plt.clf()
     print('done: create image "most occurring transformations"')
     # plt.show()
 
@@ -227,6 +231,7 @@ def average_weight_transformations(call_graph, export_path):
 
     name = 'graph_average_weight_transformation'
     plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    plt.clf()
     print('done: create image "average weight transformation"')
     # plt.show()
 
