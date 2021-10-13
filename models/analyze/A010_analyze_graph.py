@@ -159,7 +159,7 @@ def outgoing_transformations_occurrence(call_graph, export_path):
     print('done: create image "outgoing transformations occurrence"')
     # plt.show()
 
-# most occuring transformations
+# most occuring transformations overall
 def most_occurring_transformations(call_graph, export_path):
     transform_count_hti = call_graph.run("""
     MATCH ()-[t:HAS_TRANSFORMED_INTO]->()
@@ -184,7 +184,7 @@ def most_occurring_transformations(call_graph, export_path):
     plt.barh(x + height/2, df_join.share_cti, height = 0.3, color='green')
     plt.barh(x - height/2 , df_join.share_hti, height = 0.3, color='orange')
     plt.yticks(x, labels = labels)
-    plt.title('Anteil der chemischen Transformationen an Transformationskanten')
+    plt.title('Anteil der chemischen Transformationen an Transformationskanten über alle Messpunkte')
     plt.ylabel('chemische Transformation')
     plt.xlabel('Anteil an Transformationskanten (%)')
     plt.legend(['PT-Kanten', 'HTI-Kanten'])
@@ -193,6 +193,73 @@ def most_occurring_transformations(call_graph, export_path):
     plt.savefig(export_path + name + '.png', bbox_inches='tight')
     plt.clf()
     print('done: create image "most occurring transformations"')
+    # plt.show()
+
+# most occurring transformations per measurement
+def most_occurring_transformations_measurement(call_graph, export_path):
+    df_time = call_graph.run("""
+        MATCH (t:Measurement)
+        RETURN t.point_in_time as time
+    """).to_data_frame()
+
+    time_list = df_time['time'].to_list()
+    del time_list[-1]
+
+    df_tu_hti = call_graph.run("""
+        MATCH (:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
+        RETURN DISTINCT t.transformation_unit as funktionelle_Gruppe
+        """).to_data_frame()
+
+    df_tu_pt = call_graph.run("""
+        MATCH (:Molecule)-[t:POTENTIAL_TRANSFORMATION]->(:Molecule)
+        RETURN DISTINCT t.tu_pt as funktionelle_Gruppe
+        """).to_data_frame()
+
+    for ele in time_list:
+        transform_count_hti = call_graph.run("""
+        MATCH (m:Measurement)-[:MEASURED_IN]-(:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
+        WHERE m.point_in_time = """ + str(ele) + """
+        RETURN t.transformation_unit as funktionelle_Gruppe, count(t.transformation_unit) as Anzahl_HTI_Kanten_""" + str(ele) + """
+        ORDER BY Anzahl_HTI_Kanten_""" + str(ele) + """ DESC
+        """).to_data_frame()
+
+        transform_count_cti = call_graph.run("""
+        MATCH (m:Measurement)-[:MEASURED_IN]-(:Molecule)-[t:POTENTIAL_TRANSFORMATION]->(:Molecule)
+        WHERE m.point_in_time = """ + str(ele) + """
+        RETURN t.tu_pt as funktionelle_Gruppe, count(t.tu_pt) as Anzahl_CTI_Kanten_""" + str(ele) + """
+        ORDER BY Anzahl_CTI_Kanten_""" + str(ele) + """ DESC
+        """).to_data_frame()
+        
+        df_tu_hti = pd.merge(df_tu_hti, transform_count_hti, on=["funktionelle_Gruppe"])
+        df_tu_hti['share_hti_' + str(ele)] = df_tu_hti['Anzahl_HTI_Kanten_' + str(ele)]/df_tu_hti['Anzahl_HTI_Kanten_' + str(ele)].sum()*100
+        
+        df_tu_pt = pd.merge(df_tu_pt, transform_count_cti, on=["funktionelle_Gruppe"])
+        df_tu_pt['share_cti_' + str(ele)] = df_tu_pt['Anzahl_CTI_Kanten_' + str(ele)]/df_tu_pt['Anzahl_CTI_Kanten_' + str(ele)].sum()*100
+
+    df_join = pd.merge(df_tu_hti, df_tu_pt, on=["funktionelle_Gruppe"])
+
+    for ele in time_list:
+        element = 'share_hti_' + str(ele)
+        df_join = df_join.sort_values([element])
+        
+        plt.figure()
+        labels = df_join['funktionelle_Gruppe'].to_list()
+        x = np.arange(len(labels))
+        height = 0.3
+        plt.figure(figsize=(4, 7))
+        plt.barh(x + height/2, df_join['share_cti_' + str(ele)], height = 0.3, color='green')
+        plt.barh(x - height/2 , df_join['share_hti_' + str(ele)], height = 0.3, color='orange')
+        plt.yticks(x, labels = labels)
+        plt.title('Anteil der chemischen Transformationen an Transformationskanten zu Messpunkt ' + str(ele))
+        plt.ylabel('chemische Transformation')
+        plt.xlabel('Anteil an Transformationskanten (%)')
+        plt.legend(['PT-Kanten', 'HTI-Kanten'])
+
+    name = 'graph_outgoing_transformations_occurrence_per_measurement'
+    #plt.savefig(export_path + name + '.png', bbox_inches='tight')
+    plt.clf()
+    plt.close()
+    print('done: create image "outgoing transformations occurrence per measurement"')
     # plt.show()
 
 # average weight of transformations
@@ -243,4 +310,5 @@ get_intensity_trend_distribution(call_graph, export_path)
 outgoing_transformations_measurement(call_graph, export_path)
 outgoing_transformations_occurrence(call_graph, export_path)
 most_occurring_transformations(call_graph, export_path)
+most_occurring_transformations_measurement(call_graph, export_path)
 average_weight_transformations(call_graph, export_path)
