@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 12. october 2021
+# Date: 13. october 2021
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -68,8 +68,7 @@ def get_intensity_trend_distribution(call_graph, export_path):
     plt.xlabel('Messpunkt')
     plt.ylabel('Anzahl an ausgehenden \n "SAME_AS"-Kanten')
     plt.legend(['Anzahl Molekülknoten', 'gleichbleibende Intensität', 'sinkende Intensität', 'steigende Intensität'], loc='upper left', bbox_to_anchor=(1, 1))
-    x = [0,1,2,3,4,5,6,7,8,9,10,11,12]
-    plt.xticks(x)
+    plt.xticks(np.arange(0, len(get_mol), 1))
 
     name = 'graph_intensity_trend_distribution'
     plt.savefig(export_path + name + '.png', bbox_inches='tight')
@@ -93,7 +92,7 @@ def outgoing_transformations_measurement(call_graph, export_path):
 
     get_mol = call_graph.run("""
         MATCH (m:Molecule)-[]-(t:Measurement)
-        WHERE t.point_in_time < 12
+        WHERE t.point_in_time < 13
         RETURN t.point_in_time as time, count(m) as cmol
     """).to_data_frame()
 
@@ -106,8 +105,7 @@ def outgoing_transformations_measurement(call_graph, export_path):
     plt.bar(or_hti.time, or_hti.relationships_out, color='orange')
     plt.plot(get_mol.time, get_mol.cmol, color = 'black', lw=1.5)
     plt.legend(['Anzahl Molekülknoten', 'PT-Kanten', 'HTI-Kanten'], loc='upper left', bbox_to_anchor=(1, 1))
-    x = [0,1,2,3,4,5,6,7,8,9,10,11]
-    plt.xticks(x)
+    plt.xticks(np.arange(0, len(get_mol), 1))
 
     name = 'graph_outgoing_transformations_measurement'
     plt.savefig(export_path + name + '.png', bbox_inches='tight')
@@ -139,22 +137,19 @@ def outgoing_transformations_occurrence(call_graph, export_path):
     mor_cti = mor_cti.groupby(mor_cti['rel_out'], as_index=False).aggregate(af_cti)
     mor_cti['cti_perc'] = mor_cti.formula_string/mor_cti.formula_string.sum()*100
 
-    y = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
-    x = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-
     plt.figure(figsize=(9, 3))
     plt.subplot(1, 2, 1)
     plt.suptitle('Verteilung der Anzahl der ausgehenden Transformationskanten pro Molekülknoten')
     plt.bar(mor_cti.rel_out, mor_cti.cti_perc, color='green')
     plt.xlabel('Anzahl ausgehende PT-Kanten')
     plt.ylabel('Anteil der Molekülknoten (%)')
-    plt.xticks(y)
+    plt.xticks(np.arange(1, len(mor_cti)+1, 1))
 
     plt.subplot(1, 2, 2)
     plt.bar(mor.rel_out, mor.hti_perc, color='green')
     plt.xlabel('Anzahl ausgehende HTI-Kanten')
     plt.ylabel('Anteil der Molekülknoten (%)')
-    plt.xticks(x)
+    plt.xticks(np.arange(1, len(mor)+1, 1))
 
     plt.tight_layout()
 
@@ -181,11 +176,8 @@ def most_occurring_transformations(call_graph, export_path):
     df_join = pd.merge(transform_count_hti, transform_count_cti, on=["funktionelle_Gruppe"])
     df_join['share_hti'] = df_join.Anzahl_HTI_Kanten/df_join.Anzahl_HTI_Kanten.sum()*100
     df_join['share_cti'] = df_join.Anzahl_CTI_Kanten/df_join.Anzahl_CTI_Kanten.sum()*100
-    df_join['fg'] = ['-CO', '-C', '-CH2', 'O', '-H2', '-C2H2', 'H2O', '+O-CH2', '+O-H2', '-C2H4O', '-CO2', '-C4H4O', 'O2', '-H2O', '+O2-H4', '-O+NH', '+O-NH', '-S', '-SO', '-SO3']
 
-    df_join['diff'] = df_join.share_hti/df_join.share_cti
-
-    labels = ['-CO', '-C', '-CH2', 'O', '-H2', '-C2H2', 'H2O', '+O-CH2', '+O-H2', '-C2H4O', '-CO2', '-C4H4O', 'O2', '-H2O', '+O2-H4', '-O+NH', '+O-NH', '-S', '-SO', '-SO3']
+    labels = df_join['funktionelle_Gruppe'].to_list()
     x = np.arange(len(labels))
     height = 0.3
     plt.figure(figsize=(4, 7))
@@ -217,7 +209,7 @@ def average_weight_transformations(call_graph, export_path):
     tch.avg_combined = tch.avg_combined
     tch.avg_connect = tch.avg_connect
 
-    labels = ['-CO', '-C', '-CH2', 'O', '-H2', '-C2H2', 'H2O', '+O-CH2', '+O-H2', '-C2H4O', '-CO2', '-C4H4O', 'O2', '-H2O', '+O2-H4', '-O+NH', '+O-NH', '-S', '-SO', '-SO3']
+    labels = tch['funktionelle_Gruppe'].to_list()
     x = np.arange(len(labels))
     height = 0.3
     plt.figure(figsize=(4, 7))
