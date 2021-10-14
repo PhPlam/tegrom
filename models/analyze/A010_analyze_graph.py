@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 13. october 2021
+# Date: 14. october 2021
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,6 +9,8 @@ from py2neo import Graph
 from A000_path_variables_analyze import host, user, passwd, db_name_parallel
 from A000_path_variables_analyze import path_prefix
 
+import warnings
+warnings.filterwarnings("ignore")
 
 ##################################################################################
 #settings#########################################################################
@@ -196,7 +198,7 @@ def most_occurring_transformations(call_graph, export_path):
     print('done: create image "most occurring transformations"')
     # plt.show()
 
-# most occurring transformations per measurement one bar plot
+# most occurring transformations all measurements several bar plots
 def most_occurring_transformations_measurement_bar(call_graph, export_path):
     df_time = call_graph.run("""
         MATCH (t:Measurement)
@@ -263,7 +265,7 @@ def most_occurring_transformations_measurement_bar(call_graph, export_path):
     print('done: create image "outgoing transformations occurrence per measurement"')
     # plt.show()
 
-# most occurring transformations per measurement in one line plot
+# most occurring transformations per measurement in line plot
 def most_occurring_transformations_measurement_line(call_graph, export_path):
     df_time = call_graph.run("""
         MATCH (t:Measurement)
@@ -362,10 +364,10 @@ def most_occurring_transformations_measurement_line(call_graph, export_path):
     )
     # fig.show()
     fig.write_image(export_path + "graph_transformations_share_pt.png")
+    print('done: create image "transformations share hti and pt"')
 
-
-# average weight of transformations
-def average_weight_transformations(call_graph, export_path):
+# average weight of transformations all measurements one bar plot
+def average_weight_transformations_bar(call_graph, export_path):
     tch = call_graph.run("""
     MATCH ()-[t:HAS_TRANSFORMED_INTO]->()
     RETURN t.transformation_unit as funktionelle_Gruppe, 
@@ -396,6 +398,93 @@ def average_weight_transformations(call_graph, export_path):
     print('done: create image "average weight transformation"')
     # plt.show()
 
+# average weight of transformations per measurement in line plot
+def average_weight_transformations_line(call_graph, export_path):
+    df_time = call_graph.run("""
+        MATCH (t:Measurement)
+        RETURN t.point_in_time as time
+    """).to_data_frame()
+
+    time_list = df_time['time'].to_list()
+    del time_list[-1]
+
+    df_tu = call_graph.run("""
+        MATCH (:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
+        RETURN DISTINCT t.transformation_unit as transformation_unit
+        """).to_data_frame()
+
+    for ele in time_list:
+        tch = call_graph.run("""
+        MATCH (m:Measurement)-[]-(:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
+        WHERE m.point_in_time = """ + str(ele) + """
+        RETURN t.transformation_unit as transformation_unit, 
+                count(t.transformation_unit) as Count_HTI_""" + str(ele) + """,
+                avg(t.normalized_combined_weight) as avg_combined_""" + str(ele) + """,
+                avg(t.normalized_connected_weight) as avg_connect_""" + str(ele) + """
+        ORDER BY Count_HTI_""" + str(ele) + """ DESC
+        """).to_data_frame()
+        
+        df_tu = pd.merge(df_tu, tch, on=["transformation_unit"])
+        
+    # drop columns 
+    # for combined
+    droplist_combined = [i for i in df_tu.columns if i.startswith('Count') or i.startswith('avg_connect')]
+    df_tu_combined = df_tu.drop(columns=droplist_combined, axis=1)
+    # for connected
+    droplist_connected = [i for i in df_tu.columns if i.startswith('Count') or i.startswith('avg_combined')]
+    df_tu_connected = df_tu.drop(columns=droplist_connected, axis=1)
+
+    # make dataframe vertical
+    # for combined
+    df_tu_combined = df_tu_combined.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='average_weight').drop('level_1',1)
+    # for connected
+    df_tu_connected = df_tu_connected.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='average_weight').drop('level_1',1)
+
+    # add time to dataframe
+    # for combined
+    times_repeat = len(df_tu_combined)/len(time_list)
+    times_list_combined = time_list * int(times_repeat)
+    df_tu_combined['point_in_time'] = times_list_combined
+    # for connected
+    times_repeat = len(df_tu_connected)/len(time_list)
+    times_list_connected = time_list * int(times_repeat)
+    df_tu_connected['point_in_time'] = times_list_connected
+
+    # create plots
+    # for combined
+    fig = px.line(df_tu_combined, x='point_in_time', y='average_weight', color='transformation_unit', symbol="transformation_unit",
+                    labels={
+                        "average_weight": "average combined weight",
+                        "point_in_time": "measurement"
+                    },
+                    title="Transformations and their weight per measurement - combined weight")
+    fig.update_layout(
+        xaxis = dict(
+            tickmode = 'linear',
+            tick0 = 0,
+            dtick = 1
+        )
+    )
+    #fig.show()
+    fig.write_image(export_path + "graph_transformations_average_weight_combined.png")
+
+    # for connected
+    fig = px.line(df_tu_connected, x='point_in_time', y='average_weight', color='transformation_unit', symbol="transformation_unit",
+                    labels={
+                        "average_weight": "average connected weight",
+                        "point_in_time": "measurement"
+                    },
+                    title="Transformations and their weight per measurement - connected weight")
+    fig.update_layout(
+        xaxis = dict(
+            tickmode = 'linear',
+            tick0 = 0,
+            dtick = 1
+        )
+    )
+    #fig.show()
+    fig.write_image(export_path + "graph_transformations_average_weight_connected.png")
+    print('done: create image "transformations average weight combined and connected"')
 
 ##################################################################################
 #call functions###################################################################
@@ -414,4 +503,5 @@ outgoing_transformations_occurrence(call_graph, export_path)
 most_occurring_transformations(call_graph, export_path)
 # most_occurring_transformations_measurement_bar(call_graph, export_path)
 most_occurring_transformations_measurement_line(call_graph, export_path)
-average_weight_transformations(call_graph, export_path)
+average_weight_transformations_bar(call_graph, export_path)
+average_weight_transformations_line(call_graph, export_path)
