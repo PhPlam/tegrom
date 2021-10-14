@@ -3,8 +3,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-from py2neo import Graph
 import pandas as pd
+import plotly.express as px
+from py2neo import Graph
 from A000_path_variables_analyze import host, user, passwd, db_name_parallel
 from A000_path_variables_analyze import path_prefix
 
@@ -195,8 +196,8 @@ def most_occurring_transformations(call_graph, export_path):
     print('done: create image "most occurring transformations"')
     # plt.show()
 
-# most occurring transformations per measurement
-def most_occurring_transformations_measurement(call_graph, export_path):
+# most occurring transformations per measurement one bar plot
+def most_occurring_transformations_measurement_bar(call_graph, export_path):
     df_time = call_graph.run("""
         MATCH (t:Measurement)
         RETURN t.point_in_time as time
@@ -262,6 +263,107 @@ def most_occurring_transformations_measurement(call_graph, export_path):
     print('done: create image "outgoing transformations occurrence per measurement"')
     # plt.show()
 
+# most occurring transformations per measurement in one line plot
+def most_occurring_transformations_measurement_line(call_graph, export_path):
+    df_time = call_graph.run("""
+        MATCH (t:Measurement)
+        RETURN t.point_in_time as time
+    """).to_data_frame()
+
+    time_list = df_time['time'].to_list()
+    del time_list[-1]
+
+    df_tu_hti = call_graph.run("""
+        MATCH (:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
+        RETURN DISTINCT t.transformation_unit as transformation_unit
+        """).to_data_frame()
+
+    df_tu_pt = call_graph.run("""
+        MATCH (:Molecule)-[t:POTENTIAL_TRANSFORMATION]->(:Molecule)
+        RETURN DISTINCT t.tu_pt as transformation_unit
+        """).to_data_frame()
+
+    for ele in time_list:
+        transform_count_hti = call_graph.run("""
+        MATCH (m:Measurement)-[:MEASURED_IN]-(:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
+        WHERE m.point_in_time = """ + str(ele) + """
+        RETURN t.transformation_unit as transformation_unit, count(t.transformation_unit) as Count_HTI_""" + str(ele) + """
+        ORDER BY Count_HTI_""" + str(ele) + """ DESC
+        """).to_data_frame()
+
+        transform_count_cti = call_graph.run("""
+        MATCH (m:Measurement)-[:MEASURED_IN]-(:Molecule)-[t:POTENTIAL_TRANSFORMATION]->(:Molecule)
+        WHERE m.point_in_time = """ + str(ele) + """
+        RETURN t.tu_pt as transformation_unit, count(t.tu_pt) as Count_PT_""" + str(ele) + """
+        ORDER BY Count_PT_""" + str(ele) + """ DESC
+        """).to_data_frame()
+        
+        df_tu_hti = pd.merge(df_tu_hti, transform_count_hti, on=["transformation_unit"])
+        df_tu_hti['share_hti_' + str(ele)] = df_tu_hti['Count_HTI_' + str(ele)]/df_tu_hti['Count_HTI_' + str(ele)].sum()*100
+        
+        df_tu_pt = pd.merge(df_tu_pt, transform_count_cti, on=["transformation_unit"])
+        df_tu_pt['share_pt_' + str(ele)] = df_tu_pt['Count_PT_' + str(ele)]/df_tu_pt['Count_PT_' + str(ele)].sum()*100
+
+    # drop columns 'Count_'
+    # HTI
+    droplist_hti = [i for i in df_tu_hti.columns if i.startswith('Count')]
+    df_tu_hti = df_tu_hti.drop(columns=droplist_hti, axis=1)
+    # PT
+    droplist_pt = [i for i in df_tu_pt.columns if i.startswith('Count')]
+    df_tu_pt = df_tu_pt.drop(columns=droplist_pt, axis=1)
+
+    # make dataframe vertical
+    # HTI
+    df_tu_hti = df_tu_hti.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='share').drop('level_1',1)
+    # PT
+    df_tu_pt = df_tu_pt.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='share').drop('level_1',1)
+
+    # add time to dataframe
+    # HTI
+    times_repeat = len(df_tu_hti)/len(time_list)
+    times_list_hti = time_list * int(times_repeat)
+    df_tu_hti['point_in_time'] = times_list_hti
+    # PT
+    times_repeat = len(df_tu_pt)/len(time_list)
+    times_list_pt = time_list * int(times_repeat)
+    df_tu_pt['point_in_time'] = times_list_pt
+
+    # create plots
+    # HTI
+    fig = px.line(df_tu_hti, x='point_in_time', y='share', color='transformation_unit', symbol="transformation_unit",
+                    labels={
+                        "share": "share in %",
+                        "point_in_time": "measurement"
+                    },
+                    title="Transformations and their share per measurement - HTI")
+    fig.update_layout(
+        xaxis = dict(
+            tickmode = 'linear',
+            tick0 = 0,
+            dtick = 1
+        )
+    )
+    # fig.show()
+    fig.write_image(export_path + "graph_transformations_share_hti.png")
+
+    # PT
+    fig = px.line(df_tu_pt, x='point_in_time', y='share', color='transformation_unit', symbol="transformation_unit",
+                    labels={
+                        "share": "share in %",
+                        "point_in_time": "measurement"
+                    },
+                    title="Transformations and their share per measurement - PT")
+    fig.update_layout(
+        xaxis = dict(
+            tickmode = 'linear',
+            tick0 = 0,
+            dtick = 1
+        )
+    )
+    # fig.show()
+    fig.write_image(export_path + "graph_transformations_share_pt.png")
+
+
 # average weight of transformations
 def average_weight_transformations(call_graph, export_path):
     tch = call_graph.run("""
@@ -310,5 +412,6 @@ get_intensity_trend_distribution(call_graph, export_path)
 outgoing_transformations_measurement(call_graph, export_path)
 outgoing_transformations_occurrence(call_graph, export_path)
 most_occurring_transformations(call_graph, export_path)
-most_occurring_transformations_measurement(call_graph, export_path)
+# most_occurring_transformations_measurement_bar(call_graph, export_path)
+most_occurring_transformations_measurement_line(call_graph, export_path)
 average_weight_transformations(call_graph, export_path)

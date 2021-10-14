@@ -1,7 +1,10 @@
 # required libraries for code execution
+# Date: 14. october 2021
 
 pandas
 py2neo==2021.1.5
 progress
 numpy
 matplotlib
+plotly
+kaleido
