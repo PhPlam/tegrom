@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 12. october 2021
+# Date: 18. october 2021
 
 import pandas as pd
 from P000_path_variables_preprocess import sample_meta_file_csv, sample_join_file_csv 
@@ -38,10 +38,7 @@ def extract_metadata(combined_metadata):
     return extracted_metadata
 
 # remove measurements from data
-def remove_measurements(extracted_data):
-    # select points in time
-    time_list = []
-
+def remove_measurements(extracted_data, time_list):
     for point_in_time in time_list:
         extracted_data = extracted_data[extracted_data.timepoint != point_in_time]
 
@@ -67,11 +64,12 @@ def export_file(data, export_path):
 # define data
 sample_1 = sample_meta_file_csv
 sample_2 = sample_join_file_csv
+time_list = []
 
 # calculate
 combined_metadata = map_ids(sample_1, sample_2)
 extracted_metadata = extract_metadata(combined_metadata)
-removed_measurements = remove_measurements(extracted_metadata)
+removed_measurements = remove_measurements(extracted_metadata, time_list)
 
 # export to csv
 export_file(removed_measurements, export_path_metadata)
