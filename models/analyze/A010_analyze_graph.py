@@ -70,7 +70,7 @@ def intensity_trend_distribution(call_graph, export_png, export_path):
     plt.plot(get_mol.time, get_mol.cmol, color = 'red')
     plt.xlabel('Measurement')
     plt.ylabel('Number of outgoing \n "SAME_AS" relationships')
-    plt.legend(['Number nodes "Molecule"', 'Persistent intensity', 'Decreasing intensity', 'inreasing intensity'], loc='upper left', bbox_to_anchor=(1, 1))
+    plt.legend(['Number nodes "Molecule"', 'Persistent intensity', 'Decreasing intensity', 'Inreasing intensity'], loc='upper left', bbox_to_anchor=(1, 1))
     plt.xticks(np.arange(0, len(get_mol), 1))
 
     if export_png == 1:
@@ -147,13 +147,13 @@ def outgoing_transformations_occurrence(call_graph, export_png, export_path):
     plt.suptitle('Distribution of the number of outgoing transformations per node "Molecule"')
     plt.bar(mor_pt.rel_out, mor_pt.pt_perc, color='green')
     plt.xlabel('Number of outgoing \n "POTENTIAL_TRANSFORMATION" relationships')
-    plt.ylabel('Proportion of nodes "Molecule" (%)')
+    plt.ylabel('Proportion of nodes \n "Molecule" (%)')
     plt.xticks(np.arange(1, len(mor_pt)+1, 1))
 
     plt.subplot(1, 2, 2)
     plt.bar(mor.rel_out, mor.hti_perc, color='green')
     plt.xlabel('Number of outgoing \n "HAS_TRANSFORMED_INTO" relationships')
-    plt.ylabel('Proportion of nodes "Molecule" (%)')
+    plt.ylabel('Proportion of nodes \n "Molecule" (%)')
     plt.xticks(np.arange(1, len(mor)+1, 1))
 
     plt.tight_layout()
@@ -194,7 +194,7 @@ def most_occurring_transformations(call_graph, export_png, export_path):
     plt.title('Proportion of chemical transformations across all measurements')
     plt.ylabel('Chemical transformation')
     plt.xlabel('Proportion of transformation (%)')
-    plt.legend(['"POTENTIAL_TRANSFORMATION" relationships', '"HAS_TRANSFORMED_INTO" relationships'])
+    plt.legend(['"POTENTIAL_TRANSFORMATION" relationships', '"HAS_TRANSFORMED_INTO" relationships'], loc='upper left', bbox_to_anchor=(1, 1))
 
     if export_png == 1:
         name = 'graph_most_occurring_transformations'
@@ -346,7 +346,7 @@ def most_occurring_transformations_measurement_line(call_graph, export_png, expo
                         "proportion": "proportion in %",
                         "point_in_time": "measurement"
                     },
-                    title="Transformations and their proportion per measurement - HAS_TRANSFORMED_INTO")
+                    title="Transformations and their proportion per measurement <br>-HAS_TRANSFORMED_INTO-")
     fig.update_layout(
         xaxis = dict(
             tickmode = 'linear',
@@ -368,7 +368,7 @@ def most_occurring_transformations_measurement_line(call_graph, export_png, expo
                         "proportion": "proportion in %",
                         "point_in_time": "measurement"
                     },
-                    title="Transformations and their proportion per measurement - POTENTIAL_TRANSFORMATION")
+                    title="Transformations and their proportion per measurement <br>-POTENTIAL_TRANSFORMATION-")
     fig.update_layout(
         xaxis = dict(
             tickmode = 'linear',
@@ -479,7 +479,7 @@ def average_weight_transformations_line(call_graph, export_png, export_html, exp
                         "average_weight": "average combined weight",
                         "point_in_time": "measurement"
                     },
-                    title="Transformations and their weight per measurement - combined weight")
+                    title="Transformations and their weight per measurement <br>-combined weight-")
     fig.update_layout(
         xaxis = dict(
             tickmode = 'linear',
@@ -501,7 +501,7 @@ def average_weight_transformations_line(call_graph, export_png, export_html, exp
                         "average_weight": "average connected weight",
                         "point_in_time": "measurement"
                     },
-                    title="Transformations and their weight per measurement - connected weight")
+                    title="Transformations and their weight per measurement <br>-connected weight-")
     fig.update_layout(
         xaxis = dict(
             tickmode = 'linear',

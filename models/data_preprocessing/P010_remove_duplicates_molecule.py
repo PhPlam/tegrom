@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 12. october 2021
+# Date: 20. october 2021
 
 import pandas as pd
 from P000_path_variables_preprocess import raw_data_csv, meta_file_file_csv
@@ -27,8 +27,8 @@ def remove_molecules(filled_data):
     filled_data = filled_data[filled_data.C <= 999]
     filled_data = filled_data[filled_data.H <= 999]
     filled_data = filled_data[filled_data.O <= 999]
-    filled_data = filled_data[filled_data.N <= 999]
-    shrinked_data = filled_data[filled_data.S <= 999]
+    filled_data = filled_data[filled_data.N <= 2]
+    shrinked_data = filled_data[filled_data.S <= 1]
     print('done: remove molecules with specific atom count')
     return shrinked_data
 

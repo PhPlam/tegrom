@@ -57,11 +57,11 @@ def sum_relative_intensity(molecule_data, export_png, export_path):
     df_gesamt['diff'] = df_gesamt['peak_relint_tic']-df_gesamt['soll']
 
     plt.suptitle('Sum of relative intensities per measurement')
-    plt.bar(df_gesamt.occ, df_gesamt.peak_relint_tic, color='green')
     plt.bar(df_gesamt.occ, df_gesamt.soll, color='orange')
+    plt.bar(df_gesamt.occ, df_gesamt.peak_relint_tic, color='green')
     plt.xlabel('Measurement')
     plt.ylabel('Sum of relative intensities')
-    plt.legend(['Sum of relative intensities', 'Intensity of 1.0'], loc='upper left', bbox_to_anchor=(1, 1))
+    plt.legend(['Intensity of 1.0', 'Sum of relative intensities'], loc='upper left', bbox_to_anchor=(1, 1))
     plt.xticks(np.arange(0, len(df_gesamt), 1))
 
 
@@ -82,7 +82,7 @@ def occurrence_formula_class(molecule_data, export_png, export_path):
     df_class_new['occ'] = df_class.formula_class['count']/df_class.formula_class['count'].sum()*100
 
     plt.figure(figsize=(6, 3))
-    plt.suptitle('Proportion of formula classses')
+    plt.suptitle('Proportion of formula classes')
     plt.bar(df_class_new.form_class, df_class_new.occ, color='green')
     plt.xlabel('Formula class')
     plt.ylabel('Proportion of formula class (%)')
@@ -100,7 +100,7 @@ def occurrence_formula_class(molecule_data, export_png, export_path):
 ##################################################################################
 
 # load data
-molecule_data = pd.read_csv(path_prefix_csv + 'ufz_all_formulas_raw.csv', sep=';')
+molecule_data = pd.read_csv(path_prefix_csv + 'ufz_all_formulas_cleaned.csv', sep=',')
 
 # set export
 export_png = 1
