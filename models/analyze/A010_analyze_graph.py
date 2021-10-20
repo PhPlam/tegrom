@@ -35,7 +35,7 @@ def get_database_connection(host, user, passwd, db_name):
     return database_connection
 
 # distribution of the intensity trends per measurement (increasing, decreasing, constant)
-def get_intensity_trend_distribution(call_graph, export_png, export_path):
+def intensity_trend_distribution(call_graph, export_png, export_path):
     inc_rel = call_graph.run("""
         MATCH (t:Measurement)-[:MEASURED_IN]-(m:Molecule)-[s:SAME_AS]->(m2:Molecule)
         WHERE s.intensity_trend >= 1.025
@@ -205,6 +205,7 @@ def most_occurring_transformations(call_graph, export_png, export_path):
     # plt.show()
 
 # most occurring transformations all measurements several bar plots
+# don't use
 def most_occurring_transformations_measurement_bar(call_graph, export_png, export_path):
     df_time = call_graph.run("""
         MATCH (t:Measurement)
@@ -356,10 +357,10 @@ def most_occurring_transformations_measurement_line(call_graph, export_png, expo
     # fig.show()
 
     if export_png == 1:
-        fig.write_image(export_path + "graph_transformations_proportion_hti.png")
+        fig.write_image(export_path + "graph_most_occurring_transformations_measurement_line_hti.png")
 
     if export_html == 1:
-        fig.write_html(export_path + "graph_transformations_proportion_hti.html")
+        fig.write_html(export_path + "graph_most_occurring_transformations_measurement_line_hti.html")
 
     # PT
     fig = px.line(df_tu_pt, x='point_in_time', y='proportion', color='transformation_unit', symbol="transformation_unit",
@@ -378,12 +379,12 @@ def most_occurring_transformations_measurement_line(call_graph, export_png, expo
     # fig.show()
 
     if export_png == 1:
-        fig.write_image(export_path + "graph_transformations_proportion_pt.png")
+        fig.write_image(export_path + "graph_most_occurring_transformations_measurement_line_pt.png")
 
     if export_html == 1:
-        fig.write_html(export_path + "graph_transformations_proportion_pt.html")
+        fig.write_html(export_path + "graph_most_occurring_transformations_measurement_line_pt.html")
 
-    print('done: create image "transformations proportion hti and pt"')
+    print('done: create image "most occurring transformations measurement line hti and pt"')
 
 # average weight of transformations all measurements one bar plot
 def average_weight_transformations_bar(call_graph, export_png, export_path):
@@ -412,11 +413,11 @@ def average_weight_transformations_bar(call_graph, export_png, export_path):
     plt.legend(['normalized connected weight', 'normalized combined weight'], bbox_to_anchor=(1, 1))
 
     if export_png == 1:
-        name = 'graph_average_weight_transformation'
+        name = 'graph_average_weight_transformations_bar'
         plt.savefig(export_path + name + '.png', bbox_inches='tight')
 
     plt.clf()
-    print('done: create image "average weight transformation"')
+    print('done: create image "average weight transformations bar"')
     # plt.show()
 
 # average weight of transformations per measurement in line plot
@@ -489,10 +490,10 @@ def average_weight_transformations_line(call_graph, export_png, export_html, exp
     #fig.show()
 
     if export_png == 1:
-        fig.write_image(export_path + "graph_transformations_average_weight_combined.png")
+        fig.write_image(export_path + "graph_average_weight_transformations_line_combined.png")
 
     if export_html == 1:
-        fig.write_html(export_path + "graph_transformations_average_weight_combined.html")
+        fig.write_html(export_path + "graph_average_weight_transformations_line_combined.html")
 
     # for connected
     fig = px.line(df_tu_connected, x='point_in_time', y='average_weight', color='transformation_unit', symbol="transformation_unit",
@@ -511,12 +512,12 @@ def average_weight_transformations_line(call_graph, export_png, export_html, exp
     #fig.show()
 
     if export_png == 1:
-        fig.write_image(export_path + "graph_transformations_average_weight_connected.png")
+        fig.write_image(export_path + "graph_average_weight_transformations_line_connected.png")
     
     if export_html == 1:
-        fig.write_html(export_path + "graph_transformations_average_weight_connected.html")
+        fig.write_html(export_path + "graph_average_weight_transformations_line_connected.html")
     
-    print('done: create image "transformations average weight combined and connected"')
+    print('done: create image "average weight transformations line combined and connected"')
 
 ##################################################################################
 #call functions###################################################################
@@ -531,11 +532,11 @@ export_html = 0
 export_path = path_prefix
 
 # functions
-get_intensity_trend_distribution(call_graph, export_png, export_path)
+intensity_trend_distribution(call_graph, export_png, export_path)
 outgoing_transformations_measurement(call_graph, export_png, export_path)
 outgoing_transformations_occurrence(call_graph, export_png, export_path)
 most_occurring_transformations(call_graph, export_png, export_path)
-most_occurring_transformations_measurement_bar(call_graph, 0, export_path)
+# most_occurring_transformations_measurement_bar(call_graph, 0, export_path)
 most_occurring_transformations_measurement_line(call_graph, export_png, export_html, export_path)
 average_weight_transformations_bar(call_graph, export_png, export_path)
 average_weight_transformations_line(call_graph, export_png, export_html, export_path)
