@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 18. october 2021
+# Date: 20. october 2021
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -82,10 +82,10 @@ def occurrence_formula_class(molecule_data, export_png, export_path):
     df_class_new['occ'] = df_class.formula_class['count']/df_class.formula_class['count'].sum()*100
 
     plt.figure(figsize=(6, 3))
-    plt.suptitle('Share of formula classses')
+    plt.suptitle('Proportion of formula classses')
     plt.bar(df_class_new.form_class, df_class_new.occ, color='green')
     plt.xlabel('Formula class')
-    plt.ylabel('Share of formula class (%)')
+    plt.ylabel('Proportion of formula class (%)')
 
     if export_png == 1:
         name = 'data_occurrence_formula_class'

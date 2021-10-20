@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 18. october 2021
+# Date: 20. october 2021
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -147,13 +147,13 @@ def outgoing_transformations_occurrence(call_graph, export_png, export_path):
     plt.suptitle('Distribution of the number of outgoing transformations per node "Molecule"')
     plt.bar(mor_pt.rel_out, mor_pt.pt_perc, color='green')
     plt.xlabel('Number of outgoing \n "POTENTIAL_TRANSFORMATION" relationships')
-    plt.ylabel('Share of nodes "Molecule" (%)')
+    plt.ylabel('Proportion of nodes "Molecule" (%)')
     plt.xticks(np.arange(1, len(mor_pt)+1, 1))
 
     plt.subplot(1, 2, 2)
     plt.bar(mor.rel_out, mor.hti_perc, color='green')
     plt.xlabel('Number of outgoing \n "HAS_TRANSFORMED_INTO" relationships')
-    plt.ylabel('Share of nodes "Molecule" (%)')
+    plt.ylabel('Proportion of nodes "Molecule" (%)')
     plt.xticks(np.arange(1, len(mor)+1, 1))
 
     plt.tight_layout()
@@ -181,19 +181,19 @@ def most_occurring_transformations(call_graph, export_png, export_path):
     """).to_data_frame()
 
     df_join = pd.merge(transform_count_hti, transform_count_pt, on=["transformation_unit"])
-    df_join['share_hti'] = df_join.count_HTI/df_join.count_HTI.sum()*100
-    df_join['share_pt'] = df_join.count_PT/df_join.count_PT.sum()*100
+    df_join['proportion_hti'] = df_join.count_HTI/df_join.count_HTI.sum()*100
+    df_join['proportion_pt'] = df_join.count_PT/df_join.count_PT.sum()*100
 
     labels = df_join['transformation_unit'].to_list()
     x = np.arange(len(labels))
     height = 0.3
     plt.figure(figsize=(4, 7))
-    plt.barh(x + height/2, df_join.share_pt, height = 0.3, color='green')
-    plt.barh(x - height/2 , df_join.share_hti, height = 0.3, color='orange')
+    plt.barh(x + height/2, df_join.proportion_pt, height = 0.3, color='green')
+    plt.barh(x - height/2 , df_join.proportion_hti, height = 0.3, color='orange')
     plt.yticks(x, labels = labels)
-    plt.title('Share of chemical transformations across all measurements')
+    plt.title('Proportion of chemical transformations across all measurements')
     plt.ylabel('Chemical transformation')
-    plt.xlabel('Share of transformation (%)')
+    plt.xlabel('Proportion of transformation (%)')
     plt.legend(['"POTENTIAL_TRANSFORMATION" relationships', '"HAS_TRANSFORMED_INTO" relationships'])
 
     if export_png == 1:
@@ -240,15 +240,15 @@ def most_occurring_transformations_measurement_bar(call_graph, export_png, expor
         """).to_data_frame()
         
         df_tu_hti = pd.merge(df_tu_hti, transform_count_hti, on=["transformation_unit"])
-        df_tu_hti['share_hti_' + str(ele)] = df_tu_hti['count_HTI_' + str(ele)]/df_tu_hti['count_HTI_' + str(ele)].sum()*100
+        df_tu_hti['proportion_hti_' + str(ele)] = df_tu_hti['count_HTI_' + str(ele)]/df_tu_hti['count_HTI_' + str(ele)].sum()*100
         
         df_tu_pt = pd.merge(df_tu_pt, transform_count_pt, on=["transformation_unit"])
-        df_tu_pt['share_pt_' + str(ele)] = df_tu_pt['count_PT_' + str(ele)]/df_tu_pt['count_PT_' + str(ele)].sum()*100
+        df_tu_pt['proportion_pt_' + str(ele)] = df_tu_pt['count_PT_' + str(ele)]/df_tu_pt['count_PT_' + str(ele)].sum()*100
 
     df_join = pd.merge(df_tu_hti, df_tu_pt, on=["transformation_unit"])
 
     for ele in time_list:
-        element = 'share_hti_' + str(ele)
+        element = 'proportion_hti_' + str(ele)
         df_join = df_join.sort_values([element])
         
         plt.figure()
@@ -256,12 +256,12 @@ def most_occurring_transformations_measurement_bar(call_graph, export_png, expor
         x = np.arange(len(labels))
         height = 0.3
         plt.figure(figsize=(4, 7))
-        plt.barh(x + height/2, df_join['share_pt_' + str(ele)], height = 0.3, color='green')
-        plt.barh(x - height/2 , df_join['share_hti_' + str(ele)], height = 0.3, color='orange')
+        plt.barh(x + height/2, df_join['proportion_pt_' + str(ele)], height = 0.3, color='green')
+        plt.barh(x - height/2 , df_join['proportion_hti_' + str(ele)], height = 0.3, color='orange')
         plt.yticks(x, labels = labels)
-        plt.title('Share of chemical transformations at measurement ' + str(ele))
+        plt.title('Proportion of chemical transformations at measurement ' + str(ele))
         plt.ylabel('Chemical transformation')
-        plt.xlabel('Share of transformation (%)')
+        plt.xlabel('Proportion of transformation (%)')
         plt.legend(['"POTENTIAL_TRANSFORMATION" relationships', '"HAS_TRANSFORMED_INTO" relationships'])
 
     if export_png == 1:
@@ -309,10 +309,10 @@ def most_occurring_transformations_measurement_line(call_graph, export_png, expo
         """).to_data_frame()
         
         df_tu_hti = pd.merge(df_tu_hti, transform_count_hti, on=["transformation_unit"])
-        df_tu_hti['share_hti_' + str(ele)] = df_tu_hti['Count_HTI_' + str(ele)]/df_tu_hti['Count_HTI_' + str(ele)].sum()*100
+        df_tu_hti['proportion_hti_' + str(ele)] = df_tu_hti['Count_HTI_' + str(ele)]/df_tu_hti['Count_HTI_' + str(ele)].sum()*100
         
         df_tu_pt = pd.merge(df_tu_pt, transform_count_pt, on=["transformation_unit"])
-        df_tu_pt['share_pt_' + str(ele)] = df_tu_pt['Count_PT_' + str(ele)]/df_tu_pt['Count_PT_' + str(ele)].sum()*100
+        df_tu_pt['proportion_pt_' + str(ele)] = df_tu_pt['Count_PT_' + str(ele)]/df_tu_pt['Count_PT_' + str(ele)].sum()*100
 
     # drop columns 'Count_'
     # HTI
@@ -324,9 +324,9 @@ def most_occurring_transformations_measurement_line(call_graph, export_png, expo
 
     # make dataframe vertical
     # HTI
-    df_tu_hti = df_tu_hti.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='share').drop('level_1',1)
+    df_tu_hti = df_tu_hti.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='proportion').drop('level_1',1)
     # PT
-    df_tu_pt = df_tu_pt.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='share').drop('level_1',1)
+    df_tu_pt = df_tu_pt.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='proportion').drop('level_1',1)
 
     # add time to dataframe
     # HTI
@@ -340,12 +340,12 @@ def most_occurring_transformations_measurement_line(call_graph, export_png, expo
 
     # create plots
     # HTI
-    fig = px.line(df_tu_hti, x='point_in_time', y='share', color='transformation_unit', symbol="transformation_unit",
+    fig = px.line(df_tu_hti, x='point_in_time', y='proportion', color='transformation_unit', symbol="transformation_unit",
                     labels={
-                        "share": "share in %",
+                        "proportion": "proportion in %",
                         "point_in_time": "measurement"
                     },
-                    title="Transformations and their share per measurement - HAS_TRANSFORMED_INTO")
+                    title="Transformations and their proportion per measurement - HAS_TRANSFORMED_INTO")
     fig.update_layout(
         xaxis = dict(
             tickmode = 'linear',
@@ -356,18 +356,18 @@ def most_occurring_transformations_measurement_line(call_graph, export_png, expo
     # fig.show()
 
     if export_png == 1:
-        fig.write_image(export_path + "graph_transformations_share_hti.png")
+        fig.write_image(export_path + "graph_transformations_proportion_hti.png")
 
     if export_html == 1:
-        fig.write_html(export_path + "graph_transformations_share_hti.html")
+        fig.write_html(export_path + "graph_transformations_proportion_hti.html")
 
     # PT
-    fig = px.line(df_tu_pt, x='point_in_time', y='share', color='transformation_unit', symbol="transformation_unit",
+    fig = px.line(df_tu_pt, x='point_in_time', y='proportion', color='transformation_unit', symbol="transformation_unit",
                     labels={
-                        "share": "share in %",
+                        "proportion": "proportion in %",
                         "point_in_time": "measurement"
                     },
-                    title="Transformations and their share per measurement - POTENTIAL_TRANSFORMATION")
+                    title="Transformations and their proportion per measurement - POTENTIAL_TRANSFORMATION")
     fig.update_layout(
         xaxis = dict(
             tickmode = 'linear',
@@ -378,12 +378,12 @@ def most_occurring_transformations_measurement_line(call_graph, export_png, expo
     # fig.show()
 
     if export_png == 1:
-        fig.write_image(export_path + "graph_transformations_share_pt.png")
+        fig.write_image(export_path + "graph_transformations_proportion_pt.png")
 
     if export_html == 1:
-        fig.write_html(export_path + "graph_transformations_share_pt.html")
+        fig.write_html(export_path + "graph_transformations_proportion_pt.html")
 
-    print('done: create image "transformations share hti and pt"')
+    print('done: create image "transformations proportion hti and pt"')
 
 # average weight of transformations all measurements one bar plot
 def average_weight_transformations_bar(call_graph, export_png, export_path):
