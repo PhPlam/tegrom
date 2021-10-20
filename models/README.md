@@ -1,6 +1,13 @@
 # Models
 
-Contains the used files, the scripts to preprocess the given data and the scripts to create the graph in neo4j.
-
 Owner: Philipp Plamper  
-Date: 08. october 2021
+Date: 20. october 2021
+
+
+## Content
+  
+- the used files  
+- the scripts to preprocess the given data  
+- the scripts to create the graph in neo4j  
+- the functions used to analyze the graph
+
