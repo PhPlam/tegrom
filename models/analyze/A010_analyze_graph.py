@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 20. october 2021
+# Date: 02. november 2021
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -528,7 +528,7 @@ call_graph = get_database_connection(host, user, passwd, db_name)
 
 # set export
 export_png = 1
-export_html = 0
+export_html = 1
 export_path = path_prefix
 
 # functions
