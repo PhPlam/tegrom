@@ -68,7 +68,7 @@ def calc_weights(tendencies):
             tendency_weight_list.append(res)
             connect_weight_list.append(res * row.int)
         else:
-            tendency_weight_list.append(0) 
+            tendency_weight_list.append(0)
             connect_weight_list.append(0)
 
     tendencies['tendency_weight'] = tendency_weight_list
