@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 07. october 2021
+# Date: 20. december 2021
 
 # contains path variables used to create models
 # contains test functions to check reliabilty of data
@@ -22,6 +22,7 @@ passwd = '1234'
 
 # select database
 db_name_parallel = 'modelparallel'
+db_name_compact = 'modelcompact'
 
 # set filepath prefix
 abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
