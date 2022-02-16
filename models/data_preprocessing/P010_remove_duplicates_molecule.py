@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 20. october 2021
+# Date: 16. february 2021
 
 import pandas as pd
 from P000_path_variables_preprocess import raw_data_csv, meta_file_file_csv
@@ -37,6 +37,7 @@ def remove_molecules_without_measurement(shrinked_data, metadata):
     measurement_list = metadata['measurement_id'].to_list()
     removed_molecules_without_measurement = shrinked_data[shrinked_data.measurement_id.isin(measurement_list)]
     removed_molecules_without_measurement = removed_molecules_without_measurement.reset_index(drop=True)
+    removed_molecules_without_measurement = removed_molecules_without_measurement.merge(metadata,how='inner',left_on=['measurement_id'],right_on=['measurement_id'])
     print('done: remove molecules without measurements')
     return removed_molecules_without_measurement
 
