@@ -183,6 +183,12 @@ def create_property_transition_count(call_graph):
 # property 'hti_count'
 # = number of transtions recognizes as edge of type 'hti' 
 def create_property_hti_count(call_graph, new_model_paths):
+    call_graph.run("""
+        MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(:Molecule)
+        SET c.hti_count = 0
+        RETURN count(*)
+    """)
+
     for i in range(1,new_model_paths.mol_to_time.max()+1):
         call_graph.run("""
             MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(:Molecule)
