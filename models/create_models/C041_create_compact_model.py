@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 16. february 2021
+# Date: 24. february 2022
 
 import os
 from py2neo import Graph
@@ -86,7 +86,10 @@ def create_nodes_molecule(call_graph):
             H : toInteger(row.H), 
             O : toInteger(row.O), 
             N : toInteger(row.N), 
-            S : toInteger(row.S)})
+            S : toInteger(row.S),
+            formula_class : row.formula_class,
+            OC : toFloat(row.O)/toFloat(row.C),
+            HC : toFloat(row.H)/toFloat(row.C)})
     RETURN count(*)
     """)
 
