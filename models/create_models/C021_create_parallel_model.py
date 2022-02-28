@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 16. february 2022
+# Date: 28. february 2022
 
 # be sure your neo4j instance is up and running
 # configure custom filepaths, see requirements (comment out 'dbms.directories.import=import' in neo4j settings)
@@ -60,7 +60,10 @@ def create_nodes_molecule(call_graph):
         H : toInteger(row.H), 
         O : toInteger(row.O), 
         N : toInteger(row.N), 
-        S : toInteger(row.S)
+        S : toInteger(row.S),
+        measurement_rank : toInteger(row.measurement_rank),
+        OC : toFloat(row.O)/toFloat(row.C),
+        HC : toFloat(row.H)/toFloat(row.C)
         })
     """)
     print('done: create Molecule nodes')
