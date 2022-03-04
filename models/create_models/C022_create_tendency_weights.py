@@ -42,8 +42,14 @@ def get_database_connection(host, user, passwd, db_name):
 def get_tendencies(call_graph):
     graph = call_graph
     tendencies = graph.run("""
+        MATCH (m:Molecule)
+        WITH m.sample_id as sid, avg(m.peak_relint_tic) as avg_int 
         MATCH (m1:Molecule)-[s:SAME_AS]->(m2:Molecule)
-        RETURN m1.formula_string AS from_formula, m1.sample_id AS from_mid, m2.formula_string AS to_formula, m2.sample_id AS to_mid, s.intensity_trend as intensity_trend, m1.peak_relint_tic as int
+        WHERE m1.sample_id = sid
+        RETURN m1.formula_string AS from_formula, m1.sample_id AS from_mid, 
+                m2.formula_string AS to_formula, m2.sample_id AS to_mid, 
+                s.intensity_trend as intensity_trend, m1.peak_relint_tic as int,
+                avg_int
         ORDER BY intensity_trend ASC
     """).to_data_frame()
     print('done: get property intensity_trend')
@@ -62,11 +68,11 @@ def calc_weights(tendencies):
         if row.intensity_trend >= upper_limit:
             res = row.intensity_trend/MAX # current intensity trend / maximum intensity trend
             tendency_weight_list.append(res)
-            connect_weight_list.append(res * row.int)
+            connect_weight_list.append(res * (row.int/row.avg_int))
         elif row.intensity_trend <= lower_limit:
             res = (1-row.intensity_trend)/(1-MIN) # (1 - current intensity trend) / (1 - minimum intensity trend)
             tendency_weight_list.append(res)
-            connect_weight_list.append(res * row.int)
+            connect_weight_list.append(res * (row.int/row.avg_int))
         else:
             tendency_weight_list.append(0)
             connect_weight_list.append(0)
