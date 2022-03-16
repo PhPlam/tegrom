@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 18. october 2021
+# Date: 16. march 2022
 
 import pandas as pd
 from P000_path_variables_preprocess import sample_meta_file_csv, sample_join_file_csv 
@@ -39,6 +39,7 @@ def extract_metadata(combined_metadata):
 
 # remove measurements from data
 def remove_measurements(extracted_data, time_list):
+    time_list = []
     for point_in_time in time_list:
         extracted_data = extracted_data[extracted_data.timepoint != point_in_time]
 
