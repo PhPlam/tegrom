@@ -45,7 +45,6 @@ tendency_weight_path = path_prefix + 'tendency_weights.csv' # path to calculated
 upper_limit = 1.025 # above considered as increasing intensity
 lower_limit = 0.975 # below considered as decreasing intensity
 
-
 ##################################################################################
 #test functions for unittests#####################################################
 ##################################################################################
