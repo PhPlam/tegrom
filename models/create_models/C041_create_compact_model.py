@@ -19,6 +19,7 @@ passwd = passwd
 # select database
 db_name_parallel = db_name_parallel
 db_name_compact = db_name_compact
+#db_name_compact = 'modelcompacttest'
 
 # path of used files
 unique_formulas_file_path = unique_formulas_file_path # unique formula strings
