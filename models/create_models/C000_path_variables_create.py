@@ -22,7 +22,7 @@ passwd = '1234'
 
 # select database
 db_name_parallel = 'modelparallel'
-db_name_compact = 'modelcompact'
+db_name_compact = 'modelcompact2'
 
 # set filepath prefix
 abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
