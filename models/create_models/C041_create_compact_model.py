@@ -1,10 +1,9 @@
 # Name: Philipp Plamper 
-# Date: 24. february 2022
+# Date: 24. june 2022
 
 import os
 from py2neo import Graph
 from C000_path_variables_create import host, user, passwd, db_name_parallel, db_name_compact
-from C000_path_variables_create import unique_formulas_file_path, transform_file_path
 
 
 ##################################################################################
@@ -18,12 +17,8 @@ passwd = passwd
 
 # select database
 db_name_parallel = db_name_parallel
-db_name_compact = db_name_compact
-#db_name_compact = 'modelcompacttest'
-
-# path of used files
-unique_formulas_file_path = unique_formulas_file_path # unique formula strings
-transform_file_path = transform_file_path # potential transformations
+#db_name_compact = db_name_compact
+db_name_compact = 'modelcompacttest'
 
 
 ##################################################################################
@@ -70,29 +65,40 @@ def get_relationships(call_graph):
     # fill null values of columns matched with 'Optional Match'
     new_model_paths = new_model_paths.fillna(0)
 
-    ### Pfade
-    # export
-    #new_model_paths.to_csv('new_model_transitions/full_paths.csv', sep=',', encoding='utf-8', index=False)
     print('done: get all potential transformation relationships')
 
     return new_model_paths
 
 
 # create molecule nodes from unique formula strings
-def create_nodes_molecule(call_graph):
-    call_graph.run("""
-    LOAD CSV WITH HEADERS FROM 'file:///""" + unique_formulas_file_path + """' as row
-    CREATE (:Molecule {formula_string:row.formula_string,         
-            C : toInteger(row.C), 
-            H : toInteger(row.H), 
-            O : toInteger(row.O), 
-            N : toInteger(row.N), 
-            S : toInteger(row.S),
-            formula_class : row.formula_class,
-            OC : toFloat(row.O)/toFloat(row.C),
-            HC : toFloat(row.H)/toFloat(row.C)})
-    RETURN count(*)
-    """)
+def create_nodes_molecule(call_graph_par, call_graph_com):
+    df_unique_mol = call_graph_par.run("""
+    MATCH (m:Molecule)
+    RETURN m.formula_string as formula_string, 
+        m.C as C, m.H as H, m.O as O, m.N as N, m.S as S, 
+        m.formula_class as formula_class, 
+        toFloat(m.O)/toFloat(m.C) as OC, 
+        toFloat(m.H)/toFloat(m.C) as HC,
+        count(m) as cnt 
+    """).to_data_frame()
+
+    tx = call_graph_com.begin()
+    for index, row in df_unique_mol.iterrows():
+        tx.evaluate("""
+            CREATE (:Molecule {formula_string:$formula_string,         
+                    C : toInteger($C), 
+                    H : toInteger($H), 
+                    O : toInteger($O), 
+                    N : toInteger($N), 
+                    S : toInteger($S),
+                    formula_class : $formula_class,
+                    OC : toFloat($O)/toFloat($C),
+                    HC : toFloat($H)/toFloat($C)})
+            RETURN count(*) 
+        """, parameters= {'formula_string': row['formula_string'], 'C': row['C'], 
+        'H': row['H'], 'O': row['O'], 'N': row['N'], 'S': row['S'], 
+        'formula_class': row['formula_class']})
+    call_graph_com.commit(tx)
 
     print('done: create nodes molecule')
 
@@ -105,22 +111,32 @@ def create_index(call_graph):
 
 
 # create CHEMICAL_TRANSFORMATION relationship
-def create_relationship_chemical_transformation(call_graph):
-    call_graph.run("""
-        USING PERIODIC COMMIT 1000
-        LOAD CSV WITH HEADERS FROM 'file:///""" + transform_file_path + """' as row
-        MATCH (m1:Molecule), (m2:Molecule)
-        WHERE m1.formula_string = row.new_formula 
-            AND m2.formula_string = row.formula_string
-        CREATE (m1)-[:CHEMICAL_TRANSFORMATION {tu:row.transformation_unit}]->(m2)
-        RETURN count(*)
-    """)
+def create_relationship_chemical_transformation(call_graph_par, call_graph_com):
+    df_pt_rel = call_graph_par.run("""
+    MATCH (m1:Molecule)-[pt:POTENTIAL_TRANSFORMATION]->(m2:Molecule)
+    RETURN  m1.formula_string as from_fs, pt.tu_pt as tu, 
+        m2.formula_string as to_fs, pt.C as C, pt.H as H, 
+        pt.O as O, pt.N as N, pt.S as S, count(*)
+    """).to_data_frame()
+
+    tx = call_graph_com.begin()
+    for index, row in df_pt_rel.iterrows():
+        tx.evaluate("""
+            MATCH (m1:Molecule), (m2:Molecule)
+            WHERE m1.formula_string = $from_fs 
+                AND m2.formula_string = $to_fs
+            CREATE (m1)-[:CHEMICAL_TRANSFORMATION {tu: $tu, C:$C, H: $H, O: $O, N: $N, S: $S}]->(m2)
+            RETURN count(*)
+        """, parameters= {'from_fs': row['from_fs'], 'to_fs': row['to_fs'], 'C': row['C'], 
+        'H': row['H'], 'O': row['O'], 'N': row['N'], 'S': row['S'], 'tu': row['tu']}
+        )
+    call_graph_com.commit(tx)
 
     print('done: create relationship chemical transformation')
 
 
 # create and set properties at relationship CHEMICAL_TRANSRFORMATION
-def set_properties_chemical_transformation(call_graph, new_model_paths):
+def set_properties_chemical_transformation(call_graph_com, new_model_paths):
     for i in range (1,new_model_paths.mol_to_time.max()+1):
         is_hti_list = []
         new_model_paths_trim = new_model_paths[new_model_paths.mol_to_time == i]
@@ -131,19 +147,25 @@ def set_properties_chemical_transformation(call_graph, new_model_paths):
             else:
                 is_hti_list.append(0)
         new_model_paths_trim['is_hti'] = is_hti_list
-        
-        new_model_paths_trim.to_csv(path_prefix + 'paths' + str(i) + '.csv', sep=',', encoding='utf-8', index=False)
-        
-        call_graph.run("""
-            LOAD CSV WITH HEADERS FROM 'file:///""" + path_prefix + """paths""" + str(i) +""".csv' as row
-            MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(m2:Molecule)
-            WHERE m1.formula_string = row.mol_from
-                AND m2.formula_string = row.mol_to
-                AND c.tu = row.transformation_unit
-            SET c.transition_""" + str(i) + """ = [toFloat(row.mol_to_time), toFloat(row.mol_from_int), 
-                toFloat(row.mol_to_int), toFloat(row.mol_from_int_trend), 
-                toFloat(row.mol_to_int_trend), toFloat(row.is_hti)]
-        """)
+
+        #print(new_model_paths_trim.head(10))
+
+        tx = call_graph_com.begin()
+        for index, row in new_model_paths_trim.iterrows():
+            tx.evaluate("""
+                MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(m2:Molecule)
+                WHERE m1.formula_string = $mol_from
+                    AND m2.formula_string = $mol_to
+                    AND c.tu = $transformation_unit
+                SET c.transition_""" + str(i) + """ = [toFloat($mol_to_time), toFloat($mol_from_int), 
+                    toFloat($mol_to_int), toFloat($mol_from_int_trend), 
+                    toFloat($mol_to_int_trend), toFloat($is_hti)]        
+            """, parameters= {'mol_from': row.mol_from, 'mol_to': row.mol_to, 'transformation_unit': row.transformation_unit,
+            'mol_to_time': row.mol_to_time, 'mol_from_int': row.mol_from_int, 'mol_to_int': row.mol_to_int,
+            'mol_from_int_trend': row.mol_from_int_trend, 'mol_to_int_trend': row.mol_to_int_trend,
+            'is_hti': row.is_hti}
+            )
+        call_graph_com.commit(tx)
     
     print('done: set properties at relationship chemical transformation')
         
@@ -159,16 +181,16 @@ def set_properties_chemical_transformation(call_graph, new_model_paths):
 # delete [:CT] with possible transformation but without existing transition
 # transformation is theoretical possible but molecules are too far away 
 # e.g. first measurement and last measurement
-def delete_without_properties(call_graph):
-    call_graph.run("""
-        MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(:Molecule)
-        WITH m1, c, size(keys(c)) as keys
-        WHERE keys <= 1 
-        DETACH DELETE c
-        RETURN count(c)
-    """)
-
-    print('done: delete relationships without properties')
+#def delete_without_properties(call_graph):
+#    call_graph.run("""
+#        MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(:Molecule)
+#        WITH m1, c, size(keys(c)) as keys
+#        WHERE keys <= 1 
+#        DETACH DELETE c
+#        RETURN count(c)
+#    """)
+#
+#    print('done: delete relationships without properties')
 
 
 # property 'transition_count'
@@ -176,7 +198,7 @@ def delete_without_properties(call_graph):
 def create_property_transition_count(call_graph):
     call_graph.run("""
         MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(:Molecule)
-        WITH m1, c, size(keys(c))-1 as keys
+        WITH m1, c, size(keys(c))-6 as keys
         SET c.transition_count = keys
         RETURN m1.formula_string, keys LIMIT 5
     """)
@@ -213,16 +235,17 @@ create_database(host, user, passwd, db_name_compact)
 
 
 # connect to parallel model
-call_graph = get_database_connection(host, user, passwd, db_name_parallel)
-new_model_paths = get_relationships(call_graph)
+call_graph_par = get_database_connection(host, user, passwd, db_name_parallel)
+new_model_paths = get_relationships(call_graph_par)
 
 
 # connect to compact model
-call_graph = get_database_connection(host, user, passwd, db_name_compact)
-create_nodes_molecule(call_graph)
-create_index(call_graph)
-create_relationship_chemical_transformation(call_graph)
-set_properties_chemical_transformation(call_graph, new_model_paths)
-delete_without_properties(call_graph)
-create_property_transition_count(call_graph)
-create_property_hti_count(call_graph, new_model_paths)
+call_graph_com = get_database_connection(host, user, passwd, db_name_compact)
+create_nodes_molecule(call_graph_par, call_graph_com)
+create_index(call_graph_com)
+create_relationship_chemical_transformation(call_graph_par, call_graph_com)
+set_properties_chemical_transformation(call_graph_com, new_model_paths)
+# deprecated
+# delete_without_properties(call_graph_com) 
+create_property_transition_count(call_graph_com)
+create_property_hti_count(call_graph_com, new_model_paths)
