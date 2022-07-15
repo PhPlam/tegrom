@@ -48,7 +48,6 @@ class testData(unittest.TestCase):
         print('test file with measurement meta data')
         self.assertIn('measurement_id', testSample())
         self.assertIn('sample_id', testSample())
-        self.assertIn('radiation_dose', testSample())
         self.assertIn('timepoint', testSample())
         self.assertIn('time', testSample())
 

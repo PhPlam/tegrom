@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 12. october 2021
+# Date: 11. july 2022
 
 import pandas as pd
 from py2neo import Graph
@@ -43,11 +43,11 @@ def get_tendencies(call_graph):
     graph = call_graph
     tendencies = graph.run("""
         MATCH (m:Molecule)
-        WITH m.sample_id as sid, avg(m.peak_relint_tic) as avg_int 
+        WITH m.point_in_time as sid, avg(m.peak_relint_tic) as avg_int 
         MATCH (m1:Molecule)-[s:SAME_AS]->(m2:Molecule)
-        WHERE m1.sample_id = sid
-        RETURN m1.formula_string AS from_formula, m1.sample_id AS from_mid, 
-                m2.formula_string AS to_formula, m2.sample_id AS to_mid, 
+        WHERE m1.point_in_time = sid
+        RETURN m1.formula_string AS from_formula, m1.point_in_time AS from_mid, 
+                m2.formula_string AS to_formula, m2.point_in_time AS to_mid, 
                 s.intensity_trend as intensity_trend, m1.peak_relint_tic as int,
                 avg_int
         ORDER BY intensity_trend ASC
@@ -57,7 +57,7 @@ def get_tendencies(call_graph):
 
 # calculate tendency weight for every intensity trend
 # inlcudes parts of the calculation of the connected weight
-def calc_weights(tendencies):
+def calc_weights(tendencies, tendency_weight_path):
     MAX = tendencies.intensity_trend.max()
     MIN = tendencies.intensity_trend.min()
 
@@ -82,20 +82,30 @@ def calc_weights(tendencies):
 
     # export calculated weights to csv 
     tendencies.to_csv(tendency_weight_path, sep=',', encoding='utf-8', index=False)
-    print('done: calculate and save tendency weights')
+
+    print('done: calculate tendency weights')
+    return tendencies
+
 
 # add tendency weight property to graph 
 # includes adding parts of the later calculated connected weight
-def add_weights_to_graph(tendency_weight_path, call_graph):
+def add_weights_to_graph(tendency_weights, call_graph):
     graph = call_graph
-    graph.run("""
-        LOAD CSV WITH HEADERS FROM 'file:///""" + tendency_weight_path + """' AS row
-        MATCH (m1:Molecule)-[s:SAME_AS]->(m2:Molecule)
-        WHERE m1.formula_string = row.from_formula AND m1.sample_id = row.from_mid
-	    AND m2.formula_string = row.to_formula AND m2.sample_id = row.to_mid
-        SET s.tendency_weight = row.tendency_weight
-        SET s.tendency_weight_conn = row.tendency_weight_conn
-    """)
+    tendency_weights = tendency_weights
+
+    tx = graph.begin()
+    for index, row in tendency_weights.iterrows():
+        tx.evaluate("""
+            MATCH (m1:Molecule)-[s:SAME_AS]->(m2:Molecule)
+            WHERE m1.formula_string = $from_formula AND m1.point_in_time = $from_mid
+                AND m2.formula_string = $to_formula AND m2.point_in_time = $to_mid
+            SET s.tendency_weight = $tendency_weight
+            SET s.tendency_weight_conn = $tendency_weight_conn
+        """, parameters= {'from_formula': row['from_formula'], 'from_mid': row['from_mid'], 
+        'to_formula': row['to_formula'], 'to_mid': row['to_mid'], 'tendency_weight': row['tendency_weight'], 
+        'tendency_weight_conn': row['tendency_weight_conn']})
+    graph.commit(tx)
+
     print('done: add tendency_weight property')
 
 ##################################################################################
@@ -107,5 +117,5 @@ call_graph = get_database_connection(host, user, passwd, db_name)
 
 # calculate weights and add to graph
 tendencies = get_tendencies(call_graph)
-calculate_tendency_weights = calc_weights(tendencies)
-add_weights_to_graph(tendency_weight_path, call_graph)
+tendency_weights = calc_weights(tendencies, tendency_weight_path)
+add_weights_to_graph(tendency_weights, call_graph)

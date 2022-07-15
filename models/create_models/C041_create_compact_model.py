@@ -1,7 +1,6 @@
 # Name: Philipp Plamper 
-# Date: 24. june 2022
+# Date: 04. july 2022
 
-import os
 from py2neo import Graph
 from C000_path_variables_create import host, user, passwd, db_name_parallel, db_name_compact
 
@@ -19,16 +18,6 @@ passwd = passwd
 db_name_parallel = db_name_parallel
 #db_name_compact = db_name_compact
 db_name_compact = 'modelcompacttest'
-
-
-##################################################################################
-#set path for tmp files###########################################################
-##################################################################################
-
-# set relative filepath prefix
-abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
-path_prefix = str(abs_path[0]) + '/files_tmp_compact/' # add path to files in project folder
-path_prefix = path_prefix.replace('\\', '/') # necessary for application in Windows
 
 
 ##################################################################################
@@ -148,8 +137,6 @@ def set_properties_chemical_transformation(call_graph_com, new_model_paths):
                 is_hti_list.append(0)
         new_model_paths_trim['is_hti'] = is_hti_list
 
-        #print(new_model_paths_trim.head(10))
-
         tx = call_graph_com.begin()
         for index, row in new_model_paths_trim.iterrows():
             tx.evaluate("""
@@ -166,6 +153,7 @@ def set_properties_chemical_transformation(call_graph_com, new_model_paths):
             'is_hti': row.is_hti}
             )
         call_graph_com.commit(tx)
+        print('done: set properties of transition:', str(i))
     
     print('done: set properties at relationship chemical transformation')
         
@@ -176,21 +164,6 @@ def set_properties_chemical_transformation(call_graph_com, new_model_paths):
     # 4. intensity trend to molecule with same formula of source molecule
     # 5. intensity trend from molecule with same formula of target molecule
     # 6. is hti, see RelIdent-algorithm
-
-
-# delete [:CT] with possible transformation but without existing transition
-# transformation is theoretical possible but molecules are too far away 
-# e.g. first measurement and last measurement
-#def delete_without_properties(call_graph):
-#    call_graph.run("""
-#        MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(:Molecule)
-#        WITH m1, c, size(keys(c)) as keys
-#        WHERE keys <= 1 
-#        DETACH DELETE c
-#        RETURN count(c)
-#    """)
-#
-#    print('done: delete relationships without properties')
 
 
 # property 'transition_count'
@@ -245,7 +218,5 @@ create_nodes_molecule(call_graph_par, call_graph_com)
 create_index(call_graph_com)
 create_relationship_chemical_transformation(call_graph_par, call_graph_com)
 set_properties_chemical_transformation(call_graph_com, new_model_paths)
-# deprecated
-# delete_without_properties(call_graph_com) 
 create_property_transition_count(call_graph_com)
 create_property_hti_count(call_graph_com, new_model_paths)
