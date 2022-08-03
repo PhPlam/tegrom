@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 02. november 2021
+# Date: 02. august 2022
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -37,27 +37,27 @@ def get_database_connection(host, user, passwd, db_name):
 # distribution of the intensity trends per measurement (increasing, decreasing, constant)
 def intensity_trend_distribution(call_graph, export_png, export_path):
     inc_rel = call_graph.run("""
-        MATCH (t:Measurement)-[:MEASURED_IN]-(m:Molecule)-[s:SAME_AS]->(m2:Molecule)
+        MATCH (m:Molecule)-[s:SAME_AS]->(m2:Molecule)
         WHERE s.intensity_trend >= 1.025
-        RETURN t.point_in_time as time, count(s) as increase
+        RETURN m.point_in_time as time, count(s) as increase
     """).to_data_frame()
 
     dec_rel = call_graph.run("""
-        MATCH (t:Measurement)-[:MEASURED_IN]-(m:Molecule)-[s:SAME_AS]->(m2:Molecule)
+        MATCH (m:Molecule)-[s:SAME_AS]->(m2:Molecule)
         WHERE s.intensity_trend <= 0.975
-        RETURN t.point_in_time as time, count(s) as decrease
+        RETURN m.point_in_time as time, count(s) as decrease
     """).to_data_frame()
 
     same_rel = call_graph.run("""
-        MATCH (t:Measurement)-[:MEASURED_IN]-(m:Molecule)-[s:SAME_AS]->(m2:Molecule)
+        MATCH (m:Molecule)-[s:SAME_AS]->(m2:Molecule)
         WHERE 0.975 < s.intensity_trend < 1.025
-        RETURN t.point_in_time as time, count(s) as same
+        RETURN m.point_in_time as time, count(s) as same
     """).to_data_frame()
 
     get_mol = call_graph.run("""
-        MATCH (m:Molecule)-[]-(t:Measurement)
-        WHERE t.point_in_time < 13
-        RETURN t.point_in_time as time, count(m) as cmol
+        MATCH (m:Molecule)
+        WHERE m.point_in_time < 13
+        RETURN m.point_in_time as time, count(m) as cmol
     """).to_data_frame()
 
     inc_rel['mid'] = inc_rel.increase + dec_rel.decrease + same_rel.same
@@ -84,21 +84,21 @@ def intensity_trend_distribution(call_graph, export_png, export_path):
 # outgoing transformations per measurement
 def outgoing_transformations_measurement(call_graph, export_png, export_path):
     or_pt = call_graph.run("""
-        MATCH (t1:Measurement)-[:MEASURED_IN]-(:Molecule)-[c:POTENTIAL_TRANSFORMATION]->(:Molecule)-[:MEASURED_IN]-(t2:Measurement)
-        WHERE t2.point_in_time = t1.point_in_time + 1
-        RETURN t1.point_in_time as time, count(c) as relationships_out
+        MATCH (m1:Molecule)-[c:POTENTIAL_TRANSFORMATION]->(m2:Molecule)
+        WHERE m2.point_in_time = m1.point_in_time + 1
+        RETURN m1.point_in_time as time, count(c) as relationships_out
     """).to_data_frame()
 
     or_hti = call_graph.run("""
-        MATCH (t1:Measurement)-[:MEASURED_IN]-(:Molecule)-[c:HAS_TRANSFORMED_INTO]->(:Molecule)-[:MEASURED_IN]-(t2:Measurement)
-        WHERE t2.point_in_time = t1.point_in_time + 1
-        RETURN t1.point_in_time as time, count(c) as relationships_out
+        MATCH (m1:Molecule)-[c:HAS_TRANSFORMED_INTO]->(m2:Molecule)
+        WHERE m2.point_in_time = m1.point_in_time + 1
+        RETURN m1.point_in_time as time, count(c) as relationships_out
     """).to_data_frame()
 
     get_mol = call_graph.run("""
-        MATCH (m:Molecule)-[]-(t:Measurement)
-        WHERE t.point_in_time < 13
-        RETURN t.point_in_time as time, count(m) as cmol
+        MATCH (m:Molecule)
+        WHERE m.point_in_time < 13
+        RETURN m.point_in_time as time, count(m) as cmol
     """).to_data_frame()
 
     plt.figure(figsize=(6, 3))
@@ -208,8 +208,9 @@ def most_occurring_transformations(call_graph, export_png, export_path):
 # don't use
 def most_occurring_transformations_measurement_bar(call_graph, export_png, export_path):
     df_time = call_graph.run("""
-        MATCH (t:Measurement)
-        RETURN t.point_in_time as time
+        MATCH (m:Molecule)
+        RETURN DISTINCT m.point_in_time as time
+        ORDER BY time
     """).to_data_frame()
 
     time_list = df_time['time'].to_list()
@@ -227,14 +228,14 @@ def most_occurring_transformations_measurement_bar(call_graph, export_png, expor
 
     for ele in time_list:
         transform_count_hti = call_graph.run("""
-        MATCH (m:Measurement)-[:MEASURED_IN]-(:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
+        MATCH (m:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
         WHERE m.point_in_time = """ + str(ele) + """
         RETURN t.transformation_unit as transformation_unit, count(t.transformation_unit) as count_HTI_""" + str(ele) + """
         ORDER BY count_HTI_""" + str(ele) + """ DESC
         """).to_data_frame()
 
         transform_count_pt = call_graph.run("""
-        MATCH (m:Measurement)-[:MEASURED_IN]-(:Molecule)-[t:POTENTIAL_TRANSFORMATION]->(:Molecule)
+        MATCH (m:Molecule)-[t:POTENTIAL_TRANSFORMATION]->(:Molecule)
         WHERE m.point_in_time = """ + str(ele) + """
         RETURN t.tu_pt as transformation_unit, count(t.tu_pt) as count_PT_""" + str(ele) + """
         ORDER BY count_PT_""" + str(ele) + """ DESC
@@ -277,8 +278,9 @@ def most_occurring_transformations_measurement_bar(call_graph, export_png, expor
 # most occurring transformations per measurement in line plot
 def most_occurring_transformations_measurement_line(call_graph, export_png, export_html, export_path):
     df_time = call_graph.run("""
-        MATCH (t:Measurement)
-        RETURN t.point_in_time as time
+        MATCH (m:Molecule)
+        RETURN DISTINCT m.point_in_time as time
+        ORDER BY time
     """).to_data_frame()
 
     time_list = df_time['time'].to_list()
@@ -296,14 +298,14 @@ def most_occurring_transformations_measurement_line(call_graph, export_png, expo
 
     for ele in time_list:
         transform_count_hti = call_graph.run("""
-        MATCH (m:Measurement)-[:MEASURED_IN]-(:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
+        MATCH (m:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
         WHERE m.point_in_time = """ + str(ele) + """
         RETURN t.transformation_unit as transformation_unit, count(t.transformation_unit) as Count_HTI_""" + str(ele) + """
         ORDER BY Count_HTI_""" + str(ele) + """ DESC
         """).to_data_frame()
 
         transform_count_pt = call_graph.run("""
-        MATCH (m:Measurement)-[:MEASURED_IN]-(:Molecule)-[t:POTENTIAL_TRANSFORMATION]->(:Molecule)
+        MATCH (m:Molecule)-[t:POTENTIAL_TRANSFORMATION]->(:Molecule)
         WHERE m.point_in_time = """ + str(ele) + """
         RETURN t.tu_pt as transformation_unit, count(t.tu_pt) as Count_PT_""" + str(ele) + """
         ORDER BY Count_PT_""" + str(ele) + """ DESC
@@ -423,8 +425,9 @@ def average_weight_transformations_bar(call_graph, export_png, export_path):
 # average weight of transformations per measurement in line plot
 def average_weight_transformations_line(call_graph, export_png, export_html, export_path):
     df_time = call_graph.run("""
-        MATCH (t:Measurement)
-        RETURN t.point_in_time as time
+        MATCH (m:Molecule)
+        RETURN DISTINCT m.point_in_time as time
+        ORDER BY time
     """).to_data_frame()
 
     time_list = df_time['time'].to_list()
@@ -437,7 +440,7 @@ def average_weight_transformations_line(call_graph, export_png, export_html, exp
 
     for ele in time_list:
         tch = call_graph.run("""
-        MATCH (m:Measurement)-[]-(:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
+        MATCH (m:Molecule)-[t:HAS_TRANSFORMED_INTO]->(:Molecule)
         WHERE m.point_in_time = """ + str(ele) + """
         RETURN t.transformation_unit as transformation_unit, 
                 count(t.transformation_unit) as Count_HTI_""" + str(ele) + """,
