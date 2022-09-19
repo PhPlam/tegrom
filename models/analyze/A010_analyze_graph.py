@@ -531,7 +531,7 @@ call_graph = get_database_connection(host, user, passwd, db_name)
 
 # set export
 export_png = 1
-export_html = 1
+export_html = 0
 export_path = path_prefix
 
 # functions

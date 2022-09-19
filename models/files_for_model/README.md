@@ -4,7 +4,7 @@ Contains the used files to create the graph.
 
 Name: Philipp Plamper  
 Owner: Helmholtz-Zentrum für Umweltforschung UFZ  
-Date: 08. october 2021
+Date: 19. september 2022
 
 
 ## File descriptions
@@ -14,8 +14,7 @@ Informs about content and origin of the used files.
 
 ### Given files
 
-1. ufz_all_formulas_raw.csv
-- renamed original file for easier use in future (original: Photodatensatz_Graphanalyse_formulas_2020-09-10.csv)
+1. ufz_all_formulas_raw.csv / Photodatensatz_Graphanalyse_formulas_2020-09-10.csv
 - contains all information about the molecules in the dataset 
 - from the original ufz dataset
 
@@ -23,13 +22,11 @@ Informs about content and origin of the used files.
 - contains necessary information about the transformation units that could possibly occur in the sample
 - created by expert (ufz dataset)
 
-3. ufz_sample_meta_raw.csv
-- renamed original file for easier use in future (original: Photodatensatz_Graphanalyse_sample.metadata_2020-09-10.csv)
+3. ufz_sample_meta_raw.csv / Photodatensatz_Graphanalyse_sample.metadata_2020-09-10.csv
 - contains metadata
 - from the original ufz dataset
 
-4. ufz_sample_join_raw.csv
-- renamed original file for easier use in future (original: Photodatensatz_Graphanalyse_meas.metadata_2020-09-10.csv)
+4. ufz_sample_join_raw.csv / Photodatensatz_Graphanalyse_meas.metadata_2020-09-10.csv
 - contains mapping (sampleID <-> measurementID)
 - from the original ufz dataset
 

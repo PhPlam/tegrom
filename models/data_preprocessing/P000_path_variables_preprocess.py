@@ -1,12 +1,12 @@
 # Name: Philipp Plamper
-# Date: 08. october 2021
+# Date: 19. september 2022
 
 # contains path variables used by data preprocessing scripts
 # contains test functions to check reliabilty of data
 
 import pandas as pd
 import os
-
+import P001_parameters_preprocessing as pp
 
 ##################################################################################
 #set path for data preprocessing scripts##########################################
@@ -24,7 +24,7 @@ path_prefix = path_prefix.replace('\\', '/') # necessary for application in Wind
 
 # get raw file with all molecules
 try:
-    load_file = 'ufz_all_formulas_raw.csv'
+    load_file = pp.molecules
     raw_file_path = path_prefix + load_file
     raw_data_csv = pd.read_csv(raw_file_path, sep=';')
 except FileNotFoundError:
@@ -63,7 +63,7 @@ except FileNotFoundError:
 
 # load file with transformation units
 try:
-    transformation_unit_file = 'transformations_handwritten.csv'
+    transformation_unit_file = pp.transformation_unit_file
     groups_path = path_prefix + transformation_unit_file
     transformation_unit_csv = pd.read_csv(groups_path)
 except FileNotFoundError:
@@ -85,7 +85,8 @@ except FileNotFoundError:
 
 # load file with metadata of measurements
 try: 
-    sample_meta_name = 'ufz_sample_meta_raw.csv'
+    #sample_meta_name = 'ufz_sample_meta_raw.csv'
+    sample_meta_name = pp.sample_meta_name
     sample_meta_path = path_prefix + sample_meta_name
     sample_meta_file_csv = pd.read_csv(sample_meta_path, sep=';')
 except FileNotFoundError:
@@ -95,10 +96,11 @@ except FileNotFoundError:
 
 # load file with ID mapping
 try:
-    sample_join_name = 'ufz_sample_join_raw.csv'
+    #sample_join_name = 'ufz_sample_join_raw.csv'
+    sample_join_name = pp.sample_join_name
     sample_join_path = path_prefix + sample_join_name
     sample_join_file_csv = pd.read_csv(sample_join_path, sep=';')
-except FileExistsError:
+except FileNotFoundError:
     print('info: cannot load file with ID mapping')
     pass
 
@@ -115,26 +117,6 @@ try:
     meta_file_name = 'sample_metadata.csv'
     meta_file_path = path_prefix + meta_file_name
     meta_file_file_csv = pd.read_csv(meta_file_path, sep=',')
-except FileExistsError:
+except FileNotFoundError:
     print('info: cannot load file with metadata')
     pass
-
-
-##################################################################################
-#test functions for unittests#####################################################
-##################################################################################
-
-def testPhoto():
-    return list(raw_data_csv)
-
-def testUnique():
-    return list(formula_strings_csv)
-
-def testFunctional():
-    return list(transformation_unit_csv)
-
-def testMeta():
-    return list(sample_meta_file_csv)
-
-def testJoin():
-    return list(sample_join_file_csv)

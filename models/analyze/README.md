@@ -1,9 +1,7 @@
-# Data preprocessing
-
-contains scripts to analyze the data and the graph.
+# Graph analysis
 
 Owner: Philipp Plamper
-Date: 20. october 2021
+Date: 19. september 2022
 
 ## Function description
 

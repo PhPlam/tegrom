@@ -7,6 +7,7 @@
 import pandas as pd
 import os
 from py2neo import Graph
+import C001_parameters_temporal_graph as ptg
 
 
 ##################################################################################
@@ -14,15 +15,15 @@ from py2neo import Graph
 ##################################################################################
 
 # host + port
-host = 'http://localhost:7474'
+host = ptg.host
 
 # credentials for API
-user = 'neo4j'
-passwd = '1234'
+user = ptg.user
+passwd = ptg.passwd
 
 # select database
-db_name_parallel = 'modelparallel'
-db_name_compact = 'modelcompact'
+db_name_temporal = ptg.db_name_temporal
+db_name_smash = ptg.db_name_smash
 
 # set filepath prefix
 abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
@@ -42,30 +43,5 @@ int_change_path = path_prefix + 'increasing_intensities.csv' # path to calculate
 tendency_weight_path = path_prefix + 'tendency_weights.csv' # path to calculated weights
 
 # define fault tolerance for intensity trend 
-upper_limit = 1.025 # above considered as increasing intensity
-lower_limit = 0.975 # below considered as decreasing intensity
-
-##################################################################################
-#test functions for unittests#####################################################
-##################################################################################
-
-def testSample():
-    measurement_file = pd.read_csv(measurement_file_path, nrows=5)
-    return list(measurement_file)
-
-def testRelationships():
-    transform_file = pd.read_csv(transform_file_path, nrows=5)
-    return list(transform_file)
-
-def testIntensityCSV():
-    int_change_file = pd.read_csv(int_change_path, nrows=5)
-    return list(int_change_file)
-
-def testWeightCSV():
-    tendency_weight_file = pd.read_csv(tendency_weight_path, nrows=5)
-    return list(tendency_weight_file)
-
-def testDbConnection():
-    connect_db = Graph(host, auth=(user, passwd), name='system')
-    connect_db.run("")
-    return "works"
+upper_limit = ptg.upper_limit # above considered as increasing intensity
+lower_limit = ptg.lower_limit # below considered as decreasing intensity

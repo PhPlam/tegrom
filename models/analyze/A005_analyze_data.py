@@ -82,10 +82,10 @@ def occurrence_formula_class(molecule_data, export_png, export_path):
     df_class_new['occ'] = df_class.formula_class['count']/df_class.formula_class['count'].sum()*100
 
     plt.figure(figsize=(6, 3))
-    plt.suptitle('Proportion of formula classes')
+    plt.suptitle('Share of formula classes')
     plt.bar(df_class_new.form_class, df_class_new.occ, color='green')
     plt.xlabel('Formula class')
-    plt.ylabel('Proportion of formula class (%)')
+    plt.ylabel('Share of formula class (%)')
 
     if export_png == 1:
         name = 'data_occurrence_formula_class'
