@@ -3,9 +3,9 @@
 # Name: Philipp Plamper
 # Date: 19. september 2022
 
-# create parallel model in neo4j
+# create metadata for model
 python P005_merge_metadata.py
-# create weights of relationships
+# clean molecules
 python P010_clean_molecule_data.py
-# calculate possible molecule transformations
+# calculate edges pot
 python P020_calculate_potential_transformation_relationship.py

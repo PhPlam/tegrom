@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 04. july 2022
+# Date: 20. september 2022
 
 from py2neo import Graph
 from C000_path_variables_create import host, user, passwd, db_name_temporal, db_name_smash
@@ -38,7 +38,7 @@ def get_database_connection(host, user, passwd, db_name):
 
 
 # deal with not existing "SAME_AS" relationships
-# get all PT relationships
+# get all pot relationships
 def get_relationships(call_graph):
     new_model_paths = call_graph.run("""
         MATCH (m1:Molecule)-[p:POTENTIAL_TRANSFORMATION]->(m2:Molecule)
@@ -47,7 +47,7 @@ def get_relationships(call_graph):
         WHERE m2.point_in_time = m1.point_in_time + 1
         RETURN m1.formula_string as mol_from, m1.peak_relint_tic as mol_from_int, m1.point_in_time as mol_from_time, 
         s1.intensity_trend as mol_from_int_trend, m2.formula_string as mol_to, m2.peak_relint_tic as mol_to_int, 
-        m2.point_in_time as mol_to_time, s2.intensity_trend as mol_to_int_trend, p.tu_pt as transformation_unit 
+        m2.point_in_time as mol_to_time, s2.intensity_trend as mol_to_int_trend, p.tu_pot as transformation_unit 
     """).to_data_frame()
 
     # fill null values of columns matched with 'Optional Match'
@@ -100,15 +100,15 @@ def create_index(call_graph):
 
 # create CHEMICAL_TRANSFORMATION relationship
 def create_relationship_chemical_transformation(call_graph_par, call_graph_com):
-    df_pt_rel = call_graph_par.run("""
-    MATCH (m1:Molecule)-[pt:POTENTIAL_TRANSFORMATION]->(m2:Molecule)
-    RETURN  m1.formula_string as from_fs, pt.tu_pt as tu, 
-        m2.formula_string as to_fs, pt.C as C, pt.H as H, 
-        pt.O as O, pt.N as N, pt.S as S, count(*)
+    df_pot_rel = call_graph_par.run("""
+    MATCH (m1:Molecule)-[pot:POTENTIAL_TRANSFORMATION]->(m2:Molecule)
+    RETURN  m1.formula_string as from_fs, pot.tu_pot as tu, 
+        m2.formula_string as to_fs, pot.C as C, pot.H as H, 
+        pot.O as O, pot.N as N, pot.S as S, count(*)
     """).to_data_frame()
 
     tx = call_graph_com.begin()
-    for index, row in df_pt_rel.iterrows():
+    for index, row in df_pot_rel.iterrows():
         tx.evaluate("""
             MATCH (m1:Molecule), (m2:Molecule)
             WHERE m1.formula_string = $from_fs 
@@ -126,15 +126,15 @@ def create_relationship_chemical_transformation(call_graph_par, call_graph_com):
 # create and set properties at relationship CHEMICAL_TRANSRFORMATION
 def set_properties_chemical_transformation(call_graph_com, new_model_paths):
     for i in range (1,new_model_paths.mol_to_time.max()+1):
-        is_hti_list = []
+        is_prt_list = []
         new_model_paths_trim = new_model_paths[new_model_paths.mol_to_time == i]
         
         for row in new_model_paths_trim.itertuples():
             if 0 < row.mol_from_int_trend < 0.975 and row.mol_to_int_trend > 1.025:
-                is_hti_list.append(1)
+                is_prt_list.append(1)
             else:
-                is_hti_list.append(0)
-        new_model_paths_trim['is_hti'] = is_hti_list
+                is_prt_list.append(0)
+        new_model_paths_trim['is_prt'] = is_prt_list
 
         tx = call_graph_com.begin()
         for index, row in new_model_paths_trim.iterrows():
@@ -145,11 +145,11 @@ def set_properties_chemical_transformation(call_graph_com, new_model_paths):
                     AND c.tu = $transformation_unit
                 SET c.transition_""" + str(i) + """ = [toFloat($mol_to_time), toFloat($mol_from_int), 
                     toFloat($mol_to_int), toFloat($mol_from_int_trend), 
-                    toFloat($mol_to_int_trend), toFloat($is_hti)]        
+                    toFloat($mol_to_int_trend), toFloat($is_prt)]        
             """, parameters= {'mol_from': row.mol_from, 'mol_to': row.mol_to, 'transformation_unit': row.transformation_unit,
             'mol_to_time': row.mol_to_time, 'mol_from_int': row.mol_from_int, 'mol_to_int': row.mol_to_int,
             'mol_from_int_trend': row.mol_from_int_trend, 'mol_to_int_trend': row.mol_to_int_trend,
-            'is_hti': row.is_hti}
+            'is_prt': row.is_prt}
             )
         call_graph_com.commit(tx)
         print('done: set properties of transition:', str(i))
@@ -162,7 +162,7 @@ def set_properties_chemical_transformation(call_graph_com, new_model_paths):
     # 3. relative intensity of target molecule
     # 4. intensity trend to molecule with same formula of source molecule
     # 5. intensity trend from molecule with same formula of target molecule
-    # 6. is hti, see RelIdent-algorithm
+    # 6. is prt, see RelIdent-algorithm
 
 
 # property 'transition_count'
@@ -178,12 +178,12 @@ def create_property_transition_count(call_graph):
     print('done: create property transition count')
 
 
-# property 'hti_count'
-# = number of transtions recognizes as edge of type 'hti' 
-def create_property_hti_count(call_graph, new_model_paths):
+# property 'prt_count'
+# = number of transtions recognizes as edge of type 'prt' 
+def create_property_prt_count(call_graph, new_model_paths):
     call_graph.run("""
         MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(:Molecule)
-        SET c.hti_count = 0
+        SET c.prt_count = 0
         RETURN count(*)
     """)
 
@@ -191,11 +191,11 @@ def create_property_hti_count(call_graph, new_model_paths):
         call_graph.run("""
             MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(:Molecule)
             WHERE c.transition_""" + str(i) + """[5] = 1
-            SET c.hti_count = c.hti_count + 1
+            SET c.prt_count = c.prt_count + 1
             RETURN count(*)
         """)
 
-    print('done: create property hti count')
+    print('done: create property prt count')
 
 
 ##################################################################################
@@ -218,4 +218,4 @@ create_index(call_graph_com)
 create_relationship_chemical_transformation(call_graph_par, call_graph_com)
 set_properties_chemical_transformation(call_graph_com, new_model_paths)
 create_property_transition_count(call_graph_com)
-create_property_hti_count(call_graph_com, new_model_paths)
+create_property_prt_count(call_graph_com, new_model_paths)

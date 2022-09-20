@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 05. july 2022
+# Date: 20. september 2022
 
 import os
 from py2neo import Graph
@@ -57,7 +57,7 @@ def get_molecules(call_graph, transition):
             m2.formula_string as to_fs, m2.C as to_C, m2.H as to_H, m2.O as to_O, m2.N as to_N, m2.S as to_S,
             ct.transition_""" + transition + """[1] as from_int, ct.transition_""" + transition + """[2] as to_int, 
             toInteger(ct.transition_""" + transition + """[0]-1) as from_pit, toInteger(ct.transition_""" + transition + """[0]) as to_pit, 
-            toInteger(ct.transition_""" + transition + """[5]) as is_hti, ct.transition_""" + transition + """[3] as from_sa, 
+            toInteger(ct.transition_""" + transition + """[5]) as is_prt, ct.transition_""" + transition + """[3] as from_sa, 
             ct.transition_""" + transition + """[4] as to_sa
     """).to_data_frame()
     
@@ -123,7 +123,7 @@ def merge_molecules_to(call_graph, molecules):
 
 
 # create edges of type potential transformation
-def create_edges_pt(call_graph, molecules, transition):
+def create_edges_pot(call_graph, molecules, transition):
     graph = call_graph
     molecules = molecules 
     transition = transition
@@ -148,21 +148,21 @@ def create_edges_pt(call_graph, molecules, transition):
 
 
 # create edges of type has transformed into
-def create_edges_hti(call_graph, molecules, transition):
+def create_edges_prt(call_graph, molecules, transition):
     graph = call_graph
     molecules = molecules 
     transition = transition
 
     tx = graph.begin()
     for index, row in molecules.iterrows():
-        if row['is_hti'] == 1:
+        if row['is_prt'] == 1:
             tx.evaluate("""
                 MATCH (m1:Molecule), (m2:Molecule)
                 WHERE m1.formula_string = $from_fs
                     AND m1.point_in_time = """ + str(transition -1)+ """ 
                     AND m2.formula_string = $to_fs 
                     AND m2.point_in_time = """ + str(transition) + """ 
-                CREATE (m1)-[:HAS_TRANSFORMED_INTO {transformation_unit: $tu,
+                CREATE (m1)-[:PREDICTED_TRANSFORMATION {transformation_unit: $tu,
                             C : toInteger($C), 
                             H : toInteger($H), 
                             O : toInteger($O), 
@@ -208,8 +208,8 @@ for transition in range(1,13):
     molecules = get_molecules(call_graph_com, transition)
     merge_molecules_from(call_graph_back, molecules)
     merge_molecules_to(call_graph_back, molecules)
-    create_edges_pt(call_graph_back, molecules, transition)
-    create_edges_hti(call_graph_back, molecules, transition)
+    create_edges_pot(call_graph_back, molecules, transition)
+    create_edges_prt(call_graph_back, molecules, transition)
     print('done: transition', str(transition))
 
 create_relationship_same_as(call_graph_back)

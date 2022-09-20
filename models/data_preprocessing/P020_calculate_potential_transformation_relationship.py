@@ -66,14 +66,14 @@ def calculate_new_formulas_photoaddition(formula_strings, transformation_unit):
     print('done: calculate new molecules photoaddition')
     return formula_list
 
-# calculate new molecules from given molecules and transformation units in direction: photosecession
-def calculate_new_formulas_photosecession(formula_strings, transformation_unit):
+# calculate new molecules from given molecules and transformation units in direction: photodegradation
+def calculate_new_formulas_photodegradation(formula_strings, transformation_unit):
     formula_list = []
     # initiate progress bar
-    bar_calculate_new_formulas_photosecession = Bar('calculate new formulas photosecession:', max = len(formula_strings.index))
+    bar_calculate_new_formulas_photodegradation = Bar('calculate new formulas photodegradation:', max = len(formula_strings.index))
 
     for row1 in formula_strings.itertuples():
-        bar_calculate_new_formulas_photosecession.next()
+        bar_calculate_new_formulas_photodegradation.next()
         # file with all transformation_units
         for row2 in transformation_unit.itertuples():
             # choose if transformation is useful in this model
@@ -111,13 +111,13 @@ def calculate_new_formulas_photosecession(formula_strings, transformation_unit):
             # append dictionary to list
             formula_list.append(formula_dict)
 
-    bar_calculate_new_formulas_photosecession.finish()
-    print('done: calculate new molecules photosecession')
+    bar_calculate_new_formulas_photodegradation.finish()
+    print('done: calculate new molecules photodegradation')
     return formula_list
 
 # concatenate calculated lists of molecules
-def merge_calculated_molecules(calculated_photoaddtion, calculated_photosecession):
-    merged_list = calculated_photoaddtion + calculated_photosecession
+def merge_calculated_molecules(calculated_photoaddtion, calculated_photodegradation):
+    merged_list = calculated_photoaddtion + calculated_photodegradation
     print('done: concatenate both calculated lists')
     return merged_list
 
@@ -224,8 +224,8 @@ transformation_unit = transformation_unit_csv
 
 # calculate
 calculated_photoaddtion = calculate_new_formulas_photoaddition(formula_strings, transformation_unit)
-calculated_photosecession = calculate_new_formulas_photosecession(formula_strings, transformation_unit)
-merged_molecule_list = merge_calculated_molecules(calculated_photoaddtion, calculated_photosecession)
+calculated_photodegradation = calculate_new_formulas_photodegradation(formula_strings, transformation_unit)
+merged_molecule_list = merge_calculated_molecules(calculated_photoaddtion, calculated_photodegradation)
 df_added_strings = create_strings_from_molecules(merged_molecule_list)
 df_molecules = check_existence_of_strings(df_added_strings)
 calculated_transformations = create_strings_transformation_unit(df_molecules)

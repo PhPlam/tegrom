@@ -87,7 +87,7 @@ def create_relationship_potential_transformation(call_graph, transform_file_path
         "WITH row.new_formula AS r_new_formula, row.formula_string AS r_formula_string, row.tu_C AS tu_C, row.tu_H AS tu_H, row.tu_O AS tu_O, row.tu_N AS tu_N, row.tu_S AS tu_S, row.transformation_unit as transformation_unit
         MATCH (m:Molecule), (m2:Molecule)
         WHERE m.formula_string = r_new_formula AND m2.formula_string = r_formula_string AND m.point_in_time = m2.point_in_time -1
-        CREATE (m)-[:POTENTIAL_TRANSFORMATION{C: toInteger(tu_C), H: toInteger(tu_H), O: toInteger(tu_O), N: toInteger(tu_N), S: toInteger(tu_S), tu_pt: transformation_unit}]->(m2)
+        CREATE (m)-[:POTENTIAL_TRANSFORMATION{C: toInteger(tu_C), H: toInteger(tu_H), O: toInteger(tu_O), N: toInteger(tu_N), S: toInteger(tu_S), tu_pot: transformation_unit}]->(m2)
         RETURN count(*)",
         {batchSize: 500})
     """)
@@ -112,8 +112,8 @@ def create_property_intensity_trend(call_graph):
     print('done: create property intensity_trend')
 
 
-# delete molecules without edges of type PT
-def delete_molecules_wo_pt(call_graph):
+# delete molecules without edges of type pot
+def delete_molecules_wo_pot(call_graph):
     call_graph.run("""
         MATCH (m:Molecule)
         WHERE NOT EXISTS ((m)-[:POTENTIAL_TRANSFORMATION]->(:Molecule))
@@ -121,7 +121,7 @@ def delete_molecules_wo_pt(call_graph):
         DETACH DELETE m
     """)
 
-    print("done: delete molecules without edges of type pt")
+    print("done: delete molecules without edges of type pot")
 
 
 ##################################################################################
@@ -139,4 +139,4 @@ create_index(call_graph)
 create_relationship_potential_transformation(call_graph, transform_file_path)
 create_relationship_same_as(call_graph)
 create_property_intensity_trend(call_graph)
-delete_molecules_wo_pt(call_graph)
+delete_molecules_wo_pot(call_graph)

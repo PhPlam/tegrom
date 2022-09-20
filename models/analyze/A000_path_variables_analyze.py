@@ -1,25 +1,25 @@
 # Name: Philipp Plamper
-# Date: 12. october 2021
+# Date: 20. september 2022
 
 # contains path variables used to analyze models
 
 import os
-
+import A001_parameters_analysis as pa
 
 ##################################################################################
 #set variables for models#########################################################
 ##################################################################################
 
 # host + port
-host = 'http://localhost:7474'
+host = pa.host
 
 # credentials for API
-user = 'neo4j'
-passwd = '1234'
+user = pa.user
+passwd = pa.passwd
 
 # select database
-db_name_parallel = 'modelparallel'
-db_name_compact = 'modelcompact'
+db_name_temporal = pa.db_name_temporal
+db_name_smash = pa.db_name_smash
 
 # set filepath prefix for export
 abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files

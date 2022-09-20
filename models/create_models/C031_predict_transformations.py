@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 11. july 2022
+# Date: 20. september 2022
 
 import pandas as pd
 from py2neo import Graph
@@ -124,8 +124,8 @@ def calculate_weights(trans_units, int_change_path):
     return trans_units
 
 
-# create relationship HAS_TRANSFORMED_INTO with calculated occurring transformations
-def create_relationship_has_transformed_into(call_graph, calc_weights):
+# create relationship PREDICTED_TRANSFORMATION with calculated occurring transformations
+def create_relationship_predicted_transformation(call_graph, calc_weights):
     calc_weights = calc_weights
     graph = call_graph
 
@@ -137,7 +137,7 @@ def create_relationship_has_transformed_into(call_graph, calc_weights):
                 AND m1.point_in_time = $from_mid
                 AND m2.formula_string = $to_molecule
                 AND m2.point_in_time = $to_mid
-            CREATE (m1)-[:HAS_TRANSFORMED_INTO {C: toInteger($C), 
+            CREATE (m1)-[:PREDICTED_TRANSFORMATION {C: toInteger($C), 
                 H: toInteger($H), 
                 O: toInteger($O), 
                 N: toInteger($N), 
@@ -152,25 +152,25 @@ def create_relationship_has_transformed_into(call_graph, calc_weights):
         })        
     graph.commit(tx) 
 
-    print('done: create HAS_TRANSFORMED_INTO relationship')
+    print('done: create PREDICTED_TRANSFORMATION relationship')
 
 
 # normalize incoming combined and connected weight
 def normalize_weights(call_graph):
     graph = call_graph
     graph.run("""
-        MATCH (:Molecule)-[t:HAS_TRANSFORMED_INTO]->(m:Molecule)
+        MATCH (:Molecule)-[t:PREDICTED_TRANSFORMATION]->(m:Molecule)
         WITH m.formula_string as fs, m.point_in_time as mid, sum(t.connected_weight) as sum_weight
-        MATCH (:Molecule)-[t1:HAS_TRANSFORMED_INTO]->(m1:Molecule)
+        MATCH (:Molecule)-[t1:PREDICTED_TRANSFORMATION]->(m1:Molecule)
         WHERE m1.formula_string = fs AND m1.point_in_time = mid
         SET t1.normalized_connected_weight = apoc.math.round(t1.connected_weight/sum_weight, 3)
         RETURN fs, mid, sum_weight
     """)
 
     graph.run("""
-        MATCH (:Molecule)-[t:HAS_TRANSFORMED_INTO]->(m:Molecule)
+        MATCH (:Molecule)-[t:PREDICTED_TRANSFORMATION]->(m:Molecule)
         WITH m.formula_string as fs, m.point_in_time as mid, sum(t.combined_weight) as sum_weight
-        MATCH (:Molecule)-[t1:HAS_TRANSFORMED_INTO]->(m1:Molecule)
+        MATCH (:Molecule)-[t1:PREDICTED_TRANSFORMATION]->(m1:Molecule)
         WHERE m1.formula_string = fs AND m1.point_in_time = mid
         SET t1.normalized_combined_weight = apoc.math.round(t1.combined_weight/sum_weight, 3)
         RETURN fs, mid, sum_weight
@@ -190,5 +190,5 @@ call_graph = get_database_connection(host, user, passwd, db_name)
 occ_trans = calculate_occurring_transformations(call_graph)
 trans_units = calculate_transformation_units(occ_trans)
 calc_weights = calculate_weights(trans_units, int_change_path)
-create_relationship_has_transformed_into(call_graph, calc_weights)
+create_relationship_predicted_transformation(call_graph, calc_weights)
 normalize_weights(call_graph)
