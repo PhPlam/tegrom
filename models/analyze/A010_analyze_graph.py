@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 20. september 2022
+# Date: 21. september 2022
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -655,6 +655,110 @@ def trend_single_tu(df_tu_prt, tu, tu_2, export_png, export_path):
     print('done: create image "single transformation unit trend"')
 
 
+# transform string of transformation unit to format of string in graph
+def calculate_tu_string(ele, direction):
+    tu_string = ""
+    
+    C = ele.C if direction == 'plus' else ele.C*(-1)
+    H = ele.H if direction == 'plus' else ele.H*(-1)
+    O = ele.O if direction == 'plus' else ele.O*(-1)
+    N = ele.N if direction == 'plus' else ele.N*(-1)
+    S = ele.S if direction == 'plus' else ele.S*(-1)
+
+    if C < 0: tu_string = "-" + tu_string + "C" + str(abs(C)) + " "
+    elif C > 0: tu_string = tu_string + "C" + str(C) + " "
+    else: tu_string
+
+    if H < 0: tu_string = tu_string + "-H" + str(abs(H)) + " "
+    elif H > 0: tu_string = tu_string + "H" + str(H) + " "
+    else: tu_string
+
+    if O < 0: tu_string = tu_string + "-O" + str(abs(O)) + " "
+    elif O > 0: tu_string = tu_string + "O" + str(O) + " "
+    else: tu_string
+
+    if N < 0: tu_string = tu_string + "-N" + str(abs(N)) + " "
+    elif N > 0: tu_string = tu_string + "N" + str(N) + " "
+    else: tu_string
+
+    if S < 0: tu_string = tu_string + "-S" + str(abs(S)) + " "
+    elif S > 0: tu_string = tu_string + "S" + str(S) + " "
+    else: tu_string
+        
+    tu_string = tu_string.rstrip()
+        
+    return tu_string
+
+
+# trend of photo products and photo degraded components
+def trend_products_degraded(df_tu, call_graph, export_png, export_path):
+    # calculate strings of transformation units
+    tu_list_plus = []
+    tu_list_minus = []
+    for ele in df_tu.itertuples():
+        
+        if ele.plus == 1:
+            direction = 'plus'
+            tu_string_plus = calculate_tu_string(ele, direction)
+            tu_list_plus.append(tu_string_plus)
+            
+        if ele.minus == 1:
+            direction = 'minus'
+            tu_string_minus = calculate_tu_string(ele, direction)
+            tu_list_minus.append(tu_string_minus)
+
+    # get data from graph
+    df_photo_prod = call_graph.run("""
+        MATCH (m:Molecule)-[h:PREDICTED_TRANSFORMATION]->(:Molecule)
+        WHERE h.transformation_unit IN """ + str(tu_list_plus) + """
+        RETURN m.point_in_time as pit, count(h) as cnt_prt_prod
+    """).to_data_frame()
+
+    df_photo_degr = call_graph.run("""
+    MATCH (m:Molecule)-[h:PREDICTED_TRANSFORMATION]->(:Molecule)
+    WHERE h.transformation_unit IN """ + str(tu_list_minus) + """
+    RETURN m.point_in_time as pit, count(h) as cnt_prt_degr
+    """).to_data_frame()
+
+    df_merge_prod_degr = pd.merge(df_photo_prod, df_photo_degr, on=["pit"])
+
+    # normalization because photo degradation and photo addition have different occurrence
+    df_merge_prod_degr['cnt_prt_prod_norm'] = df_merge_prod_degr.cnt_prt_prod/len(tu_list_plus)
+    df_merge_prod_degr['cnt_prt_degr_norm'] = df_merge_prod_degr.cnt_prt_degr/len(tu_list_minus)
+    df_merge_prod_degr['cnt_prt_prod_share'] = df_merge_prod_degr.cnt_prt_prod/(df_merge_prod_degr.cnt_prt_prod+df_merge_prod_degr.cnt_prt_degr)
+    df_merge_prod_degr['cnt_prt_degr_share'] = df_merge_prod_degr.cnt_prt_degr/(df_merge_prod_degr.cnt_prt_prod+df_merge_prod_degr.cnt_prt_degr)
+    df_merge_prod_degr['cnt_prt_prod_norm_share'] = df_merge_prod_degr.cnt_prt_prod_norm/(df_merge_prod_degr.cnt_prt_prod_norm+df_merge_prod_degr.cnt_prt_degr_norm)
+    df_merge_prod_degr['cnt_prt_degr_norm_share'] = df_merge_prod_degr.cnt_prt_degr_norm/(df_merge_prod_degr.cnt_prt_prod_norm+df_merge_prod_degr.cnt_prt_degr_norm)
+
+    # create plots
+    fig = plt.figure(figsize=(15,5))
+    plt.suptitle('Different approaches to show trend of photo products and photo degraded components', fontsize=14, fontweight="bold")
+
+    plt.subplot(1,2,1)
+    plt.plot(df_merge_prod_degr.pit, df_merge_prod_degr.cnt_prt_prod_share, label='photo product', marker='o')
+    plt.plot(df_merge_prod_degr.pit, df_merge_prod_degr.cnt_prt_degr_share, label='photo degraded', marker='o')
+    plt.xlabel('measurement', fontsize=12)
+    plt.ylabel('share in %', fontsize=12)
+    plt.title('Measurement X share', fontweight="bold")
+    plt.legend(loc='upper left')
+    plt.xticks(np.arange(min(df_merge_prod_degr.pit), max(df_merge_prod_degr.pit)+1, 1.0))
+
+    plt.subplot(1,2,2)
+    plt.plot(df_merge_prod_degr.pit, df_merge_prod_degr.cnt_prt_prod_norm_share, label='photo product', marker='o')
+    plt.plot(df_merge_prod_degr.pit, df_merge_prod_degr.cnt_prt_degr_norm_share, label='photo degraded', marker='o')
+    plt.xlabel('measurement', fontsize=12)
+    plt.ylabel('share of normalized in %', fontsize=12)
+    plt.title('Measurement X share of normalized', fontweight="bold")
+    plt.legend(loc='upper left')
+    plt.xticks(np.arange(min(df_merge_prod_degr.pit), max(df_merge_prod_degr.pit)+1, 1.0))
+
+    plt.tight_layout()
+
+    if export_png == 1:
+        plt.savefig(export_path + 'trend_of_product_degradation.png', dpi=150 ,bbox_inches='tight')
+
+    print('done: create image "trend photo product and degradation"')
+
 ##################################################################################
 #call functions###################################################################
 ##################################################################################
@@ -680,3 +784,6 @@ average_weight_transformations_line(call_graph, export_png, export_html, export_
 df_prts_tus = prepare_prts_tu(call_graph)
 trends_transformation_units(call_graph, df_prts_tus, export_png, export_path)
 trend_single_tu(df_prts_tus, pa.tu, pa.tu_2, export_png, export_path)
+
+df_tu = pd.read_csv("models/files_for_model/transformations_handwritten.csv")
+trend_products_degraded(df_tu, call_graph, export_png, export_path)

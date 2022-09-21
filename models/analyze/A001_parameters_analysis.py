@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 20. september 2022
+# Date: 21. september 2022
 
 # parameters for graph analysis 
 
@@ -14,6 +14,7 @@ passwd = '1234'
 db_name_temporal = 'modeltemporal'
 db_name_smash = 'modelsmash'
 
-#
+# select transformation units for visualization of development over time
+# select the same for single visualization
 tu = 'H2 O1'
 tu_2 = '-H2 -O1'
