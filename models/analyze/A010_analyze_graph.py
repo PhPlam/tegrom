@@ -8,7 +8,7 @@ import plotly.express as px
 from py2neo import Graph
 from scipy import stats
 from A000_path_variables_analyze import host, user, passwd, db_name_temporal
-from A000_path_variables_analyze import path_prefix
+from A000_path_variables_analyze import path_prefix, path_prefix_csv
 import A001_parameters_analysis as pa
 
 import warnings
@@ -737,8 +737,8 @@ def trend_products_degraded(df_tu, call_graph, export_png, export_path):
     plt.subplot(1,2,1)
     plt.plot(df_merge_prod_degr.pit, df_merge_prod_degr.cnt_prt_prod_share, label='photo product', marker='o')
     plt.plot(df_merge_prod_degr.pit, df_merge_prod_degr.cnt_prt_degr_share, label='photo degraded', marker='o')
-    plt.xlabel('measurement', fontsize=12)
-    plt.ylabel('share in %', fontsize=12)
+    plt.xlabel('measurement', fontsize=14)
+    plt.ylabel('share in %', fontsize=14)
     plt.title('Measurement X share', fontweight="bold")
     plt.legend(loc='upper left')
     plt.xticks(np.arange(min(df_merge_prod_degr.pit), max(df_merge_prod_degr.pit)+1, 1.0))
@@ -746,8 +746,8 @@ def trend_products_degraded(df_tu, call_graph, export_png, export_path):
     plt.subplot(1,2,2)
     plt.plot(df_merge_prod_degr.pit, df_merge_prod_degr.cnt_prt_prod_norm_share, label='photo product', marker='o')
     plt.plot(df_merge_prod_degr.pit, df_merge_prod_degr.cnt_prt_degr_norm_share, label='photo degraded', marker='o')
-    plt.xlabel('measurement', fontsize=12)
-    plt.ylabel('share of normalized in %', fontsize=12)
+    plt.xlabel('measurement', fontsize=14)
+    plt.ylabel('share of normalized in %', fontsize=14)
     plt.title('Measurement X share of normalized', fontweight="bold")
     plt.legend(loc='upper left')
     plt.xticks(np.arange(min(df_merge_prod_degr.pit), max(df_merge_prod_degr.pit)+1, 1.0))
@@ -785,5 +785,5 @@ df_prts_tus = prepare_prts_tu(call_graph)
 trends_transformation_units(call_graph, df_prts_tus, export_png, export_path)
 trend_single_tu(df_prts_tus, pa.tu, pa.tu_2, export_png, export_path)
 
-df_tu = pd.read_csv("models/files_for_model/transformations_handwritten.csv")
+df_tu = pd.read_csv(path_prefix_csv + "/transformations_handwritten.csv")
 trend_products_degraded(df_tu, call_graph, export_png, export_path)
