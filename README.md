@@ -1,7 +1,5 @@
 # Analysis Tool for Temporal Graphs in Neo4j
 
-Project Repository for analysis tool working on temporal graphs.  
-  
 Owner: Philipp Plamper  
 Date: 22.09.2022
 
