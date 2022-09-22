@@ -11,4 +11,4 @@ Check the requirements if you haven't done any setup yet.
 
 ## Graph Model
 
-![graph_model](https://user-images.githubusercontent.com/91727135/136388385-4afd30e2-959a-440e-b875-15d8ca35a7a3.png)
+![graph_model_v2](https://user-images.githubusercontent.com/91727135/191779044-f79589da-4d37-442f-95bc-ca8e8df131d4.png)
