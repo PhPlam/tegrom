@@ -3,7 +3,7 @@
 Project Repository for analysis tool working on temporal graphs.  
   
 Owner: Philipp Plamper  
-Date: 08. october 2021
+Date: 22.09.2022
 
 ## Suggestion
 
