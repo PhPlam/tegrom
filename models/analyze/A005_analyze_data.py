@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 20. october 2021
+# Date: 23. september 2022
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,7 +12,7 @@ from A000_path_variables_analyze import path_prefix, path_prefix_csv
 ##################################################################################
 
 # molecules per measurement
-def molecules_per_measurement(molecule_data, export_png, export_path):
+def molecules_per_snapshot_data(molecule_data, export_png, export_path):
     data = molecule_data.drop_duplicates(subset=['peak_id'])
     aggregation_functions = {'peak_charge': 'sum'}
     df_dup = data.groupby(data['measurement_id']).aggregate(aggregation_functions)
@@ -41,7 +41,7 @@ def molecules_per_measurement(molecule_data, export_png, export_path):
     plt.xticks(np.arange(0, len(df_count), 1))
 
     if export_png == 1:
-        name = 'data_molecules_per_measurement'
+        name = 'molecules_data'
         plt.savefig(export_path + name + '.png', bbox_inches='tight')
 
     plt.clf()
@@ -107,6 +107,6 @@ export_png = 1
 export_path = path_prefix
 
 #call functions
-molecules_per_measurement(molecule_data, export_png, export_path)
+molecules_per_snapshot_data(molecule_data, export_png, export_path)
 sum_relative_intensity(molecule_data, export_png, export_path)
 occurrence_formula_class(molecule_data, export_png, export_path)

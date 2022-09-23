@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 21. september 2022
+# Date: 23. september 2022
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -35,6 +35,37 @@ def get_database_connection(host, user, passwd, db_name):
     database_connection = Graph(host, auth=(user, passwd), name=db_name)
     print('done: establish database connection')
     return database_connection
+
+
+# molecules per snapshot
+def molecules_per_snapshot_graph(call_graph, export_png, export_path):
+    df_count = call_graph.run("""
+        MATCH (m:Molecule)
+        RETURN count(m) as cnt_mol, m.point_in_time as pit 
+        ORDER BY pit ASC
+    """).to_data_frame()
+
+    df_count['avg_mol'] = df_count.cnt_mol.mean()
+    mol_sd = np.std(np.array(df_count.cnt_mol, df_count.pit))
+
+    plt.figure(figsize=(6, 3))
+    plt.suptitle('Molecules in graph', fontsize=18, fontweight='bold')
+    plt.bar(df_count.pit, df_count.cnt_mol, color='green')
+    plt.plot(df_count.pit, df_count.avg_mol, color='purple', label='average')
+    plt.plot(df_count.pit, df_count.avg_mol+mol_sd, linestyle='--', color='purple', label='standard deviation')
+    plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
+    plt.plot(df_count.pit, df_count.avg_mol-mol_sd, linestyle='--', color='purple')
+    plt.axhspan(df_count.cnt_mol.mean()-mol_sd, df_count.cnt_mol.mean()+mol_sd, alpha=0.15, color='purple')
+    plt.xlabel('time', fontsize=14, fontweight='bold')
+    plt.ylabel('nodes "molecule"', fontsize=14, fontweight='bold')
+    plt.xticks(np.arange(0, len(df_count), 1), fontsize=14)
+    plt.yticks(fontsize=14)
+
+    if export_png == 1:
+        name = 'molecules_graph'
+        plt.savefig(export_path + name + '.png', bbox_inches='tight')
+
+    print('done: create image "molecules per snapshot"')
 
 # distribution of the intensity trends per measurement (increasing, decreasing, constant)
 def intensity_trend_distribution(call_graph, export_png, export_path):
@@ -774,6 +805,7 @@ export_html = 0
 export_path = path_prefix
 
 # functions
+molecules_per_snapshot_graph(call_graph, export_png, export_path)
 intensity_trend_distribution(call_graph, export_png, export_path)
 outgoing_transformations_measurement(call_graph, export_png, export_path)
 outgoing_transformations_occurrence(call_graph, export_png, export_path)
