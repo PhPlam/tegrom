@@ -65,15 +65,16 @@ def intensity_trend_distribution(call_graph, export_png, export_path):
     inc_rel['mid'] = inc_rel.increase + dec_rel.decrease + same_rel.same
 
     plt.figure(figsize=(6, 3))
-    plt.suptitle('Distribution of the intensity trends at "SAME_AS" relationships per measurement')
+    plt.suptitle('Distribution of the intensity trends at the edges "SAME_AS"', fontsize=18, fontweight='bold')
     plt.bar(same_rel.time, inc_rel.increase + dec_rel.decrease + same_rel.same, color = 'purple')
     plt.bar(dec_rel.time, dec_rel.decrease + inc_rel.increase, color = 'orange')
     plt.bar(inc_rel.time, inc_rel.increase, color = 'green')
     plt.plot(get_mol.time, get_mol.cmol, color = 'red')
-    plt.xlabel('Measurement')
-    plt.ylabel('Number of outgoing \n "SAME_AS" relationships')
-    plt.legend(['Number nodes "Molecule"', 'Persistent intensity', 'Decreasing intensity', 'Inreasing intensity'], loc='upper left', bbox_to_anchor=(1, 1))
-    plt.xticks(np.arange(0, len(get_mol), 1))
+    plt.xlabel('time', fontsize=16, fontweight='bold')
+    plt.ylabel('outgoing edges \n "SAME_AS"', fontsize=16, fontweight='bold')
+    plt.legend(['nodes "Molecule"', 'consistent intensity', 'decreasing intensity', 'inreasing intensity'], loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
+    plt.xticks(np.arange(0, len(get_mol), 1), fontsize=14)
+    plt.yticks(fontsize=14)
 
     if export_png == 1:
         name = 'graph_intensity_trend_distribution'
@@ -105,14 +106,15 @@ def outgoing_transformations_measurement(call_graph, export_png, export_path):
 
     plt.figure(figsize=(6, 3))
 
-    plt.suptitle('Outgoing transformations per measurement')
-    plt.xlabel('Measurement')
-    plt.ylabel('Number of outgoing \n transformations')
+    plt.suptitle('Number of chemical transformations', fontsize=18, fontweight='bold')
+    plt.xlabel('time', fontsize=16, fontweight='bold')
+    plt.ylabel('number of \n transformations', fontsize=16, fontweight='bold')
     plt.bar(or_pot.time, or_pot.relationships_out, color='green')
     plt.bar(or_prt.time, or_prt.relationships_out, color='orange')
     plt.plot(get_mol.time, get_mol.cmol, color = 'black', lw=1.5)
-    plt.legend(['Number of nodes "Molecule"', '"POTENTIAL_TRANSFORMATION" relationships', '"PREDICTED_TRANSFORMATION" relationships'], loc='upper left', bbox_to_anchor=(1, 1))
-    plt.xticks(np.arange(0, len(get_mol), 1))
+    plt.legend(['nodes "Molecule"', 'edges "POTENTIAL_TRANSFORMATION"', 'edges "PREDICTED_TRANSFORMATION"'], loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
+    plt.xticks(np.arange(0, len(get_mol), 1), fontsize=14)
+    plt.yticks(fontsize=14)
 
     if export_png == 1:
         name = 'graph_outgoing_transformations_measurement'
@@ -122,7 +124,7 @@ def outgoing_transformations_measurement(call_graph, export_png, export_path):
     print('done: create image "outgoing transformations measurement"')
     # plt.show()
 
-# occurrence oft outgoing transformations
+# occurrence of outgoing transformations
 def outgoing_transformations_occurrence(call_graph, export_png, export_path):
     most_outgoing_relationships = call_graph.run("""
         MATCH (m:Molecule)-[c:PREDICTED_TRANSFORMATION]->(:Molecule)
