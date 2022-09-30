@@ -49,7 +49,7 @@ def molecules_per_snapshot_graph(call_graph, export_png, export_path):
     mol_sd = np.std(np.array(df_count.cnt_mol, df_count.pit))
 
     plt.figure(figsize=(6, 3))
-    plt.suptitle('Molecules in graph', fontsize=18, fontweight='bold')
+    #plt.suptitle('Molecules in graph', fontsize=18, fontweight='bold')
     plt.bar(df_count.pit, df_count.cnt_mol, color='green')
     plt.plot(df_count.pit, df_count.avg_mol, color='purple', label='average')
     plt.plot(df_count.pit, df_count.avg_mol+mol_sd, linestyle='--', color='purple', label='standard deviation')
@@ -57,7 +57,7 @@ def molecules_per_snapshot_graph(call_graph, export_png, export_path):
     plt.plot(df_count.pit, df_count.avg_mol-mol_sd, linestyle='--', color='purple')
     plt.axhspan(df_count.cnt_mol.mean()-mol_sd, df_count.cnt_mol.mean()+mol_sd, alpha=0.15, color='purple')
     plt.xlabel('time', fontsize=14, fontweight='bold')
-    plt.ylabel('nodes "molecule"', fontsize=14, fontweight='bold')
+    plt.ylabel('nodes "Molecule"', fontsize=14, fontweight='bold')
     plt.xticks(np.arange(0, len(df_count), 1), fontsize=14)
     plt.yticks(fontsize=14)
 
@@ -96,11 +96,11 @@ def intensity_trend_distribution(call_graph, export_png, export_path):
     inc_rel['mid'] = inc_rel.increase + dec_rel.decrease + same_rel.same
 
     plt.figure(figsize=(6, 3))
-    plt.suptitle('Distribution of the intensity trends at the edges "SAME_AS"', fontsize=18, fontweight='bold')
+    #plt.suptitle('Distribution of the intensity trends at the edges "SAME_AS"', fontsize=18, fontweight='bold')
     plt.bar(same_rel.time, inc_rel.increase + dec_rel.decrease + same_rel.same, color = 'purple')
     plt.bar(dec_rel.time, dec_rel.decrease + inc_rel.increase, color = 'orange')
     plt.bar(inc_rel.time, inc_rel.increase, color = 'green')
-    plt.plot(get_mol.time, get_mol.cmol, color = 'red')
+    plt.plot(get_mol.time, get_mol.cmol, color = 'black')
     plt.xlabel('time', fontsize=16, fontweight='bold')
     plt.ylabel('outgoing edges \n "SAME_AS"', fontsize=16, fontweight='bold')
     plt.legend(['nodes "Molecule"', 'consistent intensity', 'decreasing intensity', 'inreasing intensity'], loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
@@ -137,7 +137,7 @@ def outgoing_transformations_measurement(call_graph, export_png, export_path):
 
     plt.figure(figsize=(6, 3))
 
-    plt.suptitle('Number of chemical transformations', fontsize=18, fontweight='bold')
+    #plt.suptitle('Number of chemical transformations', fontsize=18, fontweight='bold')
     plt.xlabel('time', fontsize=16, fontweight='bold')
     plt.ylabel('number of \n transformations', fontsize=16, fontweight='bold')
     plt.bar(or_pot.time, or_pot.relationships_out, color='green')
