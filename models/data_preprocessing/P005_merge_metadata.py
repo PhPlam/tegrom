@@ -2,8 +2,8 @@
 # Date: 16. march 2022
 
 import pandas as pd
-from P000_path_variables_preprocess import sample_meta_file_csv, sample_join_file_csv 
-from P000_path_variables_preprocess import export_path_metadata
+import P001_parameters_preprocessing as pp
+import P000_path_variables_preprocess as pvp
 
 
 ##################################################################################
@@ -63,8 +63,8 @@ def export_file(data, export_path):
 ##################################################################################
 
 # define data
-sample_1 = sample_meta_file_csv
-sample_2 = sample_join_file_csv
+sample_1 = pvp.load_csv(pp.file_sample_meta, seperator=';')
+sample_2 = pvp.load_csv(pp.file_sample_join, seperator=';')
 time_list = []
 
 # calculate
@@ -73,4 +73,4 @@ extracted_metadata = extract_metadata(combined_metadata)
 removed_measurements = remove_measurements(extracted_metadata, time_list)
 
 # export to csv
-export_file(removed_measurements, export_path_metadata)
+pvp.export_csv(pp.export_metadata, removed_measurements)

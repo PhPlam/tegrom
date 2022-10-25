@@ -1,9 +1,9 @@
 # Name: Philipp Plamper
-# Date: 19. september 2022
+# Date: 25. october 2022
 
 import pandas as pd
-from P000_path_variables_preprocess import raw_data_csv, meta_file_file_csv
-from P000_path_variables_preprocess import export_path_preprocess, cleaned_file_path
+import P001_parameters_preprocessing as pp
+import P000_path_variables_preprocess as pvp
 
 
 ##################################################################################
@@ -48,19 +48,14 @@ def delete_duplicates(removed_molecules_without_measurement):
     print('done: remove duplicate formula strings')
     return data
 
-# export to csv
-def export_file(data, export_path):
-    data.to_csv(export_path, sep=',', encoding='utf-8', index=False)
-    print('done: export data to ' + str(export_path))
-
 
 ##################################################################################
 #call functions###################################################################
 ##################################################################################
 
 # define data
-original_data = raw_data_csv
-metadata = meta_file_file_csv
+original_data = pvp.load_csv(pp.file_molecules, seperator=';')
+metadata = pvp.load_csv(pp.export_metadata, seperator=',')
 
 #calculate 
 filled_data = fill_null_values(original_data)
@@ -69,5 +64,5 @@ removed_molecules_without_measurement = remove_molecules_without_measurement(shr
 removed_duplicate_data = delete_duplicates(removed_molecules_without_measurement)
 
 # export to csv
-export_file(removed_molecules_without_measurement, cleaned_file_path)
-export_file(removed_duplicate_data, export_path_preprocess)
+pvp.export_csv(pp.export_cleaned_molecules, removed_molecules_without_measurement)
+pvp.export_csv(pp.export_unique_molecules, removed_duplicate_data)

@@ -1,10 +1,10 @@
 # Name: Philipp Plamper
-# Date: 19. september 2022
+# Date: 25. october 2022
 
 import pandas as pd
 from progress.bar import Bar
-from P000_path_variables_preprocess import formula_strings_csv, transformation_unit_csv
-from P000_path_variables_preprocess import export_path_create
+import P001_parameters_preprocessing as pp
+import P000_path_variables_preprocess as pvp
 
 
 ##################################################################################
@@ -209,18 +209,13 @@ def create_strings_transformation_unit(df_molecules):
     print('done: create strings for transformation unit')
     return df_molecules
 
-#export to csv
-def export_file(data, export_path):
-    data.to_csv(export_path, sep=',', encoding='utf-8', index=False)
-    print('done: export data to ' + str(export_path))
-
 ##################################################################################
 #call functions###################################################################
 ##################################################################################
 
 # define data
-formula_strings = formula_strings_csv
-transformation_unit = transformation_unit_csv
+formula_strings = pvp.load_csv(pp.export_unique_molecules, seperator=',')
+transformation_unit = pvp.load_csv(pp.file_transformation_units, seperator=',')
 
 # calculate
 calculated_photoaddtion = calculate_new_formulas_photoaddition(formula_strings, transformation_unit)
@@ -231,4 +226,4 @@ df_molecules = check_existence_of_strings(df_added_strings)
 calculated_transformations = create_strings_transformation_unit(df_molecules)
 
 #export
-export_file(calculated_transformations,export_path_create)
+pvp.export_csv(pp.export_relationships, calculated_transformations)
