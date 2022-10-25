@@ -1,46 +1,16 @@
 # Name: Philipp Plamper
-# Date: 20. september 2022
+# Date: 25.october 2022
 
 import pandas as pd
 from py2neo import Graph
-from C000_path_variables_create import host, user, passwd, db_name_temporal
-from C000_path_variables_create import int_change_path
-from C000_path_variables_create import lower_limit, upper_limit
-
-
-##################################################################################
-#settings#########################################################################
-##################################################################################
-
-# credentials 
-host = host
-user = user
-passwd = passwd
-
-# select database
-db_name = db_name_temporal
-
-# fault tolerance for intensity trend 
-lower_limit = lower_limit
-upper_limit = upper_limit
-
-# set path
-int_change_path = int_change_path # calculated occurring transformations
-
+import C000_path_variables_create as pvc
 
 ##################################################################################
 #define functions to calculate occurring transformations (RelIdent-Algorithm)#####
 ##################################################################################
 
-# establish connection to the database
-def get_database_connection(host, user, passwd, db_name):
-    database_connection = Graph(host, auth=(user, passwd), name=db_name)
-    print('done: establish database connection')
-    return database_connection
-
-
 # calculate occurring transformations
-def calculate_occurring_transformations(call_graph):
+def calculate_occurring_transformations(call_graph, upper_limit, lower_limit):
     graph = call_graph
     increasing_intensity_df = graph.run("""
         MATCH (m1:Molecule)-[s:SAME_AS]->(m2:Molecule)
@@ -184,11 +154,11 @@ def normalize_weights(call_graph):
 ##################################################################################
 
 # establish connection to graph
-call_graph = get_database_connection(host, user, passwd, db_name)
+call_graph = pvc.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
 
 # calculate and add occurring transformations (RelIdent-Algorithm)
-occ_trans = calculate_occurring_transformations(call_graph)
+occ_trans = calculate_occurring_transformations(call_graph, pvc.upper_limit, pvc.lower_limit)
 trans_units = calculate_transformation_units(occ_trans)
-calc_weights = calculate_weights(trans_units, int_change_path)
+calc_weights = calculate_weights(trans_units, pvc.int_change_path)
 create_relationship_predicted_transformation(call_graph, calc_weights)
 normalize_weights(call_graph)

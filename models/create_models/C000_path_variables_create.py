@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 23. june 2022
+# Date: 25. october 2022
 
 # contains path variables used to create models
 # contains test functions to check reliabilty of data
@@ -24,6 +24,7 @@ passwd = ptg.passwd
 # select database
 db_name_temporal = ptg.db_name_temporal
 db_name_smash = ptg.db_name_smash
+db_name_rev = ptg.db_name_rev
 
 # set filepath prefix
 abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
@@ -45,3 +46,20 @@ tendency_weight_path = path_prefix + 'tendency_weights.csv' # path to calculated
 # define fault tolerance for intensity trend 
 upper_limit = ptg.upper_limit # above considered as increasing intensity
 lower_limit = ptg.lower_limit # below considered as decreasing intensity
+
+
+##################################################################################
+# function to create and to connect to database ##################################
+##################################################################################
+
+# establish connection to the new or replaced database based on 'db_name'
+def connect_to_database(host, user, passwd, db_name):
+    database_connection = Graph(host, auth=(user, passwd), name=db_name)
+    print('done: establish database connection')
+    return database_connection
+
+# create or replace database based on 'db_name' in neo4j instance with help of the initial 'system' database
+def create_database(host, user, passwd, db_name): 
+    system_db = Graph(host, auth=(user, passwd), name='system')
+    system_db.run("CREATE OR REPLACE DATABASE " + db_name)
+    print('done: create or replace database')

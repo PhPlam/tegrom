@@ -1,41 +1,13 @@
 # Name: Philipp Plamper 
-# Date: 20. september 2022
+# Date: 25.october 2022
 
 import os
 from py2neo import Graph
-from C000_path_variables_create import host, user, passwd, db_name_smash
-
-
-##################################################################################
-#settings#########################################################################
-##################################################################################
-
-# credentials 
-host = host
-user = user
-passwd = passwd
-
-# select database
-db_name_smash = db_name_smash
-db_name_rev = 'modeltransformback'
-
+import C000_path_variables_create as pvc
 
 ##################################################################################
 #functions########################################################################
 ##################################################################################
-
-# establish connection to the database
-def get_database_connection(host, user, passwd, db_name):
-    database_connection = Graph(host, auth=(user, passwd), name=db_name)
-    print('done: establish database connection')
-    return database_connection
-
-# create or replace database based on 'db_name' in neo4j instance with help of the initial 'system' database
-def create_database(host, user, passwd, db_name): 
-    system_db = Graph(host, auth=(user, passwd), name='system')
-    system_db.run("CREATE OR REPLACE DATABASE " + db_name)
-    print('done: create or replace database')
-
 
 # create index on formula string and point in time
 def create_index(call_graph):
@@ -197,11 +169,11 @@ def create_property_intensity_trend(call_graph):
 ##################################################################################
 
 # create new database for tranformation
-create_database(host, user, passwd, db_name_rev)
+pvc.create_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_rev)
 
 # get database connections
-call_graph_com = get_database_connection(host, user, passwd, db_name_smash)
-call_graph_back = get_database_connection(host, user, passwd, db_name_rev)
+call_graph_com = pvc.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_smash)
+call_graph_back = pvc.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_rev)
 create_index(call_graph_back)
 
 for transition in range(1,13):

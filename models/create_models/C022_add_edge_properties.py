@@ -1,42 +1,16 @@
 # Name: Philipp Plamper
-# Date: 11. july 2022
+# Date: 25. october 2022
 
 import pandas as pd
 from py2neo import Graph
-from C000_path_variables_create import host, user, passwd, db_name_temporal
 from C000_path_variables_create import lower_limit, upper_limit
-from C000_path_variables_create import tendency_weight_path
+import C000_path_variables_create as pvc
 
 # pd.options.mode.chained_assignment = None
 
 ##################################################################################
-#settings#########################################################################
-##################################################################################
-
-# credentials  
-host = host
-user = user
-passwd = passwd
-
-# select database
-db_name = db_name_temporal
-
-# path of used files
-tendency_weight_path = tendency_weight_path # calculated weights
-
-# fault tolerance for intensity trend 
-lower_limit = lower_limit
-upper_limit = upper_limit
-
-##################################################################################
 #define functions for calculating weights#########################################
 ##################################################################################
-
-# establish connection to the database
-def get_database_connection(host, user, passwd, db_name):
-    database_connection = Graph(host, auth=(user, passwd), name=db_name)
-    print('done: establish database connection')
-    return database_connection
 
 # get property intensity_trend from SAME_AS relationship
 def get_tendencies(call_graph):
@@ -57,7 +31,7 @@ def get_tendencies(call_graph):
 
 # calculate tendency weight for every intensity trend
 # inlcudes parts of the calculation of the connected weight
-def calc_weights(tendencies, tendency_weight_path):
+def calc_weights(tendencies, tendency_weight_path, upper_limit, lower_limit):
     MAX = tendencies.intensity_trend.max()
     MIN = tendencies.intensity_trend.min()
 
@@ -113,9 +87,9 @@ def add_weights_to_graph(tendency_weights, call_graph):
 ##################################################################################
 
 # establish connection to graph
-call_graph = get_database_connection(host, user, passwd, db_name)
+call_graph = pvc.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
 
 # calculate weights and add to graph
 tendencies = get_tendencies(call_graph)
-tendency_weights = calc_weights(tendencies, tendency_weight_path)
+tendency_weights = calc_weights(tendencies, pvc.tendency_weight_path, pvc.upper_limit, pvc.lower_limit)
 add_weights_to_graph(tendency_weights, call_graph)
