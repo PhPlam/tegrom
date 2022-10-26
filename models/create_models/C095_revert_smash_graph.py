@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 25.october 2022
+# Date: 26.october 2022
 
 import os
 from py2neo import Graph

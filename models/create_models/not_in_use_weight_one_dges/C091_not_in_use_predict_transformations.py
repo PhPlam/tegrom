@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 26.october 2022
+# Date: 25.october 2022
 
 import pandas as pd
 from py2neo import Graph
@@ -24,8 +24,9 @@ def calculate_occurring_transformations(call_graph, upper_limit, lower_limit):
         AND m3.point_in_time = m1.point_in_time 
         AND m4.point_in_time = m2.point_in_time
         WITH m2.C - m3.C as C, m2.H - m3.H as H, m2.O - m3.O as O, m2.N - m3.N as N, m2.S - m3.S as S, m2, m3, m1, s, s2
-        RETURN m2.formula_string as to_molecule, m1.point_in_time as from_mid, 
-            m2.point_in_time as to_mid, m3.formula_string as from_molecule, C, H, O, N, S
+        RETURN m2.formula_string as to_molecule, m1.point_in_time as from_mid, m2.point_in_time as to_mid, m3.formula_string as from_molecule, 
+        C, H, O, N, S, s2.tendency_weight as tendency_weight_lose, s.tendency_weight as tendency_weight_gain,
+        s2.tendency_weight_conn as tendency_weight_lose_conn, s.tendency_weight_conn as tendency_weight_gain_conn
     """).to_data_frame()
     
     print('done: calculate occurring transformations')
@@ -68,6 +69,31 @@ def calculate_transformation_units(occ_trans):
     print('done: calculate transformation unit strings')
     return occ_trans
 
+
+# calculate combined and connected weight
+def calculate_weights(trans_units, int_change_path):
+    trans_units = trans_units   
+    
+    conn_weight_list = []
+    comb_weight_list = []
+
+    for row in trans_units.itertuples():
+        comb_erg = (row.tendency_weight_lose + row.tendency_weight_gain)
+        conn_erg = (row.tendency_weight_lose_conn + row.tendency_weight_gain_conn)
+        
+        comb_weight_list.append(comb_erg)
+        conn_weight_list.append(conn_erg)
+        
+    trans_units['weight_combined'] = comb_weight_list
+    trans_units['weight_connected'] = conn_weight_list
+
+    # add weights to csv with calculated occurring transformations 
+    trans_units.to_csv(int_change_path, sep=',', encoding='utf-8', index=False)
+
+    print('done: calculate combined and connected weight')
+    return trans_units
+
+
 # create relationship PREDICTED_TRANSFORMATION with calculated occurring transformations
 def create_relationship_predicted_transformation(call_graph, calc_weights):
     calc_weights = calc_weights
@@ -86,14 +112,42 @@ def create_relationship_predicted_transformation(call_graph, calc_weights):
                 O: toInteger($O), 
                 N: toInteger($N), 
                 S: toInteger($S), 
-                transformation_unit: $transformation_unit}]->(m2)
+                transformation_unit: $transformation_unit, 
+                combined_weight: toFloat($weight_combined), 
+                connected_weight: toFloat($weight_connected)}]->(m2)
         """, parameters= {'from_molecule': row['from_molecule'], 'from_mid': row['from_mid'], 
         'to_molecule': row['to_molecule'], 'to_mid': row['to_mid'], 'C': row['C'], 'H': row['H'], 
-        'O': row['O'], 'N': row['N'], 'S': row['S'], 'transformation_unit': row['transformation_unit']
+        'O': row['O'], 'N': row['N'], 'S': row['S'], 'transformation_unit': row['transformation_unit'], 
+        'weight_combined': row['weight_combined'], 'weight_connected': row['weight_connected']
         })        
     graph.commit(tx) 
 
     print('done: create PREDICTED_TRANSFORMATION relationship')
+
+
+# normalize incoming combined and connected weight
+def normalize_weights(call_graph):
+    graph = call_graph
+    graph.run("""
+        MATCH (:Molecule)-[t:PREDICTED_TRANSFORMATION]->(m:Molecule)
+        WITH m.formula_string as fs, m.point_in_time as mid, sum(t.connected_weight) as sum_weight
+        MATCH (:Molecule)-[t1:PREDICTED_TRANSFORMATION]->(m1:Molecule)
+        WHERE m1.formula_string = fs AND m1.point_in_time = mid
+        SET t1.normalized_connected_weight = apoc.math.round(t1.connected_weight/sum_weight, 3)
+        RETURN fs, mid, sum_weight
+    """)
+
+    graph.run("""
+        MATCH (:Molecule)-[t:PREDICTED_TRANSFORMATION]->(m:Molecule)
+        WITH m.formula_string as fs, m.point_in_time as mid, sum(t.combined_weight) as sum_weight
+        MATCH (:Molecule)-[t1:PREDICTED_TRANSFORMATION]->(m1:Molecule)
+        WHERE m1.formula_string = fs AND m1.point_in_time = mid
+        SET t1.normalized_combined_weight = apoc.math.round(t1.combined_weight/sum_weight, 3)
+        RETURN fs, mid, sum_weight
+    """)
+
+    print('done: normalize weights')
+
 
 ##################################################################################
 #call functions###################################################################
@@ -105,4 +159,6 @@ call_graph = pvc.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name
 # calculate and add occurring transformations (RelIdent-Algorithm)
 occ_trans = calculate_occurring_transformations(call_graph, pvc.upper_limit, pvc.lower_limit)
 trans_units = calculate_transformation_units(occ_trans)
-create_relationship_predicted_transformation(call_graph, trans_units)
+calc_weights = calculate_weights(trans_units, pvc.int_change_path)
+create_relationship_predicted_transformation(call_graph, calc_weights)
+normalize_weights(call_graph)

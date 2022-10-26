@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 16. march 2022
+# Date: 26. october 2022
 
 import pandas as pd
 import P001_parameters_preprocessing as pp
@@ -73,4 +73,4 @@ extracted_metadata = extract_metadata(combined_metadata)
 removed_measurements = remove_measurements(extracted_metadata, time_list)
 
 # export to csv
-pvp.export_csv(pp.export_metadata, removed_measurements)
+pvp.export_csv(pp.metadata, removed_measurements)

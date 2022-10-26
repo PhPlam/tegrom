@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 25. october 2022
+# Date: 26. october 2022
 
 import pandas as pd
 import P001_parameters_preprocessing as pp
@@ -55,7 +55,7 @@ def delete_duplicates(removed_molecules_without_measurement):
 
 # define data
 original_data = pvp.load_csv(pp.file_molecules, seperator=';')
-metadata = pvp.load_csv(pp.export_metadata, seperator=',')
+metadata = pvp.load_csv(pp.metadata, seperator=',')
 
 #calculate 
 filled_data = fill_null_values(original_data)
@@ -64,5 +64,5 @@ removed_molecules_without_measurement = remove_molecules_without_measurement(shr
 removed_duplicate_data = delete_duplicates(removed_molecules_without_measurement)
 
 # export to csv
-pvp.export_csv(pp.export_cleaned_molecules, removed_molecules_without_measurement)
-pvp.export_csv(pp.export_unique_molecules, removed_duplicate_data)
+pvp.export_csv(pp.cleaned_molecules, removed_molecules_without_measurement)
+pvp.export_csv(pp.unique_molecules, removed_duplicate_data)

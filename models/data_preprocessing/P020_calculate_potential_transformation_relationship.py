@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 25. october 2022
+# Date: 26. october 2022
 
 import pandas as pd
 from progress.bar import Bar
@@ -214,7 +214,7 @@ def create_strings_transformation_unit(df_molecules):
 ##################################################################################
 
 # define data
-formula_strings = pvp.load_csv(pp.export_unique_molecules, seperator=',')
+formula_strings = pvp.load_csv(pp.unique_molecules, seperator=',')
 transformation_unit = pvp.load_csv(pp.file_transformation_units, seperator=',')
 
 # calculate
@@ -226,4 +226,4 @@ df_molecules = check_existence_of_strings(df_added_strings)
 calculated_transformations = create_strings_transformation_unit(df_molecules)
 
 #export
-pvp.export_csv(pp.export_relationships, calculated_transformations)
+pvp.export_csv(pp.relationships, calculated_transformations)

@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 25. october 2022
+# Date: 26. october 2022
 
 # filenames for data preprocessing
 
@@ -20,13 +20,13 @@ file_sample_join = 'Photodatensatz_Graphanalyse_meas.metadata_2020-09-10.csv'
 ### paths to export calculated data ### 
 
 # unique formulas of molecules
-export_unique_molecules = 'unique_formula_strings.csv'
+unique_molecules = 'unique_formula_strings.csv'
 
 # cleaned file with molecules (e.g. filled null values)
-export_cleaned_molecules = 'ufz_all_formulas_cleaned.csv'
+cleaned_molecules = 'ufz_all_formulas_cleaned.csv'
 
 # calculated relationships
-export_relationships = 'formula_relationships.csv'
+relationships = 'formula_relationships.csv'
 
 # metadata
-export_metadata = 'sample_metadata.csv'
+metadata = 'sample_metadata.csv'
