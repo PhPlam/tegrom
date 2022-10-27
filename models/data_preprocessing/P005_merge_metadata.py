@@ -1,8 +1,7 @@
 # Name: Philipp Plamper
-# Date: 26. october 2022
+# Date: 27. october 2022
 
 import pandas as pd
-import P001_parameters_preprocessing as pp
 import P000_path_variables_preprocess as pvp
 
 
@@ -38,39 +37,33 @@ def extract_metadata(combined_metadata):
     return extracted_metadata
 
 # remove measurements from data
-def remove_measurements(extracted_data, time_list):
-    time_list = []
-    for point_in_time in time_list:
-        extracted_data = extracted_data[extracted_data.timepoint != point_in_time]
+# def remove_measurements(extracted_data, time_list, column_param):
+#     time_list = []
+#     for point_in_time in time_list:
+#         extracted_data = extracted_data[extracted_data.timepoint != point_in_time]
 
-    n = 0   
-    for index, row in extracted_data.iterrows():
-        extracted_data.at[index,'timepoint'] = n
-        n += 1
+#     n = 0   
+#     for index, row in extracted_data.iterrows():
+#         extracted_data.at[index,'timepoint'] = n
+#         n += 1
    
-    removed_measurements = extracted_data.reset_index(drop=True)
-    print('done: remove measurements')
-    return removed_measurements
-
-#export to csv
-def export_file(data, export_path):
-    data.to_csv(export_path, sep=',', encoding='utf-8', index=False)
-    print('done: export data to ' + str(export_path))
-
+#     removed_measurements = extracted_data.reset_index(drop=True)
+#     print('done: remove measurements')
+#     return removed_measurements
 
 ##################################################################################
 #call functions###################################################################
 ##################################################################################
 
 # define data
-sample_1 = pvp.load_csv(pp.file_sample_meta, seperator=';')
-sample_2 = pvp.load_csv(pp.file_sample_join, seperator=';')
+sample_1 = pvp.load_csv(pvp.file_sample_meta, seperator=';')
+sample_2 = pvp.load_csv(pvp.file_sample_join, seperator=';')
 time_list = []
 
 # calculate
 combined_metadata = map_ids(sample_1, sample_2)
 extracted_metadata = extract_metadata(combined_metadata)
-removed_measurements = remove_measurements(extracted_metadata, time_list)
+#removed_measurements = remove_measurements(extracted_metadata, time_list, pvp.column_param)
 
 # export to csv
-pvp.export_csv(pp.metadata, removed_measurements)
+pvp.export_csv(pvp.metadata, extracted_metadata)

@@ -1,10 +1,48 @@
 # Name: Philipp Plamper
-# Date: 25. october 2022
+# Date: 27. october 2022
 
 # functions to load and export csv files for preprocessing
 
 import pandas as pd
 import os
+import sys
+
+abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
+path_prefix = str(abs_path[0]) # add path to files in project folder
+path_prefix = path_prefix.replace('\\', '/') # necessary for application in Windows
+sys.path.insert(0, path_prefix)
+
+import variables.V001_variables as pv
+
+##################################################################################
+# paths and files ################################################################
+##################################################################################
+
+# molecules
+file_molecules = pv.file_molecules
+
+# transformation units
+file_transformation_units = pv.file_transformation_units
+
+# metadata of sample
+file_sample_meta = pv.file_sample_meta
+
+# metadata of measurements
+file_sample_join = pv.file_sample_join
+
+### paths to export calculated data ### 
+
+# unique formulas of molecules
+unique_molecules = pv.unique_molecules
+
+# cleaned file with molecules (e.g. filled null values)
+cleaned_molecules = pv.cleaned_molecules
+
+# calculated relationships
+relationships = pv.relationships
+
+# metadata
+metadata = pv.metadata
 
 ##################################################################################
 # functions to load and export data ##############################################

@@ -1,14 +1,19 @@
 # Name: Philipp Plamper
-# Date: 26. october 2022
+# Date: 27. october 2022
 
 import pandas as pd
-import P001_parameters_preprocessing as pp
 import P000_path_variables_preprocess as pvp
 
 
 ##################################################################################
 #clean data by removing null values###############################################
 ##################################################################################
+
+# keep only necessary columns
+def remove_unused_columns(original_data):
+    df_removed_columns = original_data[['measurement_id', 'peak_relint_tic', 'formula_string', 'C', 'H', 'N', 'O', 'S', 'formula_class']]
+    print('done: remove unused columns')
+    return df_removed_columns
 
 # fill null values with 0
 def fill_null_values(original_data):
@@ -54,15 +59,16 @@ def delete_duplicates(removed_molecules_without_measurement):
 ##################################################################################
 
 # define data
-original_data = pvp.load_csv(pp.file_molecules, seperator=';')
-metadata = pvp.load_csv(pp.metadata, seperator=',')
+original_data = pvp.load_csv(pvp.file_molecules, seperator=';')
+metadata = pvp.load_csv(pvp.metadata, seperator=',')
 
 #calculate 
-filled_data = fill_null_values(original_data)
+removed_data = remove_unused_columns(original_data)
+filled_data = fill_null_values(removed_data)
 shrinked_data = remove_molecules(filled_data)
 removed_molecules_without_measurement = remove_molecules_without_measurement(shrinked_data, metadata)
 removed_duplicate_data = delete_duplicates(removed_molecules_without_measurement)
 
 # export to csv
-pvp.export_csv(pp.cleaned_molecules, removed_molecules_without_measurement)
-pvp.export_csv(pp.unique_molecules, removed_duplicate_data)
+pvp.export_csv(pvp.cleaned_molecules, removed_molecules_without_measurement)
+pvp.export_csv(pvp.unique_molecules, removed_duplicate_data)

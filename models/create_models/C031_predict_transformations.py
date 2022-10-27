@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 26.october 2022
+# Date: 27.october 2022
 
 import pandas as pd
 from py2neo import Graph
@@ -10,25 +10,31 @@ import C000_path_variables_create as pvc
 ##################################################################################
 
 # calculate occurring transformations
-def calculate_occurring_transformations(call_graph, upper_limit, lower_limit):
+def calculate_occurring_transformations(call_graph, upper_limit, lower_limit, query_params):
     graph = call_graph
     increasing_intensity_df = graph.run("""
-        MATCH (m1:Molecule)-[s:SAME_AS]->(m2:Molecule)
-        WHERE s.intensity_trend > """ + str(upper_limit) + """ AND m1.point_in_time = m2.point_in_time - 1
+        MATCH (m1:""" + query_params['label_node'] + """)-[s:""" + query_params['label_same_as'] + """]->(m2:""" + query_params['label_node'] + """)
+        WHERE s.""" + query_params['prop_edge_value_2'] + """ > """ + str(upper_limit) + """ 
+            AND m1.""" + query_params['prop_node_snapshot'] + """ = m2.""" + query_params['prop_node_snapshot'] + """ - 1
         WITH m1, m2, s
-        MATCH (m3:Molecule)-[:POTENTIAL_TRANSFORMATION]->(m2)
-        WHERE m3.point_in_time = m1.point_in_time
+        MATCH (m3:""" + query_params['label_node'] + """)-[:""" + query_params['label_potential_edge'] + """]->(m2)
+        WHERE m3.""" + query_params['prop_node_snapshot'] + """ = m1.""" + query_params['prop_node_snapshot'] + """
         WITH m3, m2, m1, s
-        MATCH (m3)-[s2:SAME_AS]->(m4:Molecule)
-        WHERE s2.intensity_trend < """ + str(lower_limit) + """
-        AND m3.point_in_time = m1.point_in_time 
-        AND m4.point_in_time = m2.point_in_time
-        WITH m2.C - m3.C as C, m2.H - m3.H as H, m2.O - m3.O as O, m2.N - m3.N as N, m2.S - m3.S as S, m2, m3, m1, s, s2
-        RETURN m2.formula_string as to_molecule, m1.point_in_time as from_mid, 
-            m2.point_in_time as to_mid, m3.formula_string as from_molecule, C, H, O, N, S
+        MATCH (m3)-[s2:""" + query_params['label_same_as'] + """]->(m4:""" + query_params['label_node'] + """)
+        WHERE s2.""" + query_params['prop_edge_value_2'] + """ < """ + str(lower_limit) + """
+        AND m3.""" + query_params['prop_node_snapshot'] + """ = m1.""" + query_params['prop_node_snapshot'] + """
+        AND m4.""" + query_params['prop_node_snapshot'] + """ = m2.""" + query_params['prop_node_snapshot'] + """
+        WITH m2.""" + query_params['prop_extra_1'] + """ - m3.""" + query_params['prop_extra_1'] + """ as """ + query_params['prop_extra_1'] + """, 
+            m2.""" + query_params['prop_extra_2'] + """ - m3.""" + query_params['prop_extra_2'] + """ as """ + query_params['prop_extra_2'] + """, 
+            m2.""" + query_params['prop_extra_3'] + """ - m3.""" + query_params['prop_extra_3'] + """ as """ + query_params['prop_extra_3'] + """,
+            m2.""" + query_params['prop_extra_4'] + """ - m3.""" + query_params['prop_extra_4'] + """ as """ + query_params['prop_extra_4'] + """,  
+            m2.""" + query_params['prop_extra_5'] + """ - m3.""" + query_params['prop_extra_5'] + """ as """ + query_params['prop_extra_5'] + """, 
+            m2, m3, m1, s, s2
+        RETURN m2.""" + query_params['prop_node_name'] + """ as to_molecule, m1.""" + query_params['prop_node_snapshot'] + """ as from_mid, 
+            m2.""" + query_params['prop_node_snapshot'] + """ as to_mid, m3.""" + query_params['prop_node_name'] + """ as from_molecule, C, H, O, N, S
     """).to_data_frame()
     
-    print('done: calculate occurring transformations')
+    print('done: calculate likely occurring transformations')
     return increasing_intensity_df
 
 
@@ -69,31 +75,32 @@ def calculate_transformation_units(occ_trans):
     return occ_trans
 
 # create relationship PREDICTED_TRANSFORMATION with calculated occurring transformations
-def create_relationship_predicted_transformation(call_graph, calc_weights):
+def create_relationship_predicted_transformation(call_graph, calc_weights, query_params):
     calc_weights = calc_weights
     graph = call_graph
 
     tx = graph.begin()
     for index, row in calc_weights.iterrows():
         tx.evaluate("""
-            MATCH (m1:Molecule), (m2:Molecule)
-            WHERE m1.formula_string = $from_molecule
-                AND m1.point_in_time = $from_mid
-                AND m2.formula_string = $to_molecule
-                AND m2.point_in_time = $to_mid
-            CREATE (m1)-[:PREDICTED_TRANSFORMATION {C: toInteger($C), 
-                H: toInteger($H), 
-                O: toInteger($O), 
-                N: toInteger($N), 
-                S: toInteger($S), 
-                transformation_unit: $transformation_unit}]->(m2)
+            MATCH (m1:""" + query_params['label_node'] + """), (m2:""" + query_params['label_node'] + """)
+            WHERE m1.""" + query_params['prop_node_name'] + """ = $from_molecule
+                AND m1.""" + query_params['prop_node_snapshot'] + """ = $from_mid
+                AND m2.""" + query_params['prop_node_name'] + """ = $to_molecule
+                AND m2.""" + query_params['prop_node_snapshot'] + """ = $to_mid
+            CREATE (m1)-[:""" + query_params['label_predicted_edge'] + """ {
+                """ + query_params['prop_extra_1'] + """: toInteger($C), 
+                """ + query_params['prop_extra_2'] + """: toInteger($H), 
+                """ + query_params['prop_extra_3'] + """: toInteger($N),
+                """ + query_params['prop_extra_4'] + """: toInteger($O),  
+                """ + query_params['prop_extra_5'] + """: toInteger($S), 
+                """ + query_params['prop_edge_value_1'] + """: $transformation_unit}]->(m2)
         """, parameters= {'from_molecule': row['from_molecule'], 'from_mid': row['from_mid'], 
         'to_molecule': row['to_molecule'], 'to_mid': row['to_mid'], 'C': row['C'], 'H': row['H'], 
         'O': row['O'], 'N': row['N'], 'S': row['S'], 'transformation_unit': row['transformation_unit']
         })        
     graph.commit(tx) 
 
-    print('done: create PREDICTED_TRANSFORMATION relationship')
+    print('done: create ' + query_params['label_predicted_edge'] + ' relationship')
 
 ##################################################################################
 #call functions###################################################################
@@ -103,6 +110,6 @@ def create_relationship_predicted_transformation(call_graph, calc_weights):
 call_graph = pvc.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
 
 # calculate and add occurring transformations (RelIdent-Algorithm)
-occ_trans = calculate_occurring_transformations(call_graph, pvc.upper_limit, pvc.lower_limit)
+occ_trans = calculate_occurring_transformations(call_graph, pvc.upper_limit, pvc.lower_limit, pvc.query_params)
 trans_units = calculate_transformation_units(occ_trans)
-create_relationship_predicted_transformation(call_graph, trans_units)
+create_relationship_predicted_transformation(call_graph, trans_units, pvc.query_params)

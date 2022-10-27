@@ -1,9 +1,8 @@
 # Name: Philipp Plamper
-# Date: 26. october 2022
+# Date: 27. october 2022
 
 import pandas as pd
 from progress.bar import Bar
-import P001_parameters_preprocessing as pp
 import P000_path_variables_preprocess as pvp
 
 
@@ -214,8 +213,8 @@ def create_strings_transformation_unit(df_molecules):
 ##################################################################################
 
 # define data
-formula_strings = pvp.load_csv(pp.unique_molecules, seperator=',')
-transformation_unit = pvp.load_csv(pp.file_transformation_units, seperator=',')
+formula_strings = pvp.load_csv(pvp.unique_molecules, seperator=',')
+transformation_unit = pvp.load_csv(pvp.file_transformation_units, seperator=',')
 
 # calculate
 calculated_photoaddtion = calculate_new_formulas_photoaddition(formula_strings, transformation_unit)
@@ -226,4 +225,4 @@ df_molecules = check_existence_of_strings(df_added_strings)
 calculated_transformations = create_strings_transformation_unit(df_molecules)
 
 #export
-pvp.export_csv(pp.relationships, calculated_transformations)
+pvp.export_csv(pvp.relationships, calculated_transformations)

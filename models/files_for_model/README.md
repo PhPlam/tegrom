@@ -54,6 +54,7 @@ Informs about content and origin of the used files.
 
 
 ### Runtime files
+### currently not in use
 
 9. tendency_weights.csv
 - contains calculated tendency weights

@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 25.october 2022
+# Date: 27.october 2022
 
 from py2neo import Graph
 import C000_path_variables_create as pvc
@@ -16,8 +16,8 @@ def get_relationships(call_graph):
         OPTIONAL MATCH (m1)-[s1:SAME_AS]->(:Molecule)
         OPTIONAL MATCH (:Molecule)-[s2:SAME_AS]->(m2)
         WHERE m2.point_in_time = m1.point_in_time + 1
-        RETURN m1.formula_string as mol_from, m1.peak_relint_tic as mol_from_int, m1.point_in_time as mol_from_time, 
-        s1.intensity_trend as mol_from_int_trend, m2.formula_string as mol_to, m2.peak_relint_tic as mol_to_int, 
+        RETURN m1.molecular_formula as mol_from, m1.peak_relint_tic as mol_from_int, m1.point_in_time as mol_from_time, 
+        s1.intensity_trend as mol_from_int_trend, m2.molecular_formula as mol_to, m2.peak_relint_tic as mol_to_int, 
         m2.point_in_time as mol_to_time, s2.intensity_trend as mol_to_int_trend, p.tu_pot as transformation_unit 
     """).to_data_frame()
 
@@ -33,7 +33,7 @@ def get_relationships(call_graph):
 def create_nodes_molecule(call_graph_par, call_graph_com):
     df_unique_mol = call_graph_par.run("""
     MATCH (m:Molecule)
-    RETURN m.formula_string as formula_string, 
+    RETURN m.molecular_formula as molecular_formula, 
         m.C as C, m.H as H, m.O as O, m.N as N, m.S as S, 
         m.formula_class as formula_class, 
         toFloat(m.O)/toFloat(m.C) as OC, 
@@ -44,7 +44,7 @@ def create_nodes_molecule(call_graph_par, call_graph_com):
     tx = call_graph_com.begin()
     for index, row in df_unique_mol.iterrows():
         tx.evaluate("""
-            CREATE (:Molecule {formula_string:$formula_string,         
+            CREATE (:Molecule {molecular_formula:$molecular_formula,         
                     C : toInteger($C), 
                     H : toInteger($H), 
                     O : toInteger($O), 
@@ -54,7 +54,7 @@ def create_nodes_molecule(call_graph_par, call_graph_com):
                     OC : toFloat($O)/toFloat($C),
                     HC : toFloat($H)/toFloat($C)})
             RETURN count(*) 
-        """, parameters= {'formula_string': row['formula_string'], 'C': row['C'], 
+        """, parameters= {'molecular_formula': row['molecular_formula'], 'C': row['C'], 
         'H': row['H'], 'O': row['O'], 'N': row['N'], 'S': row['S'], 
         'formula_class': row['formula_class']})
     call_graph_com.commit(tx)
@@ -64,7 +64,7 @@ def create_nodes_molecule(call_graph_par, call_graph_com):
 
 # create index on formula string
 def create_index(call_graph):
-    call_graph.run("CREATE INDEX FOR (m:Molecule) ON (m.formula_string)")
+    call_graph.run("CREATE INDEX FOR (m:Molecule) ON (m.molecular_formula)")
 
     print('done: create index on formula string')
 
@@ -73,8 +73,8 @@ def create_index(call_graph):
 def create_relationship_chemical_transformation(call_graph_par, call_graph_com):
     df_pot_rel = call_graph_par.run("""
     MATCH (m1:Molecule)-[pot:POTENTIAL_TRANSFORMATION]->(m2:Molecule)
-    RETURN  m1.formula_string as from_fs, pot.tu_pot as tu, 
-        m2.formula_string as to_fs, pot.C as C, pot.H as H, 
+    RETURN  m1.molecular_formula as from_fs, pot.tu_pot as tu, 
+        m2.molecular_formula as to_fs, pot.C as C, pot.H as H, 
         pot.O as O, pot.N as N, pot.S as S, count(*)
     """).to_data_frame()
 
@@ -82,8 +82,8 @@ def create_relationship_chemical_transformation(call_graph_par, call_graph_com):
     for index, row in df_pot_rel.iterrows():
         tx.evaluate("""
             MATCH (m1:Molecule), (m2:Molecule)
-            WHERE m1.formula_string = $from_fs 
-                AND m2.formula_string = $to_fs
+            WHERE m1.molecular_formula = $from_fs 
+                AND m2.molecular_formula = $to_fs
             CREATE (m1)-[:CHEMICAL_TRANSFORMATION {tu: $tu, C:$C, H: $H, O: $O, N: $N, S: $S}]->(m2)
             RETURN count(*)
         """, parameters= {'from_fs': row['from_fs'], 'to_fs': row['to_fs'], 'C': row['C'], 
@@ -111,8 +111,8 @@ def set_properties_chemical_transformation(call_graph_com, new_model_paths):
         for index, row in new_model_paths_trim.iterrows():
             tx.evaluate("""
                 MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(m2:Molecule)
-                WHERE m1.formula_string = $mol_from
-                    AND m2.formula_string = $mol_to
+                WHERE m1.molecular_formula = $mol_from
+                    AND m2.molecular_formula = $mol_to
                     AND c.tu = $transformation_unit
                 SET c.transition_""" + str(i) + """ = [toFloat($mol_to_time), toFloat($mol_from_int), 
                     toFloat($mol_to_int), toFloat($mol_from_int_trend), 
@@ -143,7 +143,7 @@ def create_property_transition_count(call_graph):
         MATCH (m1:Molecule)-[c:CHEMICAL_TRANSFORMATION]->(:Molecule)
         WITH m1, c, size(keys(c))-6 as keys
         SET c.transition_count = keys
-        RETURN m1.formula_string, keys LIMIT 5
+        RETURN m1.molecular_formula, keys LIMIT 5
     """)
 
     print('done: create property transition count')
