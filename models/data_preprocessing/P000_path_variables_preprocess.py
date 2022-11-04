@@ -1,14 +1,12 @@
 # Name: Philipp Plamper
-# Date: 27. october 2022
-
-# functions to load and export csv files for preprocessing
+# Date: 04. november 2022
 
 import pandas as pd
 import os
 import sys
 
-abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
-path_prefix = str(abs_path[0]) # add path to files in project folder
+# variables can be imported only if path was added to system
+path_prefix = str(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]) # get system path to variables
 path_prefix = path_prefix.replace('\\', '/') # necessary for application in Windows
 sys.path.insert(0, path_prefix)
 
@@ -18,30 +16,14 @@ import variables.V001_variables as pv
 # paths and files ################################################################
 ##################################################################################
 
-# molecules
+# see module for description of paths
 file_molecules = pv.file_molecules
-
-# transformation units
 file_transformation_units = pv.file_transformation_units
-
-# metadata of sample
 file_sample_meta = pv.file_sample_meta
-
-# metadata of measurements
 file_sample_join = pv.file_sample_join
-
-### paths to export calculated data ### 
-
-# unique formulas of molecules
 unique_molecules = pv.unique_molecules
-
-# cleaned file with molecules (e.g. filled null values)
 cleaned_molecules = pv.cleaned_molecules
-
-# calculated relationships
 relationships = pv.relationships
-
-# metadata
 metadata = pv.metadata
 
 ##################################################################################
@@ -51,9 +33,9 @@ metadata = pv.metadata
 # set path for data preprocessing scripts
 def get_path_prefix():
     
-    # set relative filepath prefix
-    abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
-    path_prefix = str(abs_path[0]) + '/files_for_model/' # add path to files in project folder
+    # set relative path to files for import and export
+    file_path = '/files_for_model/'
+    path_prefix = str(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]) + file_path
     path_prefix = path_prefix.replace('\\', '/') # necessary for application in Windows
 
     return path_prefix
@@ -72,7 +54,7 @@ def load_csv(filename, seperator):
         print('info: cannot load file ' + filename)
         pass
 
-#export data to csv
+# export data to csv
 def export_csv(filename, data):
     
     path_prefix = get_path_prefix()

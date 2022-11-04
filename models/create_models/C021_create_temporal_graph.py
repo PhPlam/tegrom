@@ -12,6 +12,7 @@ import C000_path_variables_create as pvc
 #define functions to create the graph#############################################
 ##################################################################################
 
+# create the nodes 
 def create_nodes_molecule(call_graph, formula_file_path, query_params):
     graph = call_graph
     graph.run("""

@@ -1,7 +1,0 @@
-sample_id,sample_replicate_of,description,carbonConcentration,samplePreparationVolume
-1713,1713,timepoint = 0, time = 0h, radiation_dose = 0
-1719,1719,timepoint = 1, time = 2h, radiation_dose = 1.8
-1725,1725,timepoint = 2, time = 4h, radiation_dose = 10
-1731,1731,timepoint = 3, time = 8h, radiation_dose = 43.3
-1737,1737,timepoint = 4, time = 16h, radiation_dose = 83.3
-1743,1743,timepoint = 5, time = 24h, radiation_dose = 83.3

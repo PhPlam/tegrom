@@ -1,16 +1,13 @@
 # Name: Philipp Plamper
-# Date: 27. october 2022
-
-# contains path variables used to create models
-# contains test functions to check reliabilty of data
+# Date: 04. november 2022
 
 import pandas as pd
 import os
 import sys
 from py2neo import Graph
 
-abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
-path_prefix = str(abs_path[0]) # add path to files in project folder
+# variables can be imported only if path was added to system
+path_prefix = str(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]) # get system path to variables
 path_prefix = path_prefix.replace('\\', '/') # necessary for application in Windows
 sys.path.insert(0, path_prefix)
 
@@ -18,6 +15,7 @@ import variables.V001_variables as pv
 
 ##################################################################################
 #set variables for models#########################################################
+## see module for further description ############################################
 ##################################################################################
 
 # host + port
@@ -35,18 +33,17 @@ db_name_rev = pv.db_name_rev
 # query parameters
 query_params = pv.model_params
 
+# paths
 folder = '/files_for_model/'
+written_transformations_file_path = path_prefix + folder + pv.file_transformation_units
+formula_file_path = path_prefix + folder + pv.cleaned_molecules
+transform_file_path = path_prefix + folder + pv.relationships 
+measurement_file_path = path_prefix + folder + pv.metadata
+unique_formulas_file_path = path_prefix + folder + pv.unique_molecules
 
-written_transformations_file_path = path_prefix + folder + pv.file_transformation_units # path to transformation units
-# files created in preprocessing
-formula_file_path = path_prefix + folder + pv.cleaned_molecules # path to dataset with molecule data
-transform_file_path = path_prefix + folder + pv.relationships # path to calculated potential transformations
-measurement_file_path = path_prefix + folder + pv.metadata # path to measurements
-unique_formulas_file_path = path_prefix + folder + pv.unique_molecules # path to unique formulas
-
-# define fault tolerance for intensity trend 
-upper_limit = pv.upper_limit # above considered as increasing intensity
-lower_limit = pv.lower_limit # below considered as decreasing intensity
+# threshold
+upper_limit = pv.upper_limit
+lower_limit = pv.lower_limit
 
 
 ##################################################################################
