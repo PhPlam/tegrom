@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 04. november 2022
+# Date: 11. november 2022
 
 from py2neo import Graph
 import C000_path_variables_create as pvc
@@ -16,15 +16,15 @@ def get_relationships(call_graph, query_params):
         OPTIONAL MATCH (m1)-[s1:""" + query_params['label_same_as'] + """]->(:""" + query_params['label_node'] + """)
         OPTIONAL MATCH (:""" + query_params['label_node'] + """)-[s2:""" + query_params['label_same_as'] + """]->(m2)
         WHERE m2.""" + query_params['prop_node_snapshot'] + """ = m1.""" + query_params['prop_node_snapshot'] + """ + 1
-        RETURN m1.""" + query_params['prop_node_name'] + """ as mol_from, 
-        m1.""" + query_params['prop_node_value'] + """ as mol_from_int, 
-        m1.""" + query_params['prop_node_snapshot'] + """ as mol_from_time, 
-        s1.""" + query_params['prop_edge_value_2'] + """ as mol_from_int_trend, 
-        m2.""" + query_params['prop_node_name'] + """ as mol_to, 
-        m2.""" + query_params['prop_node_value'] + """ as mol_to_int, 
-        m2.""" + query_params['prop_node_snapshot'] + """ as mol_to_time, 
-        s2.""" + query_params['prop_edge_value_2'] + """ as mol_to_int_trend, 
-        p.""" + query_params['prop_edge_value_1'] + """ as transformation_unit 
+        RETURN m1.""" + query_params['prop_node_name'] + """ as from_node, 
+        m1.""" + query_params['prop_node_value'] + """ as from_node_value, 
+        m1.""" + query_params['prop_node_snapshot'] + """ as from_node_time, 
+        s1.""" + query_params['prop_edge_value_2'] + """ as from_node_edge_value, 
+        m2.""" + query_params['prop_node_name'] + """ as to_node, 
+        m2.""" + query_params['prop_node_value'] + """ as to_node_value, 
+        m2.""" + query_params['prop_node_snapshot'] + """ as to_node_time, 
+        s2.""" + query_params['prop_edge_value_2'] + """ as to_node_edge_value, 
+        p.""" + query_params['prop_edge_value_1'] + """ as edge_string
     """).to_data_frame()
 
     # fill null values of columns matched with 'Optional Match'
@@ -39,37 +39,38 @@ def get_relationships(call_graph, query_params):
 def create_nodes_molecule(call_graph_par, call_graph_com, query_params):
     df_unique_mol = call_graph_par.run("""
     MATCH (m:""" + query_params['label_node'] + """)
-    RETURN m.""" + query_params['prop_node_name'] + """ as """ + query_params['prop_node_name'] + """, 
-        m.""" + query_params['prop_extra_1'] + """ as """ + query_params['prop_extra_1'] + """, 
-        m.""" + query_params['prop_extra_2'] + """ as """ + query_params['prop_extra_2'] + """, 
-        m.""" + query_params['prop_extra_3'] + """ as """ + query_params['prop_extra_3'] + """, 
-        m.""" + query_params['prop_extra_4'] + """ as """ + query_params['prop_extra_4'] + """, 
-        m.""" + query_params['prop_extra_5'] + """ as """ + query_params['prop_extra_5'] + """, 
-        m.""" + query_params['prop_extra_6'] + """ as """ + query_params['prop_extra_6'] + """, 
-        m.""" + query_params['prop_extra_7'] + """ as """ + query_params['prop_extra_7'] + """,
+    RETURN m.""" + query_params['prop_node_name'] + """ as node_string, 
+        m.""" + query_params['prop_extra_1'] + """ as C, 
+        m.""" + query_params['prop_extra_2'] + """ as H, 
+        m.""" + query_params['prop_extra_3'] + """ as N, 
+        m.""" + query_params['prop_extra_4'] + """ as O, 
+        m.""" + query_params['prop_extra_5'] + """ as S,
+        m.""" + query_params['prop_extra_4'] + query_params['prop_extra_1'] + """ as OC,
+        m.""" + query_params['prop_extra_2'] + query_params['prop_extra_1'] + """ as HC,
         count(m) as cnt 
     """).to_data_frame()
 
     tx = call_graph_com.begin()
     for index, row in df_unique_mol.iterrows():
         tx.evaluate("""
-            CREATE (:""" + query_params['label_node'] + """ {""" + query_params['prop_node_name'] + """:$""" + query_params['prop_node_name'] + """,         
-                    """ + query_params['prop_extra_1'] + """ : toInteger($""" + query_params['prop_extra_1'] + """), 
-                    """ + query_params['prop_extra_2'] + """ : toInteger($""" + query_params['prop_extra_2'] + """), 
-                    """ + query_params['prop_extra_3'] + """ : toInteger($""" + query_params['prop_extra_3'] + """), 
-                    """ + query_params['prop_extra_4'] + """ : toInteger($""" + query_params['prop_extra_4'] + """), 
-                    """ + query_params['prop_extra_5'] + """ : toInteger($""" + query_params['prop_extra_5'] + """),
-                    """ + query_params['prop_extra_6'] + """ : toFloat($""" + query_params['prop_extra_6'] + """),
-                    """ + query_params['prop_extra_7'] + """ : toFloat($""" + query_params['prop_extra_7'] + """)})
+            CREATE (:""" + query_params['label_node'] + """ {""" + query_params['prop_node_name'] + """:$node_string,         
+                    """ + query_params['prop_extra_1'] + """ : toInteger($C), 
+                    """ + query_params['prop_extra_2'] + """ : toInteger($H), 
+                    """ + query_params['prop_extra_3'] + """ : toInteger($N), 
+                    """ + query_params['prop_extra_4'] + """ : toInteger($O), 
+                    """ + query_params['prop_extra_5'] + """ : toInteger($S),
+                    """ + query_params['prop_extra_4'] + query_params['prop_extra_1'] + """ : toFloat($OC),
+                    """ + query_params['prop_extra_2'] + query_params['prop_extra_1'] + """ : toFloat($HC)})
             RETURN count(*) 
-        """, parameters= {query_params['prop_node_name'] : row[query_params['prop_node_name']], 
-                            'C': row[query_params['prop_extra_1']],
-                            'H': row[query_params['prop_extra_2']], 
-                            'N': row[query_params['prop_extra_3']], 
-                            'O': row[query_params['prop_extra_4']], 
-                            'S': row[query_params['prop_extra_5']], 
-                            'OC' : row[query_params['prop_extra_6']],
-                            'HC' : row[query_params['prop_extra_7']]})
+        """, parameters= {'node_string' : row['node_string'], 
+                            'C' : row['C'],
+                            'H' : row['H'], 
+                            'N' : row['N'], 
+                            'O' : row['O'], 
+                            'S' : row['S'],
+                            'OC' : row['OC'],
+                            'HC' : row['HC']
+                            })
     call_graph_com.commit(tx)
 
     print('done: create nodes ' + query_params['label_node'])
@@ -86,22 +87,40 @@ def create_index(call_graph, query_params):
 def create_relationship_chemical_transformation(call_graph_par, call_graph_com, query_params):
     df_pot_rel = call_graph_par.run("""
     MATCH (m1:""" + query_params['label_node'] + """)-[pot:""" + query_params['label_potential_edge'] + """]->(m2:""" + query_params['label_node'] + """)
-    RETURN  m1.""" + query_params['prop_node_name'] + """ as from_fs, pot.""" + query_params['prop_edge_value_1'] + """ as tu, 
-        m2.""" + query_params['prop_node_name'] + """ as to_fs, pot.C as C, pot.H as H, 
-        pot.O as O, pot.N as N, pot.S as S, count(*)
+    RETURN  m1.""" + query_params['prop_node_name'] + """ as from_node, 
+        m2.""" + query_params['prop_node_name'] + """ as to_node, 
+        pot.""" + query_params['prop_edge_value_1'] + """ as edge_string, 
+        pot.""" + query_params['prop_extra_1'] + """ as C, 
+        pot.""" + query_params['prop_extra_2'] + """ as H, 
+        pot.""" + query_params['prop_extra_3'] + """ as N,
+        pot.""" + query_params['prop_extra_4'] + """ as O,  
+        pot.""" + query_params['prop_extra_5'] + """ as S, 
+        count(*)
     """).to_data_frame()
 
     tx = call_graph_com.begin()
     for index, row in df_pot_rel.iterrows():
         tx.evaluate("""
             MATCH (m1:""" + query_params['label_node'] + """), (m2:""" + query_params['label_node'] + """)
-            WHERE m1.""" + query_params['prop_node_name'] + """ = $from_fs 
-                AND m2.""" + query_params['prop_node_name'] + """ = $to_fs
-            CREATE (m1)-[:""" + query_params['label_chemical_edge'] + """ {tu: $tu, C:$C, H: $H, O: $O, N: $N, S: $S}]->(m2)
+            WHERE m1.""" + query_params['prop_node_name'] + """ = $from_node
+                AND m2.""" + query_params['prop_node_name'] + """ = $to_node
+            CREATE (m1)-[:""" + query_params['label_chemical_edge'] + """ {
+                """ + query_params['prop_edge_value_1'] + """ : $edge_string, 
+                """ + query_params['prop_extra_1'] + """ : $C, 
+                """ + query_params['prop_extra_2'] + """ : $H, 
+                """ + query_params['prop_extra_3'] + """ : $N, 
+                """ + query_params['prop_extra_4'] + """ : $O, 
+                """ + query_params['prop_extra_5'] + """ : $S}]->(m2)
             RETURN count(*)
-        """, parameters= {'from_fs': row['from_fs'], 'to_fs': row['to_fs'], 'C': row['C'], 
-        'H': row['H'], 'O': row['O'], 'N': row['N'], 'S': row['S'], 'tu': row['tu']}
-        )
+        """, parameters= {'from_node' : row['from_node'], 
+                            'to_node' : row['to_node'], 
+                            'C' : row['C'], 
+                            'H' : row['H'], 
+                            'N' : row['N'],
+                            'O' : row['O'],  
+                            'S' : row['S'], 
+                            'edge_string' : row['edge_string']
+                            })
     call_graph_com.commit(tx)
 
     print('done: create relationship ' + query_params['label_chemical_edge'])
@@ -109,44 +128,53 @@ def create_relationship_chemical_transformation(call_graph_par, call_graph_com, 
 
 # create and set properties at relationship CHEMICAL_TRANSRFORMATION
 def set_properties_chemical_transformation(call_graph_com, new_model_paths, query_params):
-    for i in range (1,new_model_paths.mol_to_time.max()+1):
+    for i in range (1,new_model_paths['to_node_time'].max()+1):
         is_prt_list = []
-        new_model_paths_trim = new_model_paths[new_model_paths.mol_to_time == i]
+        new_model_paths_trim = new_model_paths[new_model_paths['to_node_time'] == i]
         
         for row in new_model_paths_trim.itertuples():
-            if 0 < row.mol_from_int_trend < 0.975 and row.mol_to_int_trend > 1.025:
+            if (0 < getattr(row, 'from_node_edge_value') < 0.975 and getattr(row, 'to_node_edge_value') > 1.025):
                 is_prt_list.append(1)
             else:
                 is_prt_list.append(0)
-        new_model_paths_trim['is_prt'] = is_prt_list
+        new_model_paths_trim['predicted'] = is_prt_list
 
         tx = call_graph_com.begin()
         for index, row in new_model_paths_trim.iterrows():
             tx.evaluate("""
                 MATCH (m1:""" + query_params['label_node'] + """)-[c:""" + query_params['label_chemical_edge'] + """]->(m2:""" + query_params['label_node'] + """)
-                WHERE m1.""" + query_params['prop_node_name'] + """ = $mol_from
-                    AND m2.""" + query_params['prop_node_name'] + """ = $mol_to
-                    AND c.tu = $transformation_unit
-                SET c.transition_""" + str(i) + """ = [toFloat($mol_to_time), toFloat($mol_from_int), 
-                    toFloat($mol_to_int), toFloat($mol_from_int_trend), 
-                    toFloat($mol_to_int_trend), toFloat($is_prt)]        
-            """, parameters= {'mol_from': row.mol_from, 'mol_to': row.mol_to, 'transformation_unit': row.transformation_unit,
-            'mol_to_time': row.mol_to_time, 'mol_from_int': row.mol_from_int, 'mol_to_int': row.mol_to_int,
-            'mol_from_int_trend': row.mol_from_int_trend, 'mol_to_int_trend': row.mol_to_int_trend,
-            'is_prt': row.is_prt}
+                WHERE m1.""" + query_params['prop_node_name'] + """ = $from_node
+                    AND m2.""" + query_params['prop_node_name'] + """ = $to_node
+                    AND c.""" + query_params['prop_edge_value_1'] + """ = $edge_string
+                SET c.transition_""" + str(i) + """ = 
+                    [toFloat($to_node_time), 
+                    toFloat($from_node_value), 
+                    toFloat($to_node_value), 
+                    toFloat($from_node_edge_value), 
+                    toFloat($to_node_edge_value), 
+                    toFloat($predicted)]        
+            """, parameters= {'from_node' : row['from_node'], 
+                                'to_node' : row['to_node'], 
+                                'edge_string' : row['edge_string'],
+                                'to_node_time' : row['to_node_time'], 
+                                'from_node_value' : row['from_node_value'], 
+                                'to_node_value' : row['to_node_value'],
+                                'from_node_edge_value' : row['from_node_edge_value'], 
+                                'to_node_edge_value' : row['to_node_edge_value'],
+                                'predicted': row.predicted}
             )
         call_graph_com.commit(tx)
         print('done: set properties of transition:', str(i))
     
-    print('done: set properties at relationship chemical transformation')
+    print('done: set properties at relationship ' + query_params['label_chemical_edge'])
         
     # order of properties in List
     # 1. transition
-    # 2. relative intensity of source molecule
-    # 3. relative intensity of target molecule
+    # 2. normalized intensity of source molecule
+    # 3. normalized intensity of target molecule
     # 4. intensity trend to molecule with same formula of source molecule
     # 5. intensity trend from molecule with same formula of target molecule
-    # 6. is prt, see RelIdent-algorithm
+    # 6. is prt, see "Transformation Prediction Algorithm"
 
 
 # property 'transition_count'
@@ -155,11 +183,11 @@ def create_property_transition_count(call_graph, query_params):
     call_graph.run("""
         MATCH (m1:""" + query_params['label_node'] + """)-[c:""" + query_params['label_chemical_edge'] + """]->(:""" + query_params['label_node'] + """)
         WITH m1, c, size(keys(c))-6 as keys
-        SET c.transition_count = keys
+        SET c.""" + query_params['prop_extra_8'] + """ = keys
         RETURN m1.""" + query_params['prop_node_name'] + """, keys LIMIT 5
     """)
 
-    print('done: create property transition count')
+    print('done: create property ' + query_params['prop_extra_8'])
 
 
 # property 'prt_count'
@@ -167,20 +195,32 @@ def create_property_transition_count(call_graph, query_params):
 def create_property_prt_count(call_graph, new_model_paths, query_params):
     call_graph.run("""
         MATCH (m1:""" + query_params['label_node'] + """)-[c:""" + query_params['label_chemical_edge'] + """]->(:""" + query_params['label_node'] + """)
-        SET c.prt_count = 0
+        SET c.""" + query_params['prop_extra_9'] + """ = 0
         RETURN count(*)
     """)
 
-    for i in range(1,new_model_paths.mol_to_time.max()+1):
+    for i in range(1,new_model_paths['to_node_time'].max()+1):
         call_graph.run("""
             MATCH (m1:""" + query_params['label_node'] + """)-[c:""" + query_params['label_chemical_edge'] + """]->(:""" + query_params['label_node'] + """)
             WHERE c.transition_""" + str(i) + """[5] = 1
-            SET c.prt_count = c.prt_count + 1
+            SET c.""" + query_params['prop_extra_9'] + """ = c.""" + query_params['prop_extra_9'] + """ + 1
             RETURN count(*)
         """)
 
-    print('done: create property prt count')
+    print('done: create property ' + query_params['prop_extra_9'])
+    
+### for graph with ###
+### only prt edges ###
 
+# delete edges with prt_count = 0
+# MATCH (:Molecule)-[ct:CHEMICAL_TRANSFORMATION]->(:Molecule)
+# WHERE ct.prt_count = 0
+# DELETE ct
+
+# delete nodes with no edges 
+# MATCH (:Molecule)-[ct:CHEMICAL_TRANSFORMATION]->(:Molecule)
+# WHERE ct.prt_count = 0
+# DELETE ct
 
 ##################################################################################
 #call functions###################################################################

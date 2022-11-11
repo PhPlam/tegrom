@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 04. november 2022
+# Date: 09. november 2022
 
 ### parameter for ###
 ### database connection ### 
@@ -8,14 +8,13 @@
 host = 'http://localhost:7474' # default: http://localhost:7474
 
 # username and password for neo4j instance
-
 user = 'neo4j' # default: neo4j
 passwd = '1234' # default: neo4j
 
 # names for neo4j databases
 db_name_temporal = 'modeltemporaltest' # name of temporal graph
 db_name_smash = 'modelsmashprt' # name of smashed graph
-db_name_rev = 'modeltransformback' # name of reverted graph
+db_name_rev = 'modeltransformback' # for testing; name of reverted graph
 # db_name_rev from test: can the smashed graph be converted back to the temporal graph
 
 # define threshold for intensity trend 
@@ -79,6 +78,6 @@ model_params = {
     'prop_extra_3' : 'N', # property value; Integer
     'prop_extra_4' : 'O', # property value; Integer
     'prop_extra_5' : 'S', # property value; Integer
-    'prop_extra_6' : 'OC', # property value; Integer
-    'prop_extra_7' : 'HC' # property value; Integer
+    'prop_extra_8' : 'transition_count', # property value; Integer
+    'prop_extra_9' : 'prt_count' # property value Integer
 }

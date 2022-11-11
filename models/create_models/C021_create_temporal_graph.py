@@ -1,8 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 27. october 2022
-
-# be sure your neo4j instance is up and running
-# configure custom filepaths, see requirements (comment out 'dbms.directories.import=import' in neo4j settings)
+# Date: 11. november 2022
 
 import os
 from py2neo import Graph
@@ -27,8 +24,8 @@ def create_nodes_molecule(call_graph, formula_file_path, query_params):
         """ + query_params['prop_extra_3'] + """ : toInteger(row.N),
         """ + query_params['prop_extra_4'] + """ : toInteger(row.O),  
         """ + query_params['prop_extra_5'] + """ : toInteger(row.S),
-        """ + query_params['prop_extra_6'] + """ : toFloat(row.O)/toFloat(row.C),
-        """ + query_params['prop_extra_7'] + """ : toFloat(row.H)/toFloat(row.C)
+        """ + query_params['prop_extra_4'] + query_params['prop_extra_1'] + """ : toFloat(row.O)/toFloat(row.C),
+        """ + query_params['prop_extra_2'] + query_params['prop_extra_1'] + """ : toFloat(row.H)/toFloat(row.C)
         })
     """)
     print('done: create ' + query_params['label_node'] + ' nodes')
@@ -52,19 +49,24 @@ def create_relationship_potential_transformation(call_graph, transform_file_path
     call_graph.run("""
         CALL apoc.periodic.iterate(
         "LOAD CSV WITH HEADERS FROM 'file:///""" + transform_file_path + """' AS row RETURN row",
-        "WITH row.new_formula AS r_new_formula, row.formula_string AS r_molecular_formula, 
-            row.tu_C AS tu_C, row.tu_H AS tu_H, row.tu_O AS tu_O, row.tu_N AS tu_N, 
-            row.tu_S AS tu_S, row.transformation_unit as transformation_unit
+        "WITH row.new_formula AS from_node, 
+            row.formula_string AS to_node, 
+            row.tu_C AS C, 
+            row.tu_H AS H, 
+            row.tu_N AS N,
+            row.tu_O AS O,  
+            row.tu_S AS S, 
+            row.transformation_unit as transformation_unit
         MATCH (m:""" + query_params['label_node'] + """), (m2:""" + query_params['label_node'] + """)
-        WHERE m.""" + query_params['prop_node_name'] + """ = r_new_formula 
-            AND m2.""" + query_params['prop_node_name'] + """ = r_molecular_formula 
+        WHERE m.""" + query_params['prop_node_name'] + """ = from_node 
+            AND m2.""" + query_params['prop_node_name'] + """ = to_node
             AND m.""" + query_params['prop_node_snapshot'] + """ = m2.""" + query_params['prop_node_snapshot'] + """-1
         CREATE (m)-[:""" + query_params['label_potential_edge'] + """{
-            """ + query_params['prop_extra_1'] + """: toInteger(tu_C), 
-            """ + query_params['prop_extra_2'] + """: toInteger(tu_H), 
-            """ + query_params['prop_extra_3'] + """: toInteger(tu_N), 
-            """ + query_params['prop_extra_4'] + """: toInteger(tu_O), 
-            """ + query_params['prop_extra_5'] + """: toInteger(tu_S), 
+            """ + query_params['prop_extra_1'] + """: toInteger(C), 
+            """ + query_params['prop_extra_2'] + """: toInteger(H), 
+            """ + query_params['prop_extra_3'] + """: toInteger(N), 
+            """ + query_params['prop_extra_4'] + """: toInteger(O), 
+            """ + query_params['prop_extra_5'] + """: toInteger(S), 
             """ + query_params['prop_edge_value_1'] + """: transformation_unit}]->(m2)
         RETURN count(*)",
         {batchSize: 500})
@@ -85,8 +87,9 @@ def create_relationship_same_as(call_graph, query_params):
 def create_property_intensity_trend(call_graph, query_params):
     call_graph.run("""
         MATCH (m1:""" + query_params['label_node'] + """)-[s:""" + query_params['label_same_as'] + """]->(m2:""" + query_params['label_node'] + """)
-        WITH (m2.""" + query_params['prop_node_value'] + """/m1.""" + query_params['prop_node_value'] + """) as tendency, m1, m2, s
-        SET s.""" + query_params['prop_edge_value_2'] + """ = apoc.math.round(tendency, 3)
+        WITH (m2.""" + query_params['prop_node_value'] + """/m1.""" + query_params['prop_node_value'] + """) as trend, 
+            m1, m2, s
+        SET s.""" + query_params['prop_edge_value_2'] + """ = apoc.math.round(trend, 3)
     """)
     print('done: create property ' + query_params['prop_edge_value_2'])
 

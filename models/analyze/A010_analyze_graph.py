@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 23. september 2022
+# Date: 10. november 2022
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,153 +7,214 @@ import pandas as pd
 import plotly.express as px
 from py2neo import Graph
 from scipy import stats
-from A000_path_variables_analyze import host, user, passwd, db_name_temporal
-from A000_path_variables_analyze import path_prefix, path_prefix_csv
-import A001_parameters_analysis as pa
 
-import warnings
-warnings.filterwarnings("ignore")
+import A000_path_variables_analyze as pva
+import os
+import sys
 
-##################################################################################
-#settings#########################################################################
-##################################################################################
+# variables can be imported only if path was added to system
+path_prefix = str(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]) # get system path to variables
+path_prefix = path_prefix.replace('\\', '/') # necessary for application in Windows
+sys.path.insert(0, path_prefix)
 
-# credentials 
-host = host
-user = user
-passwd = passwd
-
-# select database
-db_name = db_name_temporal
+import variables.V002_functions as func
 
 
 ##################################################################################
 #analyze functions################################################################
 ##################################################################################
 
-def get_database_connection(host, user, passwd, db_name):
-    database_connection = Graph(host, auth=(user, passwd), name=db_name)
-    print('done: establish database connection')
-    return database_connection
-
-
 # molecules per snapshot
-def molecules_per_snapshot_graph(call_graph, export_png, export_path):
-    df_count = call_graph.run("""
-        MATCH (m:Molecule)
-        RETURN count(m) as cnt_mol, m.point_in_time as pit 
-        ORDER BY pit ASC
-    """).to_data_frame()
-
-    df_count['avg_mol'] = df_count.cnt_mol.mean()
-    mol_sd = np.std(np.array(df_count.cnt_mol, df_count.pit))
-
-    plt.figure(figsize=(6, 3))
-    #plt.suptitle('Molecules in graph', fontsize=18, fontweight='bold')
-    plt.bar(df_count.pit, df_count.cnt_mol, color='green')
-    plt.plot(df_count.pit, df_count.avg_mol, color='purple', label='average')
-    plt.plot(df_count.pit, df_count.avg_mol+mol_sd, linestyle='--', color='purple', label='standard deviation')
-    plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
-    plt.plot(df_count.pit, df_count.avg_mol-mol_sd, linestyle='--', color='purple')
-    plt.axhspan(df_count.cnt_mol.mean()-mol_sd, df_count.cnt_mol.mean()+mol_sd, alpha=0.15, color='purple')
-    plt.xlabel('time', fontsize=14, fontweight='bold')
-    plt.ylabel('nodes "Molecule"', fontsize=14, fontweight='bold')
-    plt.xticks(np.arange(0, len(df_count), 1), fontsize=14)
-    plt.yticks(fontsize=14)
-
-    if export_png == 1:
-        name = 'molecules_graph'
-        plt.savefig(export_path + name + '.png', bbox_inches='tight')
-
-    print('done: create image "molecules per snapshot"')
-
-# distribution of the intensity trends per measurement (increasing, decreasing, constant)
-def intensity_trend_distribution(call_graph, export_png, export_path):
-    inc_rel = call_graph.run("""
-        MATCH (m:Molecule)-[s:SAME_AS]->(m2:Molecule)
-        WHERE s.intensity_trend >= 1.025
-        RETURN m.point_in_time as time, count(s) as increase
-    """).to_data_frame()
-
-    dec_rel = call_graph.run("""
-        MATCH (m:Molecule)-[s:SAME_AS]->(m2:Molecule)
-        WHERE s.intensity_trend <= 0.975
-        RETURN m.point_in_time as time, count(s) as decrease
-    """).to_data_frame()
-
-    same_rel = call_graph.run("""
-        MATCH (m:Molecule)-[s:SAME_AS]->(m2:Molecule)
-        WHERE 0.975 < s.intensity_trend < 1.025
-        RETURN m.point_in_time as time, count(s) as same
-    """).to_data_frame()
-
-    get_mol = call_graph.run("""
-        MATCH (m:Molecule)
-        RETURN m.point_in_time as time, count(m) as cmol
-        ORDER BY time ASC
-    """).to_data_frame()
-
-    inc_rel['mid'] = inc_rel.increase + dec_rel.decrease + same_rel.same
-
-    plt.figure(figsize=(6, 3))
-    #plt.suptitle('Distribution of the intensity trends at the edges "SAME_AS"', fontsize=18, fontweight='bold')
-    plt.bar(same_rel.time, inc_rel.increase + dec_rel.decrease + same_rel.same, color = 'purple')
-    plt.bar(dec_rel.time, dec_rel.decrease + inc_rel.increase, color = 'orange')
-    plt.bar(inc_rel.time, inc_rel.increase, color = 'green')
-    plt.plot(get_mol.time, get_mol.cmol, color = 'black')
-    plt.xlabel('time', fontsize=16, fontweight='bold')
-    plt.ylabel('outgoing edges \n "SAME_AS"', fontsize=16, fontweight='bold')
-    plt.legend(['nodes "Molecule"', 'consistent intensity', 'decreasing intensity', 'inreasing intensity'], loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
-    plt.xticks(np.arange(0, len(get_mol), 1), fontsize=14)
-    plt.yticks(fontsize=14)
-
-    if export_png == 1:
-        name = 'graph_intensity_trend_distribution'
-        plt.savefig(export_path + name + '.png', bbox_inches='tight')
-
-    plt.clf()
-    print('done: create image "intensity trend distribution"')
-    # plt.show()
-
-# outgoing transformations per measurement
-def outgoing_transformations_measurement(call_graph, export_png, export_path):
-    or_pot = call_graph.run("""
-        MATCH (m1:Molecule)-[c:POTENTIAL_TRANSFORMATION]->(m2:Molecule)
-        WHERE m2.point_in_time = m1.point_in_time + 1
-        RETURN m1.point_in_time as time, count(c) as relationships_out
-    """).to_data_frame()
-
-    or_prt = call_graph.run("""
-        MATCH (m1:Molecule)-[c:PREDICTED_TRANSFORMATION]->(m2:Molecule)
-        WHERE m2.point_in_time = m1.point_in_time + 1
-        RETURN m1.point_in_time as time, count(c) as relationships_out
-    """).to_data_frame()
-
-    get_mol = call_graph.run("""
-        MATCH (m:Molecule)
-        RETURN m.point_in_time as time, count(m) as cmol
-        ORDER BY time ASC
-    """).to_data_frame()
-
-    plt.figure(figsize=(6, 3))
-
-    #plt.suptitle('Number of chemical transformations', fontsize=18, fontweight='bold')
-    plt.xlabel('time', fontsize=16, fontweight='bold')
-    plt.ylabel('number of \n transformations', fontsize=16, fontweight='bold')
-    plt.bar(or_pot.time, or_pot.relationships_out, color='green')
-    plt.bar(or_prt.time, or_prt.relationships_out, color='orange')
-    plt.plot(get_mol.time, get_mol.cmol, color = 'black', lw=1.5)
-    plt.legend(['nodes "Molecule"', 'edges "POTENTIAL_TRANSFORMATION"', 'edges "PREDICTED_TRANSFORMATION"'], loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
-    plt.xticks(np.arange(0, len(get_mol), 1), fontsize=14)
-    plt.yticks(fontsize=14)
-
-    if export_png == 1:
-        name = 'graph_outgoing_transformations_measurement'
-        plt.savefig(export_path + name + '.png', bbox_inches='tight')
+def anaylze_graph_topology(call_graph, query_params):
     
-    plt.clf()
-    print('done: create image "outgoing transformations measurement"')
-    # plt.show()
+    ### get time ###
+    df_time = func.graph_get_time(call_graph, query_params)
+    df_time['average_nodes'] = df_time.count_nodes.mean()
+    standard_deviation = np.std(np.array(df_time['count_nodes'], df_time['property_time']))
+
+    ### get trends ###
+    # increasing 
+    trend = 'increasing'
+    lower = pva.upper_limit
+    upper = 100
+    trend_incr = func.graph_get_member_intensity_trend(call_graph, query_params, lower, upper, trend)
+    
+    # decreasing
+    trend = 'decreasing'
+    lower = 0
+    upper = pva.lower_limit
+    trend_decr = func.graph_get_member_intensity_trend(call_graph, query_params, lower, upper, trend)
+
+    # consistent
+    trend = 'consistent'
+    lower = pva.lower_limit + 1e-10
+    upper = pva.upper_limit - 1e-10
+    trend_cons = func.graph_get_member_intensity_trend(call_graph, query_params, lower, upper, trend)
+
+    ### get transformations ###
+    # POTENTIAL_TRANSFORMATIONS
+    edge_type = query_params['label_potential_edge']
+    transformations_type_a = func.graph_get_transformations(call_graph, edge_type, query_params)
+
+    # PREDICTED_TRANSFORMATIONS
+    edge_type = query_params['label_predicted_edge']
+    transformations_type_b = func.graph_get_transformations(call_graph, edge_type, query_params)
+
+    ### create plots ###
+    fig = plt.figure(figsize=(12,6))
+
+    # plot number of nodes over time
+    ax1 = plt.subplot(311)
+    plt.bar(df_time.property_time, df_time.count_nodes, color='brown', width=0.6)
+    plt.plot(df_time.property_time, df_time.average_nodes, color='purple', label='average')
+    plt.plot(df_time.property_time, df_time.average_nodes+standard_deviation, linestyle='--', color='purple', label='standard deviation')
+    plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
+    plt.plot(df_time.property_time, df_time.average_nodes-standard_deviation, linestyle='--', color='purple')
+    plt.axhspan(df_time.count_nodes.mean()-standard_deviation, df_time.count_nodes.mean()+standard_deviation, alpha=0.15, color='purple')
+    #plt.xlabel('time', fontsize=14, fontweight='bold')
+    plt.ylabel('nodes \n "' + query_params['label_node'] + '"', fontsize=15, fontweight='bold')
+    plt.xticks(np.arange(0, len(df_time), 1), fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+
+    # plot number of edges over time
+    plt.subplot(312, sharex=ax1)
+    #plt.xlabel('time', fontsize=16, fontweight='bold')
+    plt.ylabel('number of \n transformations', fontsize=15, fontweight='bold')
+    plt.bar(transformations_type_a.property_time, transformations_type_a.count_relationships, color='darkseagreen', width=0.6)
+    plt.bar(transformations_type_b.property_time, transformations_type_b.count_relationships, color='khaki', width=0.4)
+    plt.plot(df_time.property_time, df_time.count_nodes, color = 'brown', lw=1.5)
+    plt.legend(['nodes "' + query_params['label_node'] + '"', 
+        'edges "' + query_params['label_potential_edge'] + '"',
+        'edges "' + query_params['label_predicted_edge'] + '"'], 
+        loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
+    plt.xticks(np.arange(0, len(df_time), 1), fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+
+    # plot trends of 'SAME_AS' edges over time
+    plt.subplot(313, sharex=ax1)
+    plt.bar(trend_incr.property_time, trend_incr.increasing + trend_decr.decreasing + trend_cons.consistent, color = 'darkmagenta', width=0.6)
+    plt.bar(trend_incr.property_time, trend_incr.increasing + trend_decr.decreasing, color = 'darkorange', width=0.6)
+    plt.bar(trend_incr.property_time, trend_incr.increasing, color = 'olivedrab', width=0.6)
+    plt.plot(df_time.property_time, df_time.count_nodes, color = 'brown', lw=1.5)
+    plt.xlabel('time', fontsize=16, fontweight='bold')
+    plt.ylabel('edges \n "' + query_params['label_same_as'] + '"', fontsize=15, fontweight='bold')
+    plt.legend(['nodes "' + query_params['label_node'] + '"', 
+        'consistent intensity', 
+        'decreasing intensity', 
+        'inreasing intensity'], 
+        loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
+    plt.xticks(np.arange(0, len(df_time), 1), fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+
+    plt.figtext(-0.02, 0.96, '(A)', fontsize=16, fontweight='bold')
+    plt.figtext(-0.02, 0.64, '(B)', fontsize=16, fontweight='bold')
+    plt.figtext(-0.02, 0.32, '(C)', fontsize=16, fontweight='bold')
+
+    plt.tight_layout()
+
+    # todo: define path
+    plt.savefig('graph_topology.png', dpi=150, bbox_inches='tight')
+
+    print('done: analysis graph topology')
+
+
+# Prepare Dataframe with prts and tus
+def prepare_prts_tu(call_graph, query_params):
+    
+    # get time
+    df_time = func.graph_get_time(call_graph, query_params)
+    time_list = df_time['time'].to_list()
+    del time_list[-1]
+
+    df_tu_prt = call_graph.run("""
+        MATCH (:Molecule)-[t:PREDICTED_TRANSFORMATION]->(:Molecule)
+        RETURN DISTINCT t.transformation_unit as transformation_unit
+        """).to_data_frame()
+
+    for ele in time_list:
+        transform_count_prt = call_graph.run("""
+        MATCH (m:Molecule)-[t:PREDICTED_TRANSFORMATION]->(:Molecule)
+        WHERE m.point_in_time = """ + str(ele) + """
+        RETURN t.transformation_unit as transformation_unit, count(t.transformation_unit) as Count_prt_""" + str(ele) + """
+        ORDER BY Count_prt_""" + str(ele) + """ DESC
+        """).to_data_frame()
+
+        df_tu_prt = pd.merge(df_tu_prt, transform_count_prt, on=["transformation_unit"])
+        df_tu_prt['proportion_prt_' + str(ele)] = df_tu_prt['Count_prt_' + str(ele)]/df_tu_prt['Count_prt_' + str(ele)].sum()*100
+        
+    # drop columns 'Count_'
+    # prt
+    droplist_prt = [i for i in df_tu_prt.columns if i.startswith('Count')]
+    df_tu_prt = df_tu_prt.drop(columns=droplist_prt, axis=1)
+
+    # make dataframe vertical
+    # prt
+    df_tu_prt = df_tu_prt.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='proportion').drop('level_1',1)
+
+    # add time to dataframe
+    # prt
+    times_repeat = len(df_tu_prt)/len(time_list)
+    times_list_prt = time_list * int(times_repeat)
+    df_tu_prt['point_in_time'] = times_list_prt
+
+    return df_tu_prt
+
+# trends of transformation units
+def trends_transformation_units(call_graph, df_tu_prt, export_png, export_path):
+    tu = call_graph.run("""
+        MATCH (:Molecule)-[h:PREDICTED_TRANSFORMATION]->(:Molecule)
+        RETURN DISTINCT h.transformation_unit AS tu
+    """).to_data_frame()
+
+    tu_list = tu.tu.tolist()
+    tu_dict_list = []
+
+    for tu in tu_list:
+        pick_tu = df_tu_prt[df_tu_prt.transformation_unit == tu]
+        res = stats.linregress(pick_tu.point_in_time, pick_tu.proportion)
+        increase = ((res.slope*11+res.intercept)/(res.intercept))-1
+        
+        tu_dict = {
+            'tu': tu,
+            'increase': increase,
+            'share_mean_perc': pick_tu.proportion.mean()
+        }
+        tu_dict_list.append(tu_dict)
+        
+    df_tu = pd.DataFrame(tu_dict_list)
+    df_tu = df_tu.sort_values(by=['increase'], ascending=False).reset_index(drop=True)
+    df_tu['inc_perc'] = df_tu.increase*100
+
+    # first plot
+    fig = plt.figure(figsize=(12,4))
+    plt.bar(df_tu.tu, df_tu.inc_perc)
+    plt.xlabel('transformation unit', fontsize=12)
+    plt.ylabel('increase in shares in %', fontsize=12)
+    plt.title('transformation units and their increase in shares (from first to last measurement)', fontweight="bold")
+    plt.xticks(rotation=45)
+    plt.axhline(y=0, color='r', linestyle='-', label='no increase')
+    plt.legend(loc='upper right')
+    
+    if export_png == 1:
+        plt.savefig(export_path + 'transformation_units_increase_share.png', dpi=150 ,bbox_inches='tight')
+
+    # second plot
+    fig = plt.figure(figsize=(12,4))
+    plt.bar(df_tu.tu, df_tu.share_mean_perc)
+    plt.xlabel('transformation unit', fontsize=12)
+    plt.ylabel('average share in %', fontsize=12)
+    plt.title('transformation units and their average share', fontweight="bold")
+    plt.xticks(rotation=45)
+    plt.axhline(y=4.5, color='r', linestyle='-', label='average overall')
+    plt.legend(loc='upper left')
+
+    if export_png == 1:
+        plt.savefig(export_path + 'transformation_units_average_share.png', dpi=150 ,bbox_inches='tight')
+
+    print('done: create images "transformations units"')
 
 # occurrence of outgoing transformations
 def outgoing_transformations_occurrence(call_graph, export_png, export_path):
@@ -423,185 +484,6 @@ def most_occurring_transformations_measurement_line(call_graph, export_png, expo
 
     print('done: create image "most occurring transformations measurement line prt and pot"')
 
-# average weight of transformations all measurements one bar plot
-def average_weight_transformations_bar(call_graph, export_png, export_path):
-    tch = call_graph.run("""
-    MATCH ()-[t:PREDICTED_TRANSFORMATION]->()
-    RETURN t.transformation_unit as transformation_unit, 
-            count(t.transformation_unit) as count_prt,
-            avg(t.normalized_combined_weight) as avg_combined,
-            avg(t.normalized_connected_weight) as avg_connect
-    ORDER BY count_prt DESC
-    """).to_data_frame()
-
-    tch.avg_combined = tch.avg_combined
-    tch.avg_connect = tch.avg_connect
-
-    labels = tch['transformation_unit'].to_list()
-    x = np.arange(len(labels))
-    height = 0.3
-    plt.figure(figsize=(4, 7))
-    plt.barh(x + height/2, tch.avg_combined, height = 0.3, color='green', label='pot-Kanten')
-    plt.barh(x - height/2 , tch.avg_connect, height = 0.3, color='orange', label='prt-Kanten')
-    plt.yticks(x, labels = labels)
-    plt.title('Average weight of transformation')
-    plt.ylabel('Chemical transformation')
-    plt.xlabel('Average weight')
-    plt.legend(['normalized connected weight', 'normalized combined weight'], bbox_to_anchor=(1, 1))
-
-    if export_png == 1:
-        name = 'graph_average_weight_transformations_bar'
-        plt.savefig(export_path + name + '.png', bbox_inches='tight')
-
-    plt.clf()
-    print('done: create image "average weight transformations bar"')
-    # plt.show()
-
-# average weight of transformations per measurement in line plot
-def average_weight_transformations_line(call_graph, export_png, export_html, export_path):
-    df_time = call_graph.run("""
-        MATCH (m:Molecule)
-        RETURN DISTINCT m.point_in_time as time
-        ORDER BY time
-    """).to_data_frame()
-
-    time_list = df_time['time'].to_list()
-    del time_list[-1]
-
-    df_tu = call_graph.run("""
-        MATCH (:Molecule)-[t:PREDICTED_TRANSFORMATION]->(:Molecule)
-        RETURN DISTINCT t.transformation_unit as transformation_unit
-        """).to_data_frame()
-
-    for ele in time_list:
-        tch = call_graph.run("""
-        MATCH (m:Molecule)-[t:PREDICTED_TRANSFORMATION]->(:Molecule)
-        WHERE m.point_in_time = """ + str(ele) + """
-        RETURN t.transformation_unit as transformation_unit, 
-                count(t.transformation_unit) as Count_prt_""" + str(ele) + """,
-                avg(t.normalized_combined_weight) as avg_combined_""" + str(ele) + """,
-                avg(t.normalized_connected_weight) as avg_connect_""" + str(ele) + """
-        ORDER BY Count_prt_""" + str(ele) + """ DESC
-        """).to_data_frame()
-        
-        df_tu = pd.merge(df_tu, tch, on=["transformation_unit"])
-        
-    # drop columns 
-    # for combined
-    droplist_combined = [i for i in df_tu.columns if i.startswith('Count') or i.startswith('avg_connect')]
-    df_tu_combined = df_tu.drop(columns=droplist_combined, axis=1)
-    # for connected
-    droplist_connected = [i for i in df_tu.columns if i.startswith('Count') or i.startswith('avg_combined')]
-    df_tu_connected = df_tu.drop(columns=droplist_connected, axis=1)
-
-    # make dataframe vertical
-    # for combined
-    df_tu_combined = df_tu_combined.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='average_weight').drop('level_1',1)
-    # for connected
-    df_tu_connected = df_tu_connected.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='average_weight').drop('level_1',1)
-
-    # add time to dataframe
-    # for combined
-    times_repeat = len(df_tu_combined)/len(time_list)
-    times_list_combined = time_list * int(times_repeat)
-    df_tu_combined['point_in_time'] = times_list_combined
-    # for connected
-    times_repeat = len(df_tu_connected)/len(time_list)
-    times_list_connected = time_list * int(times_repeat)
-    df_tu_connected['point_in_time'] = times_list_connected
-
-    # create plots
-    # for combined
-    fig = px.line(df_tu_combined, x='point_in_time', y='average_weight', color='transformation_unit', symbol="transformation_unit",
-                    labels={
-                        "average_weight": "average combined weight",
-                        "point_in_time": "measurement"
-                    },
-                    title="Transformations and their weight per measurement <br>-combined weight-")
-    fig.update_layout(
-        xaxis = dict(
-            tickmode = 'linear',
-            tick0 = 0,
-            dtick = 1
-        )
-    )
-    #fig.show()
-
-    if export_png == 1:
-        fig.write_image(export_path + "graph_average_weight_transformations_line_combined.png")
-
-    if export_html == 1:
-        fig.write_html(export_path + "graph_average_weight_transformations_line_combined.html")
-
-    # for connected
-    fig = px.line(df_tu_connected, x='point_in_time', y='average_weight', color='transformation_unit', symbol="transformation_unit",
-                    labels={
-                        "average_weight": "average connected weight",
-                        "point_in_time": "measurement"
-                    },
-                    title="Transformations and their weight per measurement <br>-connected weight-")
-    fig.update_layout(
-        xaxis = dict(
-            tickmode = 'linear',
-            tick0 = 0,
-            dtick = 1
-        )
-    )
-    #fig.show()
-
-    if export_png == 1:
-        fig.write_image(export_path + "graph_average_weight_transformations_line_connected.png")
-    
-    if export_html == 1:
-        fig.write_html(export_path + "graph_average_weight_transformations_line_connected.html")
-    
-    print('done: create image "average weight transformations line combined and connected"')
-
-
-# Prepare Dataframe with prts and tus
-def prepare_prts_tu(call_graph):
-    df_time = call_graph.run("""
-        MATCH (m:Molecule)
-        RETURN DISTINCT m.point_in_time as time
-        ORDER BY time ASC
-    """).to_data_frame()
-
-    time_list = df_time['time'].to_list()
-    del time_list[-1]
-
-    df_tu_prt = call_graph.run("""
-        MATCH (:Molecule)-[t:PREDICTED_TRANSFORMATION]->(:Molecule)
-        RETURN DISTINCT t.transformation_unit as transformation_unit
-        """).to_data_frame()
-
-    for ele in time_list:
-        transform_count_prt = call_graph.run("""
-        MATCH (m:Molecule)-[t:PREDICTED_TRANSFORMATION]->(:Molecule)
-        WHERE m.point_in_time = """ + str(ele) + """
-        RETURN t.transformation_unit as transformation_unit, count(t.transformation_unit) as Count_prt_""" + str(ele) + """
-        ORDER BY Count_prt_""" + str(ele) + """ DESC
-        """).to_data_frame()
-
-        df_tu_prt = pd.merge(df_tu_prt, transform_count_prt, on=["transformation_unit"])
-        df_tu_prt['proportion_prt_' + str(ele)] = df_tu_prt['Count_prt_' + str(ele)]/df_tu_prt['Count_prt_' + str(ele)].sum()*100
-        
-    # drop columns 'Count_'
-    # prt
-    droplist_prt = [i for i in df_tu_prt.columns if i.startswith('Count')]
-    df_tu_prt = df_tu_prt.drop(columns=droplist_prt, axis=1)
-
-    # make dataframe vertical
-    # prt
-    df_tu_prt = df_tu_prt.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='proportion').drop('level_1',1)
-
-    # add time to dataframe
-    # prt
-    times_repeat = len(df_tu_prt)/len(time_list)
-    times_list_prt = time_list * int(times_repeat)
-    df_tu_prt['point_in_time'] = times_list_prt
-
-    return df_tu_prt
-
 
 # Different trends of transformation units
 def trends_transformation_units(call_graph, df_tu_prt, export_png, export_path):
@@ -797,23 +679,26 @@ def trend_products_degraded(df_tu, call_graph, export_png, export_path):
 ##################################################################################
 
 # establish database connection
-call_graph = get_database_connection(host, user, passwd, db_name)
+call_graph = func.connect_to_database(pva.host, pva.user, pva.passwd, pva.db_name_temporal)
 
 # set export
 export_png = 1
 export_html = 0
 export_path = path_prefix
 
-# functions
-molecules_per_snapshot_graph(call_graph, export_png, export_path)
-intensity_trend_distribution(call_graph, export_png, export_path)
-outgoing_transformations_measurement(call_graph, export_png, export_path)
+# functions to analyze graph
+# new
+anaylze_graph_topology(call_graph, pva.query_params) 
+
+# in work
+df_prt_tu = prepare_prts_tu(call_graph, pva.query_params)
+trends_transformation_units(call_graph, df_prt_tu, export_png, export_path)
+
+# old
 outgoing_transformations_occurrence(call_graph, export_png, export_path)
 most_occurring_transformations(call_graph, export_png, export_path)
 # most_occurring_transformations_measurement_bar(call_graph, 0, export_path)
 most_occurring_transformations_measurement_line(call_graph, export_png, export_html, export_path)
-average_weight_transformations_bar(call_graph, export_png, export_path)
-average_weight_transformations_line(call_graph, export_png, export_html, export_path)
 
 df_prts_tus = prepare_prts_tu(call_graph)
 trends_transformation_units(call_graph, df_prts_tus, export_png, export_path)

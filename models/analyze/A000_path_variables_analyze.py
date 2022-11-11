@@ -1,25 +1,37 @@
 # Name: Philipp Plamper
-# Date: 20. september 2022
-
-# contains path variables used to analyze models
+# Date: 08. november 2022
 
 import os
-import A001_parameters_analysis as pa
+import sys
+
+# variables can be imported only if path was added to system
+path_prefix = str(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]) # get system path to variables
+path_prefix = path_prefix.replace('\\', '/') # necessary for application in Windows
+sys.path.insert(0, path_prefix)
+
+import variables.V001_variables as pv
 
 ##################################################################################
 #set variables for models#########################################################
 ##################################################################################
 
 # host + port
-host = pa.host
+host = pv.host
 
 # credentials for API
-user = pa.user
-passwd = pa.passwd
+user = pv.user
+passwd = pv.passwd
 
 # select database
-db_name_temporal = pa.db_name_temporal
-db_name_smash = pa.db_name_smash
+db_name_temporal = pv.db_name_temporal
+db_name_smash = pv.db_name_smash
+
+# query parameters
+query_params = pv.model_params
+
+# thresholds
+lower_limit = pv.lower_limit
+upper_limit = pv.upper_limit
 
 # set filepath prefix for export
 abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
@@ -29,3 +41,8 @@ path_prefix = path_prefix.replace('\\', '/') # necessary for application in Wind
 # filepath prefix for existing files
 path_prefix_csv = str(abs_path[0]) + '/files_for_model/' # add path to files in project folder
 path_prefix_csv = path_prefix_csv.replace('\\', '/') # necessary for application in Windows
+
+# select transformation units for visualization of development over time
+# select the same for single visualization
+tu = 'H2 O1'
+tu_2 = '-H2 -O1'
