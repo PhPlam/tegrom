@@ -19,6 +19,8 @@ sys.path.insert(0, path_prefix)
 
 import variables.V002_functions as func
 
+# todo:
+# paths to export
 
 ##################################################################################
 #analyze functions################################################################
@@ -126,7 +128,7 @@ def prepare_prts_tu(call_graph, query_params):
     
     # get time
     df_time = func.graph_get_time(call_graph, query_params)
-    time_list = df_time['time'].to_list()
+    time_list = df_time['property_time'].to_list()
     del time_list[-1]
 
     df_tu_prt = call_graph.run("""
@@ -137,7 +139,7 @@ def prepare_prts_tu(call_graph, query_params):
     for ele in time_list:
         transform_count_prt = call_graph.run("""
         MATCH (m:Molecule)-[t:PREDICTED_TRANSFORMATION]->(:Molecule)
-        WHERE m.point_in_time = """ + str(ele) + """
+        WHERE m.snapshot = """ + str(ele) + """
         RETURN t.transformation_unit as transformation_unit, count(t.transformation_unit) as Count_prt_""" + str(ele) + """
         ORDER BY Count_prt_""" + str(ele) + """ DESC
         """).to_data_frame()
@@ -152,7 +154,7 @@ def prepare_prts_tu(call_graph, query_params):
 
     # make dataframe vertical
     # prt
-    df_tu_prt = df_tu_prt.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='proportion').drop('level_1',1)
+    df_tu_prt = df_tu_prt.replace('', np.nan).set_index('transformation_unit').stack().reset_index(name='share').drop('level_1',1)
 
     # add time to dataframe
     # prt
@@ -298,77 +300,6 @@ def most_occurring_transformations(call_graph, export_png, export_path):
 
     plt.clf()
     print('done: create image "most occurring transformations"')
-    # plt.show()
-
-# most occurring transformations all measurements several bar plots
-# don't use
-def most_occurring_transformations_measurement_bar(call_graph, export_png, export_path):
-    df_time = call_graph.run("""
-        MATCH (m:Molecule)
-        RETURN DISTINCT m.point_in_time as time
-        ORDER BY time
-    """).to_data_frame()
-
-    time_list = df_time['time'].to_list()
-    del time_list[-1]
-
-    df_tu_prt = call_graph.run("""
-        MATCH (:Molecule)-[t:PREDICTED_TRANSFORMATION]->(:Molecule)
-        RETURN DISTINCT t.transformation_unit as transformation_unit
-        """).to_data_frame()
-
-    df_tu_pot = call_graph.run("""
-        MATCH (:Molecule)-[t:POTENTIAL_TRANSFORMATION]->(:Molecule)
-        RETURN DISTINCT t.tu_pot as transformation_unit
-        """).to_data_frame()
-
-    for ele in time_list:
-        transform_count_prt = call_graph.run("""
-        MATCH (m:Molecule)-[t:PREDICTED_TRANSFORMATION]->(:Molecule)
-        WHERE m.point_in_time = """ + str(ele) + """
-        RETURN t.transformation_unit as transformation_unit, count(t.transformation_unit) as count_prt_""" + str(ele) + """
-        ORDER BY count_prt_""" + str(ele) + """ DESC
-        """).to_data_frame()
-
-        transform_count_pot = call_graph.run("""
-        MATCH (m:Molecule)-[t:POTENTIAL_TRANSFORMATION]->(:Molecule)
-        WHERE m.point_in_time = """ + str(ele) + """
-        RETURN t.tu_pot as transformation_unit, count(t.tu_pot) as count_pot_""" + str(ele) + """
-        ORDER BY count_pot_""" + str(ele) + """ DESC
-        """).to_data_frame()
-        
-        df_tu_prt = pd.merge(df_tu_prt, transform_count_prt, on=["transformation_unit"])
-        df_tu_prt['Share_prt_' + str(ele)] = df_tu_prt['count_prt_' + str(ele)]/df_tu_prt['count_prt_' + str(ele)].sum()*100
-        
-        df_tu_pot = pd.merge(df_tu_pot, transform_count_pot, on=["transformation_unit"])
-        df_tu_pot['Share_pot_' + str(ele)] = df_tu_pot['count_pot_' + str(ele)]/df_tu_pot['count_pot_' + str(ele)].sum()*100
-
-    df_join = pd.merge(df_tu_prt, df_tu_pot, on=["transformation_unit"])
-
-    for ele in time_list:
-        element = 'Share_prt_' + str(ele)
-        df_join = df_join.sort_values([element])
-        
-        plt.figure()
-        labels = df_join['transformation_unit'].to_list()
-        x = np.arange(len(labels))
-        height = 0.3
-        plt.figure(figsize=(4, 7))
-        plt.barh(x + height/2, df_join['Share_pot_' + str(ele)], height = 0.3, color='green')
-        plt.barh(x - height/2 , df_join['Share_prt_' + str(ele)], height = 0.3, color='orange')
-        plt.yticks(x, labels = labels)
-        plt.title('Share of chemical transformations at measurement ' + str(ele))
-        plt.ylabel('Chemical transformation')
-        plt.xlabel('Share of transformation (%)')
-        plt.legend(['"POTENTIAL_TRANSFORMATION" relationships', '"PREDICTED_TRANSFORMATION" relationships'])
-
-    if export_png == 1:
-        name = 'graph_outgoing_transformations_occurrence_per_measurement'
-        plt.savefig(export_path + name + '.png', bbox_inches='tight')
-
-    plt.clf()
-    plt.close()
-    print('done: create image "outgoing transformations occurrence per measurement"')
     # plt.show()
 
 # most occurring transformations per measurement in line plot
@@ -692,17 +623,17 @@ anaylze_graph_topology(call_graph, pva.query_params)
 
 # in work
 df_prt_tu = prepare_prts_tu(call_graph, pva.query_params)
-trends_transformation_units(call_graph, df_prt_tu, export_png, export_path)
+print(df_prt_tu)
+#trends_transformation_units(call_graph, df_prt_tu, export_png, export_path)
 
 # old
-outgoing_transformations_occurrence(call_graph, export_png, export_path)
-most_occurring_transformations(call_graph, export_png, export_path)
-# most_occurring_transformations_measurement_bar(call_graph, 0, export_path)
-most_occurring_transformations_measurement_line(call_graph, export_png, export_html, export_path)
+#outgoing_transformations_occurrence(call_graph, export_png, export_path)
+#most_occurring_transformations(call_graph, export_png, export_path)
+#most_occurring_transformations_measurement_line(call_graph, export_png, export_html, export_path)
 
-df_prts_tus = prepare_prts_tu(call_graph)
-trends_transformation_units(call_graph, df_prts_tus, export_png, export_path)
-trend_single_tu(df_prts_tus, pa.tu, pa.tu_2, export_png, export_path)
+#df_prts_tus = prepare_prts_tu(call_graph)
+#trends_transformation_units(call_graph, df_prts_tus, export_png, export_path)
+#trend_single_tu(df_prts_tus, pa.tu, pa.tu_2, export_png, export_path)
 
-df_tu = pd.read_csv(path_prefix_csv + "/transformations_handwritten.csv")
-trend_products_degraded(df_tu, call_graph, export_png, export_path)
+#df_tu = pd.read_csv(path_prefix_csv + "/transformations_handwritten.csv")
+#trend_products_degraded(df_tu, call_graph, export_png, export_path)
