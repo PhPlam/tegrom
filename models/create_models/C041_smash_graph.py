@@ -218,9 +218,9 @@ def create_property_prt_count(call_graph, new_model_paths, query_params):
 # DELETE ct
 
 # delete nodes with no edges 
-# MATCH (:Molecule)-[ct:CHEMICAL_TRANSFORMATION]->(:Molecule)
-# WHERE ct.prt_count = 0
-# DELETE ct
+# MATCH (m:Molecule)
+# WHERE NOT EXISTS ((m)-[:CHEMICAL_TRANSFORMATION]-(:Molecule))
+# DELETE m
 
 ##################################################################################
 #call functions###################################################################
