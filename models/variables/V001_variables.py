@@ -9,11 +9,11 @@ host = 'http://localhost:7474' # default: http://localhost:7474
 
 # username and password for neo4j instance
 user = 'neo4j' # default: neo4j
-passwd = '1234' # default: neo4j
+passwd = 'test1234' # default: neo4j or 1234 or test1234
 
 # names for neo4j databases
 db_name_temporal = 'modeltemporaltest' # name of temporal graph
-db_name_smash = 'modelsmashtuprt' # name of smashed graph
+db_name_smash = 'modelsmashprt' # name of smashed graph
 db_name_rev = 'modeltransformback' # for testing; name of reverted graph
 # db_name_rev from test: can the smashed graph be converted back to the temporal graph
 
@@ -27,7 +27,7 @@ lower_limit = 0.975 # below considered as decreasing intensity
 ### from UFZ ###
 
 # from UFZ assigned molecular formulas and several properties
-file_molecules = 'Photodatensatz_Graphanalyse_formulas_2020-09-10.csv'
+file_molecules = 'Philipp - Temporal Graph_formulas.final_new.avg_2023-01-04.csv'
 
 # from UFZ given transformation units
 file_transformation_units = 'transformations_handwritten.csv'
