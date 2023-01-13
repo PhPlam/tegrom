@@ -14,17 +14,17 @@ def calculate_occurring_transformations(call_graph, upper_limit, lower_limit):
     graph = call_graph
     increasing_intensity_df = graph.run("""
         MATCH (m1:Molecule)-[s:SAME_AS]->(m2:Molecule)
-        WHERE s.intensity_trend > """ + str(upper_limit) + """ AND m1.point_in_time = m2.point_in_time - 1
+        WHERE s.intensity_trend > """ + str(upper_limit) + """ AND m1.snapshot = m2.snapshot - 1
         WITH m1, m2, s
         MATCH (m3:Molecule)-[:POTENTIAL_TRANSFORMATION]->(m2)
-        WHERE m3.point_in_time = m1.point_in_time
+        WHERE m3.snapshot = m1.snapshot
         WITH m3, m2, m1, s
         MATCH (m3)-[s2:SAME_AS]->(m4:Molecule)
         WHERE s2.intensity_trend < """ + str(lower_limit) + """
-        AND m3.point_in_time = m1.point_in_time 
-        AND m4.point_in_time = m2.point_in_time
+        AND m3.snapshot = m1.snapshot 
+        AND m4.snapshot = m2.snapshot
         WITH m2.C - m3.C as C, m2.H - m3.H as H, m2.O - m3.O as O, m2.N - m3.N as N, m2.S - m3.S as S, m2, m3, m1, s, s2
-        RETURN m2.formula_string as to_molecule, m1.point_in_time as from_mid, m2.point_in_time as to_mid, m3.formula_string as from_molecule, 
+        RETURN m2.molecular_formula as to_molecule, m1.snapshot as from_mid, m2.snapshot as to_mid, m3.molecular_formula as from_molecule, 
         C, H, O, N, S, s2.tendency_weight as tendency_weight_lose, s.tendency_weight as tendency_weight_gain,
         s2.tendency_weight_conn as tendency_weight_lose_conn, s.tendency_weight_conn as tendency_weight_gain_conn
     """).to_data_frame()
@@ -103,10 +103,10 @@ def create_relationship_predicted_transformation(call_graph, calc_weights):
     for index, row in calc_weights.iterrows():
         tx.evaluate("""
             MATCH (m1:Molecule), (m2:Molecule)
-            WHERE m1.formula_string = $from_molecule
-                AND m1.point_in_time = $from_mid
-                AND m2.formula_string = $to_molecule
-                AND m2.point_in_time = $to_mid
+            WHERE m1.molecular_formula = $from_molecule
+                AND m1.snapshot = $from_mid
+                AND m2.molecular_formula = $to_molecule
+                AND m2.snapshot = $to_mid
             CREATE (m1)-[:PREDICTED_TRANSFORMATION {C: toInteger($C), 
                 H: toInteger($H), 
                 O: toInteger($O), 
@@ -130,18 +130,18 @@ def normalize_weights(call_graph):
     graph = call_graph
     graph.run("""
         MATCH (:Molecule)-[t:PREDICTED_TRANSFORMATION]->(m:Molecule)
-        WITH m.formula_string as fs, m.point_in_time as mid, sum(t.connected_weight) as sum_weight
+        WITH m.molecular_formula as fs, m.snapshot as mid, sum(t.connected_weight) as sum_weight
         MATCH (:Molecule)-[t1:PREDICTED_TRANSFORMATION]->(m1:Molecule)
-        WHERE m1.formula_string = fs AND m1.point_in_time = mid
+        WHERE m1.molecular_formula = fs AND m1.snapshot = mid
         SET t1.normalized_connected_weight = apoc.math.round(t1.connected_weight/sum_weight, 3)
         RETURN fs, mid, sum_weight
     """)
 
     graph.run("""
         MATCH (:Molecule)-[t:PREDICTED_TRANSFORMATION]->(m:Molecule)
-        WITH m.formula_string as fs, m.point_in_time as mid, sum(t.combined_weight) as sum_weight
+        WITH m.molecular_formula as fs, m.snapshot as mid, sum(t.combined_weight) as sum_weight
         MATCH (:Molecule)-[t1:PREDICTED_TRANSFORMATION]->(m1:Molecule)
-        WHERE m1.formula_string = fs AND m1.point_in_time = mid
+        WHERE m1.molecular_formula = fs AND m1.snapshot = mid
         SET t1.normalized_combined_weight = apoc.math.round(t1.combined_weight/sum_weight, 3)
         RETURN fs, mid, sum_weight
     """)

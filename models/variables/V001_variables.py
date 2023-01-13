@@ -12,7 +12,7 @@ user = 'neo4j' # default: neo4j
 passwd = 'test1234' # default: neo4j or 1234 or test1234
 
 # names for neo4j databases
-db_name_temporal = 'modeltemporaltest' # name of temporal graph
+db_name_temporal = 'modeltemporallesstu' # name of temporal graph
 db_name_smash = 'modelsmashprt' # name of smashed graph
 db_name_rev = 'modeltransformback' # for testing; name of reverted graph
 # db_name_rev from test: can the smashed graph be converted back to the temporal graph
