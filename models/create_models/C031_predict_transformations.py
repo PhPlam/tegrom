@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 11. november 2022
+# Date: 12. november 2022
 
 import pandas as pd
 from py2neo import Graph
