@@ -5,15 +5,15 @@
 ### database connection ### 
 
 # host + port
-host = 'http://localhost:7474' # default: http://localhost:7474
+host = 'bolt://localhost:7687' # default: bolt://localhost:7687
 
 # username and password for neo4j instance
 user = 'neo4j' # default: neo4j
 passwd = 'test1234' # default: neo4j or 1234 or test1234
 
 # names for neo4j databases
-db_name_temporal = 'modeltemporallesstu' # name of temporal graph
-db_name_smash = 'modelsmashprt' # name of smashed graph
+db_name_temporal = 'modeltemporaltest' # name of temporal graph
+db_name_light = 'modellightprt' # name of smashed graph
 db_name_rev = 'modeltransformback' # for testing; name of reverted graph
 # db_name_rev from test: can the smashed graph be converted back to the temporal graph
 
@@ -79,5 +79,7 @@ model_params = {
     'prop_extra_4' : 'O', # property value; Integer
     'prop_extra_5' : 'S', # property value; Integer
     'prop_extra_8' : 'transition_count', # property value; Integer
-    'prop_extra_9' : 'prt_count' # property value Integer
+    'prop_extra_9' : 'prt_count', # property value Integer
+    'prop_extra_10': 'tendency_weight',
+    'prop_extra_11': 'tendency_weight_conn'
 }

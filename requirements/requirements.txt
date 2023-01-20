@@ -1,8 +1,9 @@
 # required libraries for code execution
-# Date: 20. september 2022
+# Date: 17. january 2023
 
 pandas
 py2neo==2021.1.5
+neo4j
 progress
 numpy
 matplotlib
