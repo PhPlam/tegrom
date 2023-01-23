@@ -81,5 +81,6 @@ model_params = {
     'prop_extra_8' : 'transition_count', # property value; Integer
     'prop_extra_9' : 'prt_count', # property value Integer
     'prop_extra_10': 'tendency_weight',
-    'prop_extra_11': 'Predicted_weight'
+    'prop_extra_11': 'Predicted_weight',
+    'prop_extra_12': 'radiation_dose'
 }

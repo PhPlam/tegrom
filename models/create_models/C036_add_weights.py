@@ -97,7 +97,7 @@ def normalize_weights(session_temporal, query_params):
 
 if __name__ == '__main__':
     # establish connection to graph
-    session_temporal = pvc.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
+    session_temporal = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
 
     # calculate weights and add to graph
     tendencies = get_tendencies(session_temporal, pvc.query_params)

@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 18. january 2023
+# Date: 23. january 2023
 
 import os
 import time
@@ -24,7 +24,8 @@ def create_nodes_molecule(session, formula_file_path, query_params):
          + query_params['prop_extra_4'] + " : toInteger(row.O), "
          + query_params['prop_extra_5'] + " : toInteger(row.S), "
          + query_params['prop_extra_4'] + query_params['prop_extra_1'] + " : toFloat(row.O)/toFloat(row.C), "
-         + query_params['prop_extra_2'] + query_params['prop_extra_1'] + " : toFloat(row.H)/toFloat(row.C)}) "
+         + query_params['prop_extra_2'] + query_params['prop_extra_1'] + " : toFloat(row.H)/toFloat(row.C), "
+         + query_params['prop_extra_12'] + " : toFloat(row.radiation_dose)})"
     )
     print('create ' + query_params['label_node'] + ' nodes')
 
@@ -115,7 +116,7 @@ if __name__ == '__main__':
     pvc.create_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
     # wait a few seconds for database creation
     time.sleep(5)
-    session = pvc.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
+    session = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
 
     # create graph
     create_nodes_molecule(session, pvc.formula_file_path, pvc.query_params)

@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 18. january 2023
+# Date: 23. january 2023
 
 from neo4j import GraphDatabase
 import C000_path_variables_create as pvc
@@ -229,11 +229,11 @@ if __name__ == '__main__':
     pvc.create_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_light)
 
     # connect to temporal graph model
-    session_temporal = pvc.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
+    session_temporal = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
     new_model_paths = get_relationships(session_temporal, pvc.query_params)
 
     # connect to light temporal model
-    session_light = pvc.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_light)
+    session_light = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_light)
     create_nodes_molecule(session_temporal, session_light, pvc.query_params)
     create_index(session_light, pvc.query_params)
     create_relationship_chemical_transformation(session_temporal, session_light, pvc.query_params)

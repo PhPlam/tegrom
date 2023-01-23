@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 18. january 2023
+# Date: 23. january 2023
 
 import pandas as pd
 from neo4j import GraphDatabase
@@ -112,7 +112,7 @@ def create_relationship_predicted_transformation(session, calc_weights, query_pa
 
 if __name__ == '__main__':
     # establish connection to graph
-    session = pvc.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
+    session = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
 
     # calculate and add predicted likely occurring transformations (Transformation Prediction Algorithm)
     occ_trans = predict_likely_occurring_transformations(session, pvc.upper_limit, pvc.lower_limit, pvc.query_params)
