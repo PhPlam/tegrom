@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 09. november 2022
+# Date: 23. january 2023
 
 ### parameter for ###
 ### database connection ### 
@@ -81,5 +81,5 @@ model_params = {
     'prop_extra_8' : 'transition_count', # property value; Integer
     'prop_extra_9' : 'prt_count', # property value Integer
     'prop_extra_10': 'tendency_weight',
-    'prop_extra_11': 'tendency_weight_conn'
+    'prop_extra_11': 'Predicted_weight'
 }

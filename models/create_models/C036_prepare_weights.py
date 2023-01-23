@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 19. january 2023
+# Date: 23. january 2023
 
 import pandas as pd
 from neo4j import GraphDatabase
@@ -28,53 +28,68 @@ def get_tendencies(session_temporal, query_params):
     print('get property ' + query_params['prop_edge_value_2'])
     return tendencies
 
-# calculate tendency weight for every intensity trend
-# inlcudes parts of the calculation of the connected weight
+# calculate tendency weight for every intensity trend (intermediate weight)
 def calc_weights(tendencies, upper_limit, lower_limit):
     MAX = tendencies.intensity_trend.max()
     MIN = tendencies.intensity_trend.min()
 
-    tendency_weight_list = []
-    connect_weight_list = []
+    weight_list = []
 
     for row in tendencies.itertuples():
         if row.intensity_trend >= upper_limit:
             res = row.intensity_trend/MAX # current intensity trend / maximum intensity trend
-            tendency_weight_list.append(res)
-            connect_weight_list.append(res * (row.int/row.avg_int))
+            weight_list.append(res * (row.int/row.avg_int))
         elif row.intensity_trend <= lower_limit:
             res = (1-row.intensity_trend)/(1-MIN) # (1 - current intensity trend) / (1 - minimum intensity trend)
-            tendency_weight_list.append(res)
-            connect_weight_list.append(res * (row.int/row.avg_int))
+            weight_list.append(res * (row.int/row.avg_int))
         else:
-            tendency_weight_list.append(0)
-            connect_weight_list.append(0)
+            weight_list.append(0)
 
-    tendencies['tendency_weight'] = tendency_weight_list
-    tendencies['tendency_weight_conn'] = connect_weight_list
+    tendencies['tendency_weight'] = weight_list
 
-    print('calculate tendency weights')
+    print('calculate edge weight')
     return tendencies
 
 
-# add tendency weight property to graph 
-# includes adding parts of the later calculated connected weight
-def add_weights_to_graph(tendency_weights, session_temporal, query_params):
+# add tendency weight property to edges
+def calc_temp_weights(tendency_weights, session_temporal, query_params):
     for index, row in tendency_weights.iterrows():
         session_temporal.run(
             "MATCH (m1:" + query_params['label_node'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + ") "
             "WHERE m1." + query_params['prop_node_name'] + " = $from_formula AND m1." + query_params['prop_node_snapshot'] + " = $from_mid "
                 "AND m2." + query_params['prop_node_name'] + " = $to_formula AND m2." + query_params['prop_node_snapshot'] + " = $to_mid "
             "SET s." + query_params['prop_extra_10'] + " = $tendency_weight "
-            "SET s." + query_params['prop_extra_11'] + " = $tendency_weight_conn"
         , parameters= {'from_formula': row['from_formula'], 
             'from_mid': row['from_mid'], 
             'to_formula': row['to_formula'], 
             'to_mid': row['to_mid'], 
-            'tendency_weight': row['tendency_weight'], 
-            'tendency_weight_conn': row['tendency_weight_conn']})
+            'tendency_weight': row['tendency_weight']})
 
-    print('add tendency_weight property')
+    print('add property ' + query_params['prop_extra_10'])
+
+# add the final weights to the graph
+def add_weights(session_temporal, upper_limit, lower_limit, query_params):
+    tendency_weights = session_temporal.run(
+        "MATCH (m1:" + query_params['label_node'] + ")-[prt:" + query_params['label_predicted_edge'] + "]->(m2:" + query_params['label_node'] + "), "
+            "(m1)-[s1:" + query_params['label_same_as'] + "]->(:" + query_params['label_node'] + "), "
+            "(:" + query_params['label_node'] + ")-[s2:" + query_params['label_same_as'] + "]->(m2) "
+        "SET prt." + query_params['prop_extra_11'] + " = s1." + query_params['prop_extra_10'] + " + s2." + query_params['prop_extra_10'] + " "
+    ).to_df()
+
+    print('add weights to graph')
+
+# normalize incoming weights
+def normalize_weights(session_temporal, query_params):
+    session_temporal.run(
+        "MATCH (:" + query_params['label_node'] + ")-[t:" + query_params['label_predicted_edge'] + "]->(m:" + query_params['label_node'] + ") " 
+        "WITH m." + query_params['prop_node_name'] + " as fs, m." + query_params['prop_node_snapshot'] + " as mid, "
+            "sum(t." + query_params['prop_extra_11'] + ") as sum_weight "
+        "MATCH (:" + query_params['label_node'] + ")-[t1:" + query_params['label_predicted_edge'] + "]->(m1:" + query_params['label_node'] + ") "
+        "WHERE m1." + query_params['prop_node_name'] + " = fs AND m1." + query_params['prop_node_snapshot'] + " = mid "
+        "SET t1.normalized_" + query_params['prop_extra_11'] + " = t1.predicted_weight/sum_weight"
+    )
+
+    print('normalize weights')
 
 ##################################################################################
 #call functions###################################################################
@@ -87,7 +102,9 @@ if __name__ == '__main__':
     # calculate weights and add to graph
     tendencies = get_tendencies(session_temporal, pvc.query_params)
     tendency_weights = calc_weights(tendencies, pvc.upper_limit, pvc.lower_limit)
-    add_weights_to_graph(tendency_weights, session_temporal, pvc.query_params)
+    calc_temp_weights(tendency_weights, session_temporal, pvc.query_params)
+    add_weights(session_temporal, pvc.upper_limit, pvc.lower_limit, pvc.query_params)
+    normalize_weights(session_temporal, pvc.query_params)
 
     # close session
     session_temporal.close()
