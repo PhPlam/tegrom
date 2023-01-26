@@ -25,9 +25,11 @@ def create_nodes_molecule(session, formula_file_path, query_params):
          + query_params['prop_extra_5'] + " : toInteger(row.S), "
          + query_params['prop_extra_4'] + query_params['prop_extra_1'] + " : toFloat(row.O)/toFloat(row.C), "
          + query_params['prop_extra_2'] + query_params['prop_extra_1'] + " : toFloat(row.H)/toFloat(row.C), "
-         + query_params['prop_extra_12'] + " : toFloat(row.radiation_dose)})"
+         + query_params['prop_extra_12'] + " : toFloat(row.radiation_dose), "
+         + query_params['prop_extra_14'] + " : row.formula_class})"
+        "RETURN *"
     )
-    print('create ' + query_params['label_node'] + ' nodes')
+    print('done: create ' + query_params['label_node'] + ' nodes')
 
 # create constraint molecular_formula in combination with point in time is unique
 def create_contraint(session, query_params):
@@ -37,14 +39,14 @@ def create_contraint(session, query_params):
         + query_params['prop_node_name'] + ", m." 
         + query_params['prop_node_snapshot'] + ") IS NODE KEY"
     )
-    print('create unique ' + query_params['prop_node_name'] + ' constraint')
+    print('done: create unique ' + query_params['prop_node_name'] + ' constraint')
 
 # create index on formula strings
 def create_index(session, query_params):
     session.run("CREATE INDEX FOR (m:" 
         + query_params['label_node'] + ") ON (m." 
         + query_params['prop_node_name'] + ")")
-    print('create index on ' + query_params['prop_node_name'])
+    print('done: create index on ' + query_params['prop_node_name'])
 
 # create POTENTIAL TRANSFORMATION relationship
 def create_relationship_potential_transformation(session, transform_file_path, query_params):
@@ -58,6 +60,7 @@ def create_relationship_potential_transformation(session, transform_file_path, q
             "row.tu_N AS N, "
             "row.tu_O AS O, " 
             "row.tu_S AS S, "
+            "row.is_addition AS is_addition, "
             "row.transformation_unit as transformation_unit "
         "MATCH (m:" + query_params['label_node'] + "), (m2:" + query_params['label_node'] + ") "
         "WHERE m." + query_params['prop_node_name'] + " = from_node "
@@ -69,11 +72,12 @@ def create_relationship_potential_transformation(session, transform_file_path, q
             + query_params['prop_extra_3'] + ": toInteger(N), "
             + query_params['prop_extra_4'] + ": toInteger(O), "
             + query_params['prop_extra_5'] + ": toInteger(S), "
+            + query_params['prop_extra_13'] + ": toInteger(is_addition), "
             + query_params['prop_edge_value_1'] + ": transformation_unit}]->(m2) "
         "RETURN count(*)', "
         "{batchSize: 500})"
     )
-    print('create ' + query_params['label_potential_edge'] + ' relationship')
+    print('done: create ' + query_params['label_potential_edge'] + ' relationship')
 
 # create SAME_AS relationship
 def create_relationship_same_as(session, query_params):
@@ -83,7 +87,7 @@ def create_relationship_same_as(session, query_params):
             "AND m2." + query_params['prop_node_snapshot'] + " = m1." + query_params['prop_node_snapshot'] + " + 1 "
         "CREATE (m1)-[:" + query_params['label_same_as'] + "]->(m2)"
     )
-    print('create ' + query_params['label_same_as'] + ' relationship')
+    print('done: create ' + query_params['label_same_as'] + ' relationship')
 
 # create intensity_trend property
 def create_property_intensity_trend(session, query_params):
@@ -92,7 +96,7 @@ def create_property_intensity_trend(session, query_params):
         "WITH (m2." + query_params['prop_node_value'] + "/m1." + query_params['prop_node_value'] + ") as trend, m1, m2, s "
         "SET s." + query_params['prop_edge_value_2'] + " = trend "
     )
-    print('create property ' + query_params['prop_edge_value_2'])
+    print('done: create property ' + query_params['prop_edge_value_2'])
 
 
 # delete molecules without edges of type pot
@@ -104,7 +108,7 @@ def delete_molecules_without_transformation(session, query_params):
         "DETACH DELETE m"
     )
 
-    print("delete " + query_params['label_node'] + " without edges of type " + query_params['label_potential_edge'])
+    print("done: delete " + query_params['label_node'] + " without edges of type " + query_params['label_potential_edge'])
 
 
 ##################################################################################

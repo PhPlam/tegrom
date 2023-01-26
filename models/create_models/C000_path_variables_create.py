@@ -29,7 +29,7 @@ passwd = pv.passwd
 # select database
 db_name_temporal = pv.db_name_temporal
 db_name_light = pv.db_name_light
-db_name_rev = pv.db_name_rev
+#db_name_rev = pv.db_name_rev
 
 # query parameters
 query_params = pv.model_params
@@ -59,4 +59,4 @@ def create_database(host, user, passwd, db_name):
     session.run("CREATE OR REPLACE DATABASE " + db_name)
     # close session
     session.close()
-    print('create or replace database: ' + db_name)
+    print('done: create or replace database ' + db_name)

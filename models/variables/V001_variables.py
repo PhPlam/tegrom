@@ -14,7 +14,7 @@ passwd = 'test1234' # default: neo4j or 1234 or test1234
 # names for neo4j databases
 db_name_temporal = 'modeltemporaltest' # name of temporal graph
 db_name_light = 'modellightprt' # name of smashed graph
-db_name_rev = 'modeltransformback' # for testing; name of reverted graph
+#db_name_rev = 'modeltransformback' # for testing; name of reverted graph
 # db_name_rev from test: can the smashed graph be converted back to the temporal graph
 
 # define threshold for intensity trend 
@@ -80,7 +80,10 @@ model_params = {
     'prop_extra_5' : 'S', # property value; Integer
     'prop_extra_8' : 'transition_count', # property value; Integer
     'prop_extra_9' : 'prt_count', # property value Integer
-    'prop_extra_10': 'tendency_weight',
-    'prop_extra_11': 'Predicted_weight',
-    'prop_extra_12': 'radiation_dose'
+    'prop_extra_10': 'tendency_weight', # temporal value for weight calculation
+    'prop_extra_11': 'predicted_weight',
+    'prop_extra_12': 'radiation_dose',
+    'prop_extra_13': 'is_addition', # 1 if transformation is photo addition
+    'prop_extra_14': 'formula_class',
+    'prop_extra_15': 'normalized_predicted_weight'
 }

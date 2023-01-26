@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 23. january 2023
+# Date: 26. january 2023
 
 import pandas as pd
 from neo4j import GraphDatabase
@@ -25,7 +25,7 @@ def get_tendencies(session_temporal, query_params):
             "avg_int "
         "ORDER BY intensity_trend ASC"
     ).to_df()
-    print('get property ' + query_params['prop_edge_value_2'])
+    print('done: get property ' + query_params['prop_edge_value_2'])
     return tendencies
 
 # calculate tendency weight for every intensity trend (intermediate weight)
@@ -47,7 +47,7 @@ def calc_weights(tendencies, upper_limit, lower_limit):
 
     tendencies['tendency_weight'] = weight_list
 
-    print('calculate edge weight')
+    print('done: calculate edge weight')
     return tendencies
 
 
@@ -65,7 +65,7 @@ def calc_temp_weights(tendency_weights, session_temporal, query_params):
             'to_mid': row['to_mid'], 
             'tendency_weight': row['tendency_weight']})
 
-    print('add property ' + query_params['prop_extra_10'])
+    print('done: add property ' + query_params['prop_extra_10'])
 
 # add the final weights to the graph
 def add_weights(session_temporal, upper_limit, lower_limit, query_params):
@@ -76,7 +76,7 @@ def add_weights(session_temporal, upper_limit, lower_limit, query_params):
         "SET prt." + query_params['prop_extra_11'] + " = s1." + query_params['prop_extra_10'] + " + s2." + query_params['prop_extra_10'] + " "
     ).to_df()
 
-    print('add weights to graph')
+    print('done: add weights to graph')
 
 # normalize incoming weights
 def normalize_weights(session_temporal, query_params):
@@ -86,10 +86,10 @@ def normalize_weights(session_temporal, query_params):
             "sum(t." + query_params['prop_extra_11'] + ") as sum_weight "
         "MATCH (:" + query_params['label_node'] + ")-[t1:" + query_params['label_predicted_edge'] + "]->(m1:" + query_params['label_node'] + ") "
         "WHERE m1." + query_params['prop_node_name'] + " = fs AND m1." + query_params['prop_node_snapshot'] + " = mid "
-        "SET t1.normalized_" + query_params['prop_extra_11'] + " = t1.predicted_weight/sum_weight"
+        "SET t1." + query_params['prop_extra_15'] + " = t1." + query_params['prop_extra_11'] + "/sum_weight"
     )
 
-    print('normalize weights')
+    print('done: normalize weights')
 
 ##################################################################################
 #call functions###################################################################

@@ -38,13 +38,3 @@ upper_limit = pv.upper_limit
 abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
 export_path_prefix = str(abs_path[0]) + '/analyze/analyze_results/' # add path where to save files in project folder
 export_path_prefix = export_path_prefix.replace('\\', '/') # necessary for application in Windows
-
-# filepath prefix for existing files
-#path_prefix_csv = str(abs_path[0]) + '/files_for_model/' # add path to files in project folder
-#path_prefix_csv = path_prefix_csv.replace('\\', '/') # necessary for application in Windows
-
-# select transformation units for visualization of development over time
-# select the same for single visualization
-#tu = 'H2 O1'
-#tu_2 = '-H2 -O1'
-

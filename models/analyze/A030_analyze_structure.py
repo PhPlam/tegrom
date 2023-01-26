@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 23. january 2023
+# Date: 26. january 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,16 +10,14 @@ import A000_path_variables_analyze as pva
 #analyze functions################################################################
 ##################################################################################
 
-def analyze_structure(session, query_params):
+def analyze_structure(session, query_params, df_time):
     
     ### get the data ################################
 
     ### get time ###
-    df_time = pva.pf.graph_get_time(session, query_params)
-    df_time['average_nodes'] = df_time.count_nodes.mean()
     standard_deviation = np.std(np.array(df_time['count_nodes'], df_time['property_time']))
-    radiation = df_time['radiation_dose'].to_list()
-    radiation_diff = ['+' + str(round(x - radiation[i - 1], 1)) for i, x in enumerate(radiation)][1:]
+    radiation_diff = df_time.rad_diff.to_list()
+    del radiation_diff[0]
 
     ### get trends ###
     # increasing 
@@ -122,7 +120,10 @@ def analyze_structure(session, query_params):
     plt.figtext(-0.02, 0.32, '(C)', fontsize=16, fontweight='bold')
 
     plt.tight_layout()
-    plt.savefig(pva.export_path_prefix + 'graph_structure.png', dpi=150, bbox_inches='tight')
+
+    name = 'graph_structure.png'
+    plt.savefig(pva.export_path_prefix + name, dpi=150, bbox_inches='tight')
+    print('done: create plot ' + name)
 
 
 ##################################################################################
@@ -132,7 +133,9 @@ def analyze_structure(session, query_params):
 if __name__ == '__main__':
     # create session to database and analyze graph
     session = pva.pf.connect_to_database(pva.host, pva.user, pva.passwd, pva.db_name_temporal)
-    analyze_structure(session, pva.query_params)
+
+    df_time = pva.pf.graph_get_time(session, pva.query_params)
+    analyze_structure(session, pva.query_params, df_time)
 
     # end session
     session.close()

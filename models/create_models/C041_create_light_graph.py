@@ -30,8 +30,7 @@ def get_relationships(session_temporal, query_params):
     # fill null values of columns matched with 'Optional Match'
     new_model_paths = new_model_paths.fillna(0)
 
-    print('get all edges ' + query_params['label_potential_edge'])
-
+    print('done: get all edges ' + query_params['label_potential_edge'])
     return new_model_paths
 
 
@@ -71,7 +70,7 @@ def create_nodes_molecule(session_temporal, session_light, query_params):
                             'HC' : row['HC']
                             })
 
-    print('create nodes ' + query_params['label_node'])
+    print('done: create nodes ' + query_params['label_node'])
 
 
 # create index on formula string
@@ -80,7 +79,7 @@ def create_index(session_light, query_params):
         "CREATE INDEX FOR (m:" + query_params['label_node'] + ") ON (m." + query_params['prop_node_name'] + ")"
     )
 
-    print('create index on formula string')
+    print('done: create index on formula string')
 
 
 # create CHEMICAL_TRANSFORMATION relationship
@@ -121,14 +120,14 @@ def create_relationship_chemical_transformation(session_temporal, session_light,
                             'edge_string' : row['edge_string']
                             })
 
-    print('create relationship ' + query_params['label_chemical_edge'])
+    print('done: create relationship ' + query_params['label_chemical_edge'])
 
 
 # create and set properties at relationship CHEMICAL_TRANSRFORMATION
 def set_properties_chemical_transformation(session_light, new_model_paths, query_params):
     for i in range (1,new_model_paths['to_node_time'].max()+1):
         is_prt_list = []
-        new_model_paths_trim = new_model_paths[new_model_paths['to_node_time'] == i]
+        new_model_paths_trim = new_model_paths[new_model_paths['to_node_time'] == i].copy()
         
         for row in new_model_paths_trim.itertuples():
             if (0 < getattr(row, 'from_node_edge_value') < 0.975 and getattr(row, 'to_node_edge_value') > 1.025):
@@ -161,9 +160,9 @@ def set_properties_chemical_transformation(session_light, new_model_paths, query
                                 'predicted': row.predicted}
             )
 
-        print('set properties of transition:', str(i))
+        print('done: set properties of transition', str(i))
     
-    print('set properties at relationship ' + query_params['label_chemical_edge'])
+    print('done: set properties at relationship ' + query_params['label_chemical_edge'])
         
     # order of properties in List
     # 1. transition
@@ -183,7 +182,7 @@ def create_property_transition_count(session_light, query_params):
         "RETURN m1." + query_params['prop_node_name'] + ", keys LIMIT 5 "
     )
 
-    print('create property ' + query_params['prop_extra_8'])
+    print('done: create property ' + query_params['prop_extra_8'])
 
 
 # property 'prt_count' = number of transitions of type predicted transformation in temporal graph model
@@ -202,7 +201,7 @@ def create_property_count_predicted_transformation(session_light, new_model_path
             "RETURN count(*)"
         )
 
-    print('done: create property ' + query_params['prop_extra_9'])
+    print('done: done: create property ' + query_params['prop_extra_9'])
 
 def delete_nodes_without_predicted_transformation(session_light, query_params):
     session_light.run(
@@ -217,7 +216,7 @@ def delete_nodes_without_predicted_transformation(session_light, query_params):
         "DELETE m"   
     )
 
-    print("delete nodes without preedicted transformation")
+    print("done: delete nodes without preedicted transformation")
 
 
 ##################################################################################

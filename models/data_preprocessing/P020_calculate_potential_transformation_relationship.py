@@ -1,10 +1,9 @@
 # Name: Philipp Plamper
-# Date: 27. october 2022
+# Date: 24. january 2023
 
 import pandas as pd
 from progress.bar import Bar
 import P000_path_variables_preprocess as pvp
-
 
 ##################################################################################
 #calculate possible transformations###############################################
@@ -47,6 +46,7 @@ def calculate_new_formulas_photoaddition(formula_strings, transformation_unit):
             formula_dict = {
                 'formula_string': row1.formula_string,
                 'transformation_unit': row2.element,
+                'is_addition' : 1,
                 'new_C': new_C,
                 'new_H': new_H,
                 'new_O': new_O,
@@ -96,6 +96,7 @@ def calculate_new_formulas_photodegradation(formula_strings, transformation_unit
             formula_dict = {
                 'formula_string': row1.formula_string,
                 'transformation_unit': row2.element,
+                'is_addition': 0,
                 'new_C': new_C,
                 'new_H': new_H,
                 'new_O': new_O,
