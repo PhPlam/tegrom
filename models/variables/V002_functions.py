@@ -1,16 +1,11 @@
 # Name: Philipp Plamper 
-# Date: 25. january 2023
+# Date: 27. january 2023
 
 import os
-from neo4j import GraphDatabase
 import pandas as pd
-
-# variables can be imported only if path was added to system
-#path_prefix = str(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]) # get system path to variables
-#path_prefix = path_prefix.replace('\\', '/') # necessary for application in Windows
-#sys.path.insert(0, path_prefix)
-
-#import variables.V001_variables as var
+import numpy as np
+from scipy import stats
+from neo4j import GraphDatabase
 
 ### functions to ###
 ### provide functionality ###
@@ -104,7 +99,7 @@ def graph_get_transformations(session, edge_type, query_params):
     return df_transformations
 
 # get transformation units and their share per snapshot
-def get_share_transformation_units(session, query_params):
+def get_share_transformation_units(session, query_params, transition_property):
     df_time = graph_get_time(session, query_params)
     time_list = df_time['property_time'].to_list()
     del time_list[-1]
@@ -119,21 +114,62 @@ def get_share_transformation_units(session, query_params):
             "WHERE t." + query_params['prop_edge_value_1'] + " = transformation_unit "
                 "AND m." + query_params['prop_node_snapshot'] + "  = " + str(ele) + " "
             "RETURN transformation_unit as transformation_unit, " 
-                "count(t." + query_params['prop_edge_value_1'] + ") as Count_prt_" + str(ele) + ", "
-                "t." + query_params['prop_extra_13'] + " as is_addition "
+                "t." + query_params['prop_extra_13'] + " as is_addition, "
+                "count(t." + query_params['prop_edge_value_1'] + ") as count_prt_" + str(ele) + ", "
+                "avg(t." + query_params['prop_extra_15'] + ")*100 as weight_prt_" + str(ele) + ""
         ).to_df()
         
         if df_transformation_unit_count.empty:
             df_transformation_unit_count = count_predicted.copy()
         else:
-            df_transformation_unit_count  = pd.merge(df_transformation_unit_count, count_predicted[['transformation_unit','Count_prt_'+str(ele)]], on=["transformation_unit"])
-        
+            df_transformation_unit_count  = pd.merge(df_transformation_unit_count, count_predicted[['transformation_unit', 'count_prt_'+str(ele), 'weight_prt_'+str(ele)]], on=["transformation_unit"])
+
         # calculate share of transformation units in every snapshot
-        df_transformation_unit_count['transition_' + str(ele+1)] = df_transformation_unit_count['Count_prt_' + str(ele)]/df_transformation_unit_count['Count_prt_' + str(ele)].sum()*100
+        df_transformation_unit_count['transition_' + str(ele+1)] = df_transformation_unit_count['count_prt_' + str(ele)]/df_transformation_unit_count['count_prt_' + str(ele)].sum()*100
 
     # drop columns start with 'Count_'
-    droplist_columns = [i for i in  df_transformation_unit_count.columns if i.startswith('Count')]
+    droplist_columns = [i for i in  df_transformation_unit_count.columns if i.startswith('count')]
     df_transformation_unit_count =  df_transformation_unit_count.drop(columns=droplist_columns, axis=1)
+
+    if transition_property == 'weight':
+        droplist_columns = [i for i in  df_transformation_unit_count.columns if i.startswith('transition')]
+        df_transformation_unit_count =  df_transformation_unit_count.drop(columns=droplist_columns, axis=1)
+    elif transition_property == 'share':
+        droplist_columns = [i for i in  df_transformation_unit_count.columns if i.startswith('weight')]
+        df_transformation_unit_count =  df_transformation_unit_count.drop(columns=droplist_columns, axis=1)
+
+    df_transformation_unit_count = df_transformation_unit_count.fillna(0)
 
     print('done: get all ' + query_params['prop_edge_value_1'] + ' and their share per ' + query_params['prop_node_snapshot'])
     return df_transformation_unit_count
+
+def calculate_increase(df_transformation_unit_count, df_time):
+    time_list = df_time['property_time'].to_list()
+    del time_list[-1]
+
+    transformation_unit_dict_list = []
+    for tu in df_transformation_unit_count.transformation_unit:
+        pick_tu = df_transformation_unit_count[df_transformation_unit_count.transformation_unit == tu]
+        values = pick_tu.iloc[0,2:].values.tolist()
+
+        # calculate angle 
+        res = stats.linregress(time_list, values)
+        angle = np.rad2deg(np.arctan((res.slope*len(time_list))/(len(time_list))))
+        
+        # calculate increase
+        increase = np.tan(angle*(np.pi/180))*100    
+        
+        tu_dict = {
+            'tu': tu,
+            'is_addition': pick_tu.is_addition.values[0],
+            'increase': increase,
+            'mean_perc': np.mean(values)
+        }
+        transformation_unit_dict_list.append(tu_dict)
+        
+
+    df_transformation_unit = pd.DataFrame(transformation_unit_dict_list)
+    df_transformation_unit = df_transformation_unit.sort_values(by=['increase'], ascending=False).reset_index(drop=True)
+
+    print('done: calculate increase')
+    return df_transformation_unit

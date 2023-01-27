@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 26. january 2023
+# Date: 27. january 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     # create session to database and analyze graph
     session = pva.pf.connect_to_database(pva.host, pva.user, pva.passwd, pva.db_name_temporal)
 
-    df_transformation_unit_count = pva.pf.get_share_transformation_units(session, pva.query_params)
+    df_transformation_unit_count = pva.pf.get_share_transformation_units(session, pva.query_params, transition_property='share')
     single_transformation_unit = get_single_transformation_unit(df_transformation_unit_count)
     df_time = pva.pf.graph_get_time(session, pva.query_params)
     visualize_single_transformation_unit(single_transformation_unit, df_time)
