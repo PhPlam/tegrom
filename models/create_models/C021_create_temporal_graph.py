@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 23. january 2023
+# Date: 31. january 2023
 
 import os
 import time
@@ -26,8 +26,8 @@ def create_nodes_molecule(session, formula_file_path, query_params):
          + query_params['prop_extra_4'] + query_params['prop_extra_1'] + " : toFloat(row.O)/toFloat(row.C), "
          + query_params['prop_extra_2'] + query_params['prop_extra_1'] + " : toFloat(row.H)/toFloat(row.C), "
          + query_params['prop_extra_12'] + " : toFloat(row.radiation_dose), "
-         + query_params['prop_extra_14'] + " : row.formula_class})"
-        "RETURN *"
+         + query_params['prop_extra_14'] + " : row.formula_class, "
+         + query_params['prop_extra_16'] + " : toInteger(row.formula_mass_nominal)})"
     )
     print('done: create ' + query_params['label_node'] + ' nodes')
 

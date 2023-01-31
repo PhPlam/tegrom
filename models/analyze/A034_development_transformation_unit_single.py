@@ -14,7 +14,7 @@ import A000_path_variables_analyze as pva
 def get_single_transformation_unit(df_transformation_unit_count):
 
     # choose transformation unit from all occurring transformation units
-    print('list of all transformation units: ')
+    print('choose a transformation unit to visualize development. \nlist of all transformation units: ')
     list_transformation_units = df_transformation_unit_count.transformation_unit.to_list()
     print(list_transformation_units)
     transformation_unit = input('Choose a transformation unit (default: ' + list_transformation_units[0] + '): ') or list_transformation_units[0]

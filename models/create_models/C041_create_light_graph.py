@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 23. january 2023
+# Date: 31. january 2023
 
 from neo4j import GraphDatabase
 import C000_path_variables_create as pvc
@@ -46,6 +46,7 @@ def create_nodes_molecule(session_temporal, session_light, query_params):
             "m." + query_params['prop_extra_5'] + " as S, "
             "m." + query_params['prop_extra_4'] + query_params['prop_extra_1'] + " as OC, "
             "m." + query_params['prop_extra_2'] + query_params['prop_extra_1'] + " as HC, "
+            "m." + query_params['prop_extra_16'] + " as formula_mass, "
             "count(m) as cnt"
     ).to_df()
 
@@ -56,7 +57,8 @@ def create_nodes_molecule(session_temporal, session_light, query_params):
                     + query_params['prop_extra_2'] + " : toInteger($H), "
                     + query_params['prop_extra_3'] + " : toInteger($N), "
                     + query_params['prop_extra_4'] + " : toInteger($O), "
-                    + query_params['prop_extra_5'] + " : toInteger($S),"
+                    + query_params['prop_extra_5'] + " : toInteger($S), "
+                    + query_params['prop_extra_16'] + " : toInteger($formula_mass), "
                     + query_params['prop_extra_4'] + query_params['prop_extra_1'] + " : toFloat($OC), "
                     + query_params['prop_extra_2'] + query_params['prop_extra_1'] + " : toFloat($HC)}) "
             "RETURN count(*)" 
@@ -67,7 +69,8 @@ def create_nodes_molecule(session_temporal, session_light, query_params):
                             'O' : row['O'], 
                             'S' : row['S'],
                             'OC' : row['OC'],
-                            'HC' : row['HC']
+                            'HC' : row['HC'],
+                            'formula_mass' : row['formula_mass']
                             })
 
     print('done: create nodes ' + query_params['label_node'])

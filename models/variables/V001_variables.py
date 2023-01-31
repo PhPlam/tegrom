@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 23. january 2023
+# Date: 31. january 2023
 
 ### parameter for ###
 ### database connection ### 
@@ -85,5 +85,6 @@ model_params = {
     'prop_extra_12': 'radiation_dose',
     'prop_extra_13': 'is_addition', # 1 if transformation is photo addition
     'prop_extra_14': 'formula_class',
-    'prop_extra_15': 'normalized_predicted_weight'
+    'prop_extra_15': 'normalized_predicted_weight',
+    'prop_extra_16': 'formula_mass_nominal'
 }

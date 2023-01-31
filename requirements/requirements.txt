@@ -1,12 +1,9 @@
 # required libraries for code execution
-# Date: 23. january 2023
+# Date: 31. january 2023
 
 pandas
-#py2neo==2021.1.5
 neo4j
 progress
 numpy
 matplotlib
-plotly
-kaleido
 scipy

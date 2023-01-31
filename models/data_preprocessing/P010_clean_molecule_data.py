@@ -11,7 +11,7 @@ import P000_path_variables_preprocess as pvp
 
 # keep only necessary columns
 def remove_unused_columns(original_data):
-    df_removed_columns = original_data[['measurement_id', 'peak_relint_tic', 'formula_string', 'C', 'H', 'N', 'O', 'S', 'formula_class']]
+    df_removed_columns = original_data[['measurement_id', 'peak_relint_tic', 'formula_string', 'C', 'H', 'N', 'O', 'S', 'formula_class', 'formula_mass_nominal']]
     print('done: remove unused columns')
     return df_removed_columns
 
