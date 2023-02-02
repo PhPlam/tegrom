@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 31. january 2023
+# Date: 01. february 2023
 
 from neo4j import GraphDatabase
 import C000_path_variables_create as pvc
@@ -34,7 +34,7 @@ def create_delete_projection(session_light, query_params):
 def label_propagation_algorithm(session_light, query_params):
     session_light.run(
         "CALL gds.labelPropagation.write('graphprojection', "
-        "{relationshipWeightProperty: '" + query_params['prop_extra_9'] + "', writeProperty: 'community'})"
+        "{relationshipWeightProperty: '" + query_params['prop_extra_9'] + "', writeProperty: 'community_lpa'})"
     )
     print('done: run label propagation algorithm')
 

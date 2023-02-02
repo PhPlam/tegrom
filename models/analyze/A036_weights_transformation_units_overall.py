@@ -54,6 +54,7 @@ def visualize_weights(df_tu):
 ##################################################################################
 
 if __name__ == '__main__':
+    print('----------------------')
     # create session to database and analyze graph
     session = pva.pf.connect_to_database(pva.host, pva.user, pva.passwd, pva.db_name_temporal)
 

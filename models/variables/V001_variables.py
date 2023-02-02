@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 31. january 2023
+# Date: 02. febraury 2023
 
 ### parameter for ###
 ### database connection ### 
@@ -12,7 +12,7 @@ user = 'neo4j' # default: neo4j
 passwd = 'test1234' # default: neo4j or 1234 or test1234
 
 # names for neo4j databases
-db_name_temporal = 'modeltemporaltest' # name of temporal graph
+db_name_temporal = 'modeltemporal' # name of temporal graph
 db_name_light = 'modellightprt' # name of smashed graph
 #db_name_rev = 'modeltransformback' # for testing; name of reverted graph
 # db_name_rev from test: can the smashed graph be converted back to the temporal graph
@@ -63,11 +63,11 @@ metadata = 'sample_metadata.csv'
 ### Neo4j Query parameters/properties ###
 
 model_params = {
-    'label_node' : 'Molecule', # label nodes
-    'label_same_as' : 'SAME_AS', # label edges
-    'label_potential_edge' : 'POTENTIAL_TRANSFORMATION', # label edges
-    'label_predicted_edge' : 'PREDICTED_TRANSFORMATION', # label edges
-    'label_chemical_edge' : 'CHEMICAL_TRANSFORMATION', # label edges
+    'label_node' : 'Molecule', # String; label nodes
+    'label_same_as' : 'SAME_AS', # String; label edges
+    'label_potential_edge' : 'POTENTIAL_TRANSFORMATION', # String; label edges
+    'label_predicted_edge' : 'PREDICTED_TRANSFORMATION', # String; label edges
+    'label_chemical_edge' : 'CHEMICAL_TRANSFORMATION', # String; label edges
     'prop_node_name' : 'molecular_formula', # property name; String
     'prop_node_value' : 'normalized_intensity', # property value; Float
     'prop_node_snapshot' : 'snapshot', # property time; Integer
@@ -79,12 +79,14 @@ model_params = {
     'prop_extra_4' : 'O', # property value; Integer
     'prop_extra_5' : 'S', # property value; Integer
     'prop_extra_8' : 'transition_count', # property value; Integer
-    'prop_extra_9' : 'prt_count', # property value Integer
-    'prop_extra_10': 'tendency_weight', # temporal value for weight calculation
-    'prop_extra_11': 'predicted_weight',
-    'prop_extra_12': 'radiation_dose',
-    'prop_extra_13': 'is_addition', # 1 if transformation is photo addition
-    'prop_extra_14': 'formula_class',
-    'prop_extra_15': 'normalized_predicted_weight',
-    'prop_extra_16': 'formula_mass_nominal'
+    'prop_extra_9' : 'prt_count', # Integer; property value Integer
+    'prop_extra_10': 'tendency_weight', # Float; temporal value for weight calculation
+    'prop_extra_11': 'predicted_weight', # Float
+    'prop_extra_12': 'radiation_dose', # Float
+    'prop_extra_13': 'is_addition', # Boolean; 1 if transformation is photo addition
+    'prop_extra_14': 'formula_class', # String
+    'prop_extra_15': 'normalized_predicted_weight', # Float
+    'prop_extra_16': 'formula_mass_nominal', # Integer
+    'prop_extra_17': 'average_intensity', # Float
+    'prop_extra_18': 'occurrence_count' # Integer
 }

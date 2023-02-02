@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 31. january 2023
+# Date: 02. february 2023
 
 from neo4j import GraphDatabase
 import C000_path_variables_create as pvc
@@ -47,7 +47,8 @@ def create_nodes_molecule(session_temporal, session_light, query_params):
             "m." + query_params['prop_extra_4'] + query_params['prop_extra_1'] + " as OC, "
             "m." + query_params['prop_extra_2'] + query_params['prop_extra_1'] + " as HC, "
             "m." + query_params['prop_extra_16'] + " as formula_mass, "
-            "count(m) as cnt"
+            "avg(m." + query_params['prop_node_value'] + ") as avg_intensity, "
+            "count(m) as occ_count"
     ).to_df()
 
     for index, row in df_unique_mol.iterrows():
@@ -59,6 +60,8 @@ def create_nodes_molecule(session_temporal, session_light, query_params):
                     + query_params['prop_extra_4'] + " : toInteger($O), "
                     + query_params['prop_extra_5'] + " : toInteger($S), "
                     + query_params['prop_extra_16'] + " : toInteger($formula_mass), "
+                    + query_params['prop_extra_17'] + " : toFloat($avg_intensity), "
+                    + query_params['prop_extra_18'] + " : toInteger($occ_count), "
                     + query_params['prop_extra_4'] + query_params['prop_extra_1'] + " : toFloat($OC), "
                     + query_params['prop_extra_2'] + query_params['prop_extra_1'] + " : toFloat($HC)}) "
             "RETURN count(*)" 
@@ -70,7 +73,9 @@ def create_nodes_molecule(session_temporal, session_light, query_params):
                             'S' : row['S'],
                             'OC' : row['OC'],
                             'HC' : row['HC'],
-                            'formula_mass' : row['formula_mass']
+                            'formula_mass' : row['formula_mass'],
+                            'avg_intensity' : row['avg_intensity'],
+                            'occ_count' : row['occ_count']
                             })
 
     print('done: create nodes ' + query_params['label_node'])
@@ -219,7 +224,7 @@ def delete_nodes_without_predicted_transformation(session_light, query_params):
         "DELETE m"   
     )
 
-    print("done: delete nodes without preedicted transformation")
+    print("done: delete nodes without predicted transformation")
 
 
 ##################################################################################

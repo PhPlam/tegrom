@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 27. january 2023
+# Date: 02. february 2023
 
 import os
 import pandas as pd
@@ -173,3 +173,28 @@ def calculate_increase(df_transformation_unit_count, df_time):
 
     print('done: calculate increase')
     return df_transformation_unit
+
+# get properties of top five communities
+# label propagation algorithm
+def get_properties_top_communities(session, query_params, algorithm):
+    properties_communities = session.run(
+        "MATCH (m:" + query_params['label_node'] + ") "
+        "WITH m.community_" + algorithm + " as community, count(*) as member, "
+            "avg(m." + query_params['prop_extra_2'] + query_params['prop_extra_1'] + ") as avg_hc, "
+            "avg(m." + query_params['prop_extra_4'] + query_params['prop_extra_1'] + ") as avg_oc "
+        "ORDER BY member DESC "
+        "LIMIT 5 "
+        "OPTIONAL MATCH (m:" + query_params['label_node'] + ")-[ct:" + query_params['label_chemical_edge'] + "]->(m2:" + query_params['label_node'] + ") "
+        "WHERE m.community_" + algorithm + " = community "
+            "AND m2.community_" + algorithm + " = community "
+        "RETURN community, member, avg_hc, avg_oc, "
+            "sum(ct." + query_params['prop_extra_8'] + ") as sum_ct, "
+            "sum(ct." + query_params['prop_extra_9'] + ") as sum_prt, "
+            "avg(ct." + query_params['prop_extra_8'] + ") as avg_ct, "
+            "avg(ct." + query_params['prop_extra_9'] + ") as avg_prt, "
+            "avg(m." + query_params['prop_extra_18'] + ") as cnt_occ, "
+            "avg(m." + query_params['prop_extra_17'] + ") as avg_int"
+    ).to_df()
+
+    print('done: get properties of top five communities')
+    return properties_communities
