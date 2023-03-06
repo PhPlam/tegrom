@@ -5,4 +5,4 @@ Date: 06. march 2023
 
 ## Graph Model
 
-![graph_model_v2](https://user-images.githubusercontent.com/91727135/191779044-f79589da-4d37-442f-95bc-ca8e8df131d4.png)
+![graph_model_v4](https://user-images.githubusercontent.com/91727135/223053780-73f2dbd3-be5c-4022-8868-0edfa99d8e7b.png)
