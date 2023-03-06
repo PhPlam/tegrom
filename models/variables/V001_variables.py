@@ -41,6 +41,7 @@ file_transformation_units = 'transformations_handwritten.csv'
 file_sample_meta = 'Photodatensatz_Graphanalyse_sample.metadata_2020-09-10.csv'
 
 # from UFZ metadata of measurements
+# currently not in use
 file_sample_join = 'Photodatensatz_Graphanalyse_meas.metadata_2020-09-10.csv'
 
 ### names of ###
@@ -62,6 +63,7 @@ relationships = 'formula_relationships.csv'
 
 # combined metadata
 # combination of metadata from sample and measurement
+# currently not in use
 metadata = 'sample_metadata.csv'
 
 ### preprocessing parameters and ###

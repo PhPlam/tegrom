@@ -28,6 +28,25 @@ def create_time_order(data):
     print('done: create column with snapshots')
     return data
 
+# get 'radiation_dose' if photolysis experiment
+def create_radiation_order(metadata, data):
+    # prepare list of radiation doses 
+    i = 0
+    rad_list = []
+    for i in range(0, len(metadata)):
+        rad_list.append(float(metadata.description.str.split(',')[i][2].strip('radiation_dose =')))
+
+    # add radiation to measurements
+    n = 0
+    for ele in data['measurement_id'].unique():
+        data.loc[data.measurement_id == ele, 'radiation_dose'] = rad_list[n]
+        n+=1
+
+    data['radiation_dose'] = data['radiation_dose'].astype('float')
+
+    print('done: add radiation doses to data')
+    return data
+
 # fill null values with 0
 def fill_null_values(original_data):
     data_rm_null = original_data
@@ -82,7 +101,7 @@ if __name__ == '__main__':
 
     # define data
     original_data = pvp.load_csv(pvp.file_molecules, seperator=';')
-    metadata = pvp.load_csv(pvp.metadata, seperator=',')
+    metadata = pvp.load_csv(pvp.file_sample_meta, seperator=';')
 
     # clean molecule data
     data_all_molecules = pipeline(original_data,
@@ -97,6 +116,9 @@ if __name__ == '__main__':
                                 fill_null_values,
                                 remove_molecules,
                                 delete_duplicates)
+
+    if pvp.photolysis == 1:
+        data_all_molecules = create_radiation_order(metadata, data_all_molecules)
 
     # export to csv
     pvp.export_csv(pvp.cleaned_molecules, data_all_molecules)

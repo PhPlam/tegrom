@@ -25,6 +25,7 @@ unique_molecules = pv.unique_molecules
 cleaned_molecules = pv.cleaned_molecules
 relationships = pv.relationships
 metadata = pv.metadata
+photolysis = pv.photolysis
 
 ##################################################################################
 # functions to load and export data ##############################################
