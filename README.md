@@ -1,7 +1,7 @@
 # Analysis Tool for Temporal Graphs in Neo4j
 
 Owner: Philipp Plamper  
-Date: 02.02.2023
+Date: 06. march 2023
 
 ## Graph Model
 
