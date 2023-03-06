@@ -34,6 +34,9 @@ query_params = pv.model_params
 lower_limit = pv.lower_limit
 upper_limit = pv.upper_limit
 
+# photolysis experiment
+photolysis = pv.photolysis
+
 # set filepath prefix for export
 abs_path = os.path.split(os.path.dirname(os.path.abspath(__file__))) # get system path to files
 export_path_prefix = str(abs_path[0]) + '/analyze/analyze_results/' # add path where to save files in project folder

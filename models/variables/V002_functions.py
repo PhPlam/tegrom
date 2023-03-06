@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 02. february 2023
+# Date: 06. march 2023
 
 import os
 import pandas as pd
@@ -69,9 +69,13 @@ def graph_get_time(session, query_params):
         "ORDER BY property_time ASC"
     ).to_df()
 
-    radiation = df_time['radiation_dose'].to_list()
-    radiation_diff = ['NULL'] + ['+' + str(round(x - radiation[i - 1], 1)) for i, x in enumerate(radiation)][1:]
-    df_time['rad_diff'] = radiation_diff
+    # property "radiation_dose" does not exist if it is not a photolysis experiment
+    try:
+        radiation = df_time['radiation_dose'].to_list()
+        radiation_diff = ['NULL'] + ['+' + str(round(x - radiation[i - 1], 1)) for i, x in enumerate(radiation)][1:]
+        df_time['rad_diff'] = radiation_diff
+    except Exception:
+        pass
 
     print('done: get all time sequences')
     return df_time

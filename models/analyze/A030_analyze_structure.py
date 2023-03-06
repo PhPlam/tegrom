@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 26. january 2023
+# Date: 06. march 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,14 +10,17 @@ import A000_path_variables_analyze as pva
 #analyze functions################################################################
 ##################################################################################
 
-def analyze_structure(session, query_params, df_time):
+def analyze_structure(session, query_params, df_time, photolysis):
     
     ### get the data ################################
 
     ### get time ###
     standard_deviation = np.std(np.array(df_time['count_nodes'], df_time['property_time']))
-    radiation_diff = df_time.rad_diff.to_list()
-    del radiation_diff[0]
+
+    # only if photolysis experiment
+    if photolysis == 1: 
+        radiation_diff = df_time.rad_diff.to_list()
+        del radiation_diff[0]
 
     ### get trends ###
     # increasing 
@@ -78,13 +81,15 @@ def analyze_structure(session, query_params, df_time):
     plt.yticks(fontsize=14)
     plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
-    # second plot - second x-axis
-    axTicks = ax_sec.get_xticks()   
-    ax_rad = ax_sec.twiny()
-    ax_rad.set_xticks(axTicks)
-    ax_rad.set_xbound(ax_sec.get_xbound())
-    ax_rad.set_xticklabels(radiation_diff, fontsize=14)
-    ax_rad.set_xlabel('radiation dose (kW/m$^{2}$) - difference from the last transition', fontsize=14, fontweight='bold')
+    # only if photolysis experiment
+    if photolysis == 1: 
+        # second plot - second x-axis
+        axTicks = ax_sec.get_xticks()   
+        ax_rad = ax_sec.twiny()
+        ax_rad.set_xticks(axTicks)
+        ax_rad.set_xbound(ax_sec.get_xbound())
+        ax_rad.set_xticklabels(radiation_diff, fontsize=14)
+        ax_rad.set_xlabel('radiation dose (kW/m$^{2}$) - difference from the last transition', fontsize=14, fontweight='bold')
 
     # third plot
     ax = plt.subplot(313)#, sharex=ax_sec)
@@ -106,13 +111,15 @@ def analyze_structure(session, query_params, df_time):
     ax2.set_yticks(np.arange(0, max(transformations_type_b.count_relationships), 1000))
     ax2.legend(loc='best', bbox_to_anchor=(0.57, 1))
 
-    # third plot - second x-axis
-    axTicks = ax.get_xticks()   
-    ax_rad = ax.twiny()
-    ax_rad.set_xticks(axTicks)
-    ax_rad.set_xbound(ax.get_xbound())
-    ax_rad.set_xticklabels(radiation_diff, fontsize=14)
-    ax_rad.set_xlabel('radiation dose (kW/m$^{2}$) - difference from the last transition', fontsize=14, fontweight='bold')
+    # only if photolysis experiment
+    if photolysis == 1: 
+        # third plot - second x-axis
+        axTicks = ax.get_xticks()   
+        ax_rad = ax.twiny()
+        ax_rad.set_xticks(axTicks)
+        ax_rad.set_xbound(ax.get_xbound())
+        ax_rad.set_xticklabels(radiation_diff, fontsize=14)
+        ax_rad.set_xlabel('radiation dose (kW/m$^{2}$) - difference from the last transition', fontsize=14, fontweight='bold')
 
 
     plt.figtext(-0.02, 0.96, '(A)', fontsize=16, fontweight='bold')
@@ -136,7 +143,7 @@ if __name__ == '__main__':
     session = pva.pf.connect_to_database(pva.host, pva.user, pva.passwd, pva.db_name_temporal)
 
     df_time = pva.pf.graph_get_time(session, pva.query_params)
-    analyze_structure(session, pva.query_params, df_time)
+    analyze_structure(session, pva.query_params, df_time, pva.photolysis)
 
     # end session
     session.close()

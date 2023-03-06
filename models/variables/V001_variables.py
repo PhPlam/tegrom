@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 02. febraury 2023
+# Date: 06. march 2023
 
 ### parameter for ###
 ### database connection ### 
@@ -21,6 +21,11 @@ db_name_light = 'modellightprt' # name of smashed graph
 upper_limit = 1.025 # above considered as increasing intensity
 lower_limit = 0.975 # below considered as decreasing intensity
 
+# belongs the data to a photolysis experiment
+# changes the functionality if set to wrong parameter
+# e.g. the data contains the column 'radiation_dose'
+# 1 - yes, 0 - no
+photolysis = 0
 
 ### names of ###
 ### all files used for model ###
@@ -62,6 +67,10 @@ metadata = 'sample_metadata.csv'
 ### preprocessing parameters and ###
 ### Neo4j Query parameters/properties ###
 
+# properties starting with 'tmp' are temporary
+# they are used for further analysis steps 
+# and do not contain information for themselves (at least not intentionally)
+
 model_params = {
     'label_node' : 'Molecule', # String; label nodes
     'label_same_as' : 'SAME_AS', # String; label edges
@@ -80,13 +89,13 @@ model_params = {
     'prop_extra_5' : 'S', # property value; Integer
     'prop_extra_8' : 'transition_count', # property value; Integer
     'prop_extra_9' : 'prt_count', # Integer; property value Integer
-    'prop_extra_10': 'tendency_weight', # Float; temporal value for weight calculation
-    'prop_extra_11': 'predicted_weight', # Float
-    'prop_extra_12': 'radiation_dose', # Float
-    'prop_extra_13': 'is_addition', # Boolean; 1 if transformation is photo addition
+    'prop_extra_10': 'tmp_tendency_weight', # Float; temporal value for weight calculation
+    'prop_extra_11': 'tmp_predicted_weight', # Float
+    'prop_extra_12': 'tmp_radiation_dose', # Float
+    'prop_extra_13': 'tmp_is_addition', # Boolean; 1 if transformation is photo addition
     'prop_extra_14': 'formula_class', # String
-    'prop_extra_15': 'normalized_predicted_weight', # Float
-    'prop_extra_16': 'formula_mass_nominal', # Integer
+    'prop_extra_15': 'normalized_weight', # Float
+    'prop_extra_16': 'tmp_formula_mass_nominal', # Integer
     'prop_extra_17': 'average_intensity', # Float
     'prop_extra_18': 'occurrence_count' # Integer
 }

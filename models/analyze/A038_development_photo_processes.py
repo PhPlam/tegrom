@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 31. january 2023
+# Date: 06. march 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -25,11 +25,14 @@ def calculate_development_photo_processes(df_transformation_unit_count):
 
     return df_share_processes
 
-def visualize_share_photo_processes(df_share_processes, df_time):
+def visualize_share_photo_processes(df_share_processes, df_time, photolysis):
     time_list = df_time.property_time.to_list()
     del time_list[0]
-    radiation_diff = df_time.rad_diff.to_list()
-    del radiation_diff[0]
+
+    # only if photolysis experiment
+    if photolysis == 1:
+        radiation_diff = df_time.rad_diff.to_list()
+        del radiation_diff[0]
 
     fig, ax1 = plt.subplots(figsize=(12,5))
     plt.plot(time_list, df_share_processes.share_photo_addition, label='photo addition', marker='o')
@@ -41,14 +44,16 @@ def visualize_share_photo_processes(df_share_processes, df_time):
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
 
-    # second x-axis
-    ax1Ticks = ax1.get_xticks()   
-    ax2Ticks = ax1Ticks
-    ax2 = ax1.twiny()
-    ax2.set_xticks(ax2Ticks)
-    ax2.set_xbound(ax1.get_xbound())
-    ax2.set_xticklabels(radiation_diff, fontsize=14)
-    ax2.set_xlabel('radiation dose (kW/m$^{2}$) - difference from the last transition', fontsize=14, fontweight='bold')
+    # only if photolysis experiment
+    if photolysis == 1:
+        # second x-axis
+        ax1Ticks = ax1.get_xticks()   
+        ax2Ticks = ax1Ticks
+        ax2 = ax1.twiny()
+        ax2.set_xticks(ax2Ticks)
+        ax2.set_xbound(ax1.get_xbound())
+        ax2.set_xticklabels(radiation_diff, fontsize=14)
+        ax2.set_xlabel('radiation dose (kW/m$^{2}$) - difference from the last transition', fontsize=14, fontweight='bold')
 
     plt.tight_layout()
 
@@ -68,7 +73,7 @@ if __name__ == '__main__':
     df_transformation_unit_count = pva.pf.get_share_transformation_units(session, pva.query_params, transition_property='share')
     df_share_processes = calculate_development_photo_processes(df_transformation_unit_count)
     df_time = pva.pf.graph_get_time(session, pva.query_params)
-    visualize_share_photo_processes(df_share_processes, df_time)
+    visualize_share_photo_processes(df_share_processes, df_time, pva.photolysis)
     
     # end session
     session.close()

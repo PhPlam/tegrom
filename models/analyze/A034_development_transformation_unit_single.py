@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 27. january 2023
+# Date: 0. march 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -29,12 +29,16 @@ def get_single_transformation_unit(df_transformation_unit_count):
 
 
 # visualize development of a single transformation unit
-def visualize_single_transformation_unit(single_transformation_unit, df_time):
+def visualize_single_transformation_unit(single_transformation_unit, df_time, photolysis):
     list_share = single_transformation_unit.iloc[0,2:-1].values.tolist()
     time_list = df_time.property_time.to_list()
     del time_list[0]
-    radiation_diff = df_time.rad_diff.to_list()
-    del radiation_diff[0]
+
+    # only if photolysis experiment
+    if photolysis == 1:
+        radiation_diff = df_time.rad_diff.to_list()
+        del radiation_diff[0]
+
     std_tu = single_transformation_unit.iloc[0,-1]
 
     fig = plt.figure(figsize=(12,4))
@@ -54,13 +58,16 @@ def visualize_single_transformation_unit(single_transformation_unit, df_time):
     plt.yticks(np.arange(np.round(min(list_share),0), max(list_share), 1), fontsize=14)
     plt.ylabel('share in %', fontsize=15, fontweight='bold')
     plt.xticks(np.arange(min(time_list), max(time_list)+1, 1.0))
-    # first - second x
-    axTicks = ax1.get_xticks()   
-    ax2 = ax1.twiny()
-    ax2.set_xticks(axTicks)
-    ax2.set_xbound(ax1.get_xbound())
-    ax2.set_xticklabels(radiation_diff, fontsize=13)
-    ax2.set_xlabel('difference radiation dose (kW/m$^{2}$)', fontsize=14, fontweight='bold')
+    
+    # only if photolysis experiment
+    if photolysis == 1:
+        # first - second x
+        axTicks = ax1.get_xticks()   
+        ax2 = ax1.twiny()
+        ax2.set_xticks(axTicks)
+        ax2.set_xbound(ax1.get_xbound())
+        ax2.set_xticklabels(radiation_diff, fontsize=13)
+        ax2.set_xlabel('difference radiation dose (kW/m$^{2}$)', fontsize=14, fontweight='bold')
 
     plt.tight_layout()
     
@@ -81,7 +88,7 @@ if __name__ == '__main__':
     df_transformation_unit_count = pva.pf.get_share_transformation_units(session, pva.query_params, transition_property='share')
     single_transformation_unit = get_single_transformation_unit(df_transformation_unit_count)
     df_time = pva.pf.graph_get_time(session, pva.query_params)
-    visualize_single_transformation_unit(single_transformation_unit, df_time)
+    visualize_single_transformation_unit(single_transformation_unit, df_time, pva.photolysis)
     
     # end session
     session.close()
