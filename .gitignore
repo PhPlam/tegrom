@@ -3,3 +3,4 @@
 **/test/*/.ipynb_checkpoints
 **/models/analyze/analyze_results/*.png
 **/test/notebooks/results/*.png
+**/instructions/*
