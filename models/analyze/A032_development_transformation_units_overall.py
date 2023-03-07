@@ -36,7 +36,7 @@ def visualize_transformation_units(df_tu, query_params):
     plt.bar(df_tu.tu, df_tu.increase, width=0.6, color=col)
     plt.ylabel('increase \n share in %', fontsize=15, fontweight='bold')
     plt.xticks(rotation=45, fontsize=10)
-    plt.yticks(np.arange(np.round(min(df_tu.increase), 0), max(df_tu.increase), 10), fontsize=14)
+    #plt.yticks(np.arange(np.round(min(df_tu.increase), 0), max(df_tu.increase), 100), fontsize=14)
     #plt.xticks(color='black')
     plt.xlabel('transformation unit', fontsize=15, fontweight='bold')
     plt.axhline(y=0, color='r', linestyle='-', label='no increase')
@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
     df_transformation_unit_count = pva.pf.get_share_transformation_units(session, pva.query_params, transition_property='share')
     df_time = pva.pf.graph_get_time(session, pva.query_params)
-    df_transformation_unit_properties = pva.pf.calculate_increase(df_transformation_unit_count, df_time)
+    df_transformation_unit_properties = pva.pf.calculate_increase(df_transformation_unit_count, df_time, type='total')
     visualize_transformation_units(df_transformation_unit_properties, pva.query_params)
 
     # end session

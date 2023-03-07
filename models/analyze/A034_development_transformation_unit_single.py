@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 0. march 2023
+# Date: 07. march 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,6 +30,7 @@ def get_single_transformation_unit(df_transformation_unit_count):
 
 # visualize development of a single transformation unit
 def visualize_single_transformation_unit(single_transformation_unit, df_time, photolysis):
+    transformation_unit = single_transformation_unit.transformation_unit.values[0]
     list_share = single_transformation_unit.iloc[0,2:-1].values.tolist()
     time_list = df_time.property_time.to_list()
     del time_list[0]
@@ -45,7 +46,7 @@ def visualize_single_transformation_unit(single_transformation_unit, df_time, ph
 
     # first plot
     ax1 = plt.subplot()
-    plt.plot(time_list, list_share, marker='o', label='transformation_unit', c='b', linestyle='dashed', linewidth=1.5, markersize=10)
+    plt.plot(time_list, list_share, marker='o', label=transformation_unit, c='b', linestyle='dashed', linewidth=1.5, markersize=10)
     # first - tu - avg, sd
     plt.axhline(np.mean(list_share), c='purple', linewidth=0.5, label='average')
     plt.axhline(np.mean(list_share)+std_tu, linewidth=0.5, linestyle='--', color='purple', label='standard deviation')

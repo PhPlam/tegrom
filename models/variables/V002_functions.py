@@ -113,7 +113,11 @@ def get_share_transformation_units(session, query_params, transition_property):
     print('done: get all ' + query_params['prop_edge_value_1'] + ' and their share per ' + query_params['prop_node_snapshot'])
     return df_transformation_unit_count
 
-def calculate_increase(df_transformation_unit_count, df_time):
+# calculate increase of transformation unit
+# type = 'average' -> steepness of slope = average increase
+# type = 'total' -> increase from first to last measurement on slope (distance) = total increase
+# 'total' formula -> percentage increase = (final value - starting value)/|starting value| * 100
+def calculate_increase(df_transformation_unit_count, df_time, type):
     time_list = df_time['property_time'].to_list()
     del time_list[-1]
 
@@ -124,10 +128,13 @@ def calculate_increase(df_transformation_unit_count, df_time):
 
         # calculate angle 
         res = stats.linregress(time_list, values)
-        angle = np.rad2deg(np.arctan((res.slope*len(time_list))/(len(time_list))))
-        
-        # calculate increase
-        increase = np.tan(angle*(np.pi/180))*100    
+
+        if type == 'average':
+            # calculate average increase from angle of slope
+            angle = np.rad2deg(np.arctan((res.slope*len(time_list))/(len(time_list))))
+            increase = np.tan(angle*(np.pi/180))*100 
+        elif type == 'total':
+            increase = ((res.slope*(len(time_list)-1)+res.intercept) - (res.slope*time_list[0]+res.intercept)) / abs(res.slope*time_list[0]+res.intercept) * 100.0
         
         tu_dict = {
             'tu': tu,

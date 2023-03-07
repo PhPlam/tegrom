@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 27. january 2023
+# Date: 07. march 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     df_transformation_unit_count = pva.pf.get_share_transformation_units(session, pva.query_params, transition_property='weight')
     df_time = pva.pf.graph_get_time(session, pva.query_params)
-    df_transformation_unit_properties = pva.pf.calculate_increase(df_transformation_unit_count, df_time)
+    df_transformation_unit_properties = pva.pf.calculate_increase(df_transformation_unit_count, df_time, type='total')
     visualize_weights(df_transformation_unit_properties)
     
     # end session
