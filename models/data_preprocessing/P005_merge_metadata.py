@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 06. march 2023
+# Date: 07. march 2023
 
 import pandas as pd
 import P000_path_variables_preprocess as pvp
@@ -62,6 +62,9 @@ def extract_metadata(combined_metadata):
 
 if __name__ == '__main__':
     
+    print('Script currently not in use. Use bash script for preprocessing.')
+    quit()
+
     # define data
     sample_1 = pvp.load_csv(pvp.file_sample_meta, seperator=';')
     sample_2 = pvp.load_csv(pvp.file_sample_join, seperator=';')

@@ -32,13 +32,13 @@ photolysis = 0
 ### from UFZ ###
 
 # from UFZ assigned molecular formulas and several properties
-file_molecules = 'Philipp - Temporal Graph_formulas.final_new.avg_2023-01-04.csv'
+file_molecules = 'molecule_formulas.csv'
 
 # from UFZ given transformation units
 file_transformation_units = 'transformations_handwritten.csv'
 
 # from UFZ metadata of sample
-file_sample_meta = 'Photodatensatz_Graphanalyse_sample.metadata_2020-09-10.csv'
+file_sample_meta = 'sample_data.csv'
 
 # from UFZ metadata of measurements
 # currently not in use
@@ -50,16 +50,16 @@ file_sample_join = 'Photodatensatz_Graphanalyse_meas.metadata_2020-09-10.csv'
 
 # unique molecular formulas of molecules
 # no molecule formula appears more than one time
-unique_molecules = 'unique_formula_strings.csv'
+unique_molecules = 'molecule_formulas_unique.csv'
 
 # cleaned assigned molecular formulas 
 # e.g. filled null values, remove molecule formulas with specific atom count
-cleaned_molecules = 'ufz_all_formulas_cleaned.csv'
+cleaned_molecules = 'molecule_formulas_cleaned.csv'
 
 # calculated edges
 # contains the possible edges between molecular formulas
 # based on transformation units
-relationships = 'formula_relationships.csv'
+relationships = 'molecule_formulas_relationships.csv'
 
 # combined metadata
 # combination of metadata from sample and measurement

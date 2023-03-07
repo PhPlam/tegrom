@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 04. november 2022
+# Date: 07. march 2023
 
 import pandas as pd
 import os
@@ -48,7 +48,11 @@ def load_csv(filename, seperator):
     try:
         load_file = filename
         raw_file_path = path_prefix + load_file
-        raw_data_csv = pd.read_csv(raw_file_path, sep=seperator)
+        try:
+            raw_data_csv = pd.read_csv(raw_file_path, sep=seperator[0])
+        except Exception:
+            raw_data_csv = pd.read_csv(raw_file_path, sep=seperator[1])
+
         return raw_data_csv
 
     except FileNotFoundError:

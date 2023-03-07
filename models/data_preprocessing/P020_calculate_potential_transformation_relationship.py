@@ -216,8 +216,8 @@ def create_strings_transformation_unit(df_molecules):
 if __name__ == '__main__':
 
     # define data
-    formula_strings = pvp.load_csv(pvp.unique_molecules, seperator=',')
-    transformation_unit = pvp.load_csv(pvp.file_transformation_units, seperator=',')
+    formula_strings = pvp.load_csv(pvp.unique_molecules, seperator=[',', ';'])
+    transformation_unit = pvp.load_csv(pvp.file_transformation_units, seperator=[',', ';'])
 
     # calculate
     calculated_photoaddtion = calculate_new_formulas_photoaddition(formula_strings, transformation_unit)

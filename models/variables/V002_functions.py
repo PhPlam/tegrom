@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 06. march 2023
+# Date: 07. march 2023
 
 import os
 import pandas as pd
@@ -21,40 +21,6 @@ def connect_to_database(host, user, passwd, db_name):
     session = driver.session()
     print('done: establish connection to database ' + db_name)
     return session
-
-# set path for data preprocessing scripts
-def get_path_prefix(path_to_folder):
-    
-    # set relative path to files for import and export
-    file_path = path_to_folder
-    path_prefix = str(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]) + file_path
-    path_prefix = path_prefix.replace('\\', '/') # necessary for application in Windows
-
-    return path_prefix
-
-# load csv files
-def load_csv(filename, seperator):
-
-    path_prefix = get_path_prefix()
-    try:
-        load_file = filename
-        raw_file_path = path_prefix + load_file
-        raw_data_csv = pd.read_csv(raw_file_path, sep=seperator)
-        return raw_data_csv
-
-    except FileNotFoundError:
-        print('info: cannot load file ' + filename)
-        pass
-
-# export data to csv
-def export_csv(filename, data):
-    
-    path_prefix = get_path_prefix()
-    filename_result = filename
-    export_path = path_prefix + filename_result
-    data.to_csv(export_path, sep=',', encoding='utf-8', index=False)
-    
-    print('done: export data to ' + str(export_path))
 
 
 ### functions for ###
