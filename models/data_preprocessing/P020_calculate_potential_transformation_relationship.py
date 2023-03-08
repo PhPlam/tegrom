@@ -1,10 +1,9 @@
 # Name: Philipp Plamper
-# Date: 27. october 2022
+# Date: 24. january 2023
 
 import pandas as pd
 from progress.bar import Bar
 import P000_path_variables_preprocess as pvp
-
 
 ##################################################################################
 #calculate possible transformations###############################################
@@ -47,6 +46,7 @@ def calculate_new_formulas_photoaddition(formula_strings, transformation_unit):
             formula_dict = {
                 'formula_string': row1.formula_string,
                 'transformation_unit': row2.element,
+                'is_addition' : 1,
                 'new_C': new_C,
                 'new_H': new_H,
                 'new_O': new_O,
@@ -96,6 +96,7 @@ def calculate_new_formulas_photodegradation(formula_strings, transformation_unit
             formula_dict = {
                 'formula_string': row1.formula_string,
                 'transformation_unit': row2.element,
+                'is_addition': 0,
                 'new_C': new_C,
                 'new_H': new_H,
                 'new_O': new_O,
@@ -212,17 +213,20 @@ def create_strings_transformation_unit(df_molecules):
 #call functions###################################################################
 ##################################################################################
 
-# define data
-formula_strings = pvp.load_csv(pvp.unique_molecules, seperator=',')
-transformation_unit = pvp.load_csv(pvp.file_transformation_units, seperator=',')
+if __name__ == '__main__':
 
-# calculate
-calculated_photoaddtion = calculate_new_formulas_photoaddition(formula_strings, transformation_unit)
-calculated_photodegradation = calculate_new_formulas_photodegradation(formula_strings, transformation_unit)
-merged_molecule_list = merge_calculated_molecules(calculated_photoaddtion, calculated_photodegradation)
-df_added_strings = create_strings_from_molecules(merged_molecule_list)
-df_molecules = check_existence_of_strings(df_added_strings)
-calculated_transformations = create_strings_transformation_unit(df_molecules)
+    # define data
+    formula_strings = pvp.load_csv(pvp.unique_molecules, seperator=[',', ';'])
+    transformation_unit = pvp.load_csv(pvp.file_transformation_units, seperator=[',', ';'])
 
-#export
-pvp.export_csv(pvp.relationships, calculated_transformations)
+    # calculate
+    calculated_photoaddtion = calculate_new_formulas_photoaddition(formula_strings, transformation_unit)
+    calculated_photodegradation = calculate_new_formulas_photodegradation(formula_strings, transformation_unit)
+
+    merged_molecule_list = merge_calculated_molecules(calculated_photoaddtion, calculated_photodegradation)
+    df_added_strings = create_strings_from_molecules(merged_molecule_list)
+    df_molecules = check_existence_of_strings(df_added_strings)
+    calculated_transformations = create_strings_transformation_unit(df_molecules)
+
+    #export
+    pvp.export_csv(pvp.relationships, calculated_transformations)

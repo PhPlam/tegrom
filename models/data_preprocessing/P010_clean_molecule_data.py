@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 27. october 2022
+# Date: 07. march 2023
 
 import pandas as pd
 import P000_path_variables_preprocess as pvp
@@ -11,9 +11,41 @@ import P000_path_variables_preprocess as pvp
 
 # keep only necessary columns
 def remove_unused_columns(original_data):
-    df_removed_columns = original_data[['measurement_id', 'peak_relint_tic', 'formula_string', 'C', 'H', 'N', 'O', 'S', 'formula_class']]
+    df_removed_columns = original_data[['measurement_id', 'peak_relint_tic', 'formula_string', 'C', 'H', 'N', 'O', 'S', 'formula_mass_nominal']]
     print('done: remove unused columns')
     return df_removed_columns
+
+# get timepoints from "measurement_ids"
+def create_time_order(data):
+    data = data.copy()
+    i = 0
+    for ele in data['measurement_id'].unique():
+        data.loc[data.measurement_id == ele, 'timepoint'] = i
+        i+=1
+
+    data['timepoint'] = data['timepoint'].astype('int')
+
+    print('done: create column with snapshots')
+    return data
+
+# get 'radiation_dose' if photolysis experiment
+def create_radiation_order(metadata, data):
+    # prepare list of radiation doses 
+    i = 0
+    rad_list = []
+    for i in range(0, len(metadata)):
+        rad_list.append(float(metadata.description.str.split(',')[i][2].strip('radiation_dose =')))
+
+    # add radiation to measurements
+    n = 0
+    for ele in data['measurement_id'].unique():
+        data.loc[data.measurement_id == ele, 'radiation_dose'] = rad_list[n]
+        n+=1
+
+    data['radiation_dose'] = data['radiation_dose'].astype('float')
+
+    print('done: add radiation doses to data')
+    return data
 
 # fill null values with 0
 def fill_null_values(original_data):
@@ -38,6 +70,7 @@ def remove_molecules(filled_data):
     return shrinked_data
 
 # remove molecules from removed measurements
+# deprecated ???
 def remove_molecules_without_measurement(shrinked_data, metadata):
     measurement_list = metadata['measurement_id'].to_list()
     removed_molecules_without_measurement = shrinked_data[shrinked_data.measurement_id.isin(measurement_list)]
@@ -48,27 +81,45 @@ def remove_molecules_without_measurement(shrinked_data, metadata):
 
 # remove duplicate formula strings
 def delete_duplicates(removed_molecules_without_measurement):
-    data = removed_molecules_without_measurement[['measurement_id', 'formula_string', 'formula_class', 'C', 'H', 'O', 'N', 'S']]
+    data = removed_molecules_without_measurement[['measurement_id', 'formula_string', 'C', 'H', 'O', 'N', 'S']]
     data = data.drop_duplicates(subset=['formula_string'])
     print('done: remove duplicate formula strings')
     return data
+
+# create pipeline for better overview in sequential function calls
+def pipeline(data, *filters):
+    for filter in filters:
+        data = filter(data)
+    return data 
 
 
 ##################################################################################
 #call functions###################################################################
 ##################################################################################
 
-# define data
-original_data = pvp.load_csv(pvp.file_molecules, seperator=';')
-metadata = pvp.load_csv(pvp.metadata, seperator=',')
+if __name__ == '__main__':
 
-#calculate 
-removed_data = remove_unused_columns(original_data)
-filled_data = fill_null_values(removed_data)
-shrinked_data = remove_molecules(filled_data)
-removed_molecules_without_measurement = remove_molecules_without_measurement(shrinked_data, metadata)
-removed_duplicate_data = delete_duplicates(removed_molecules_without_measurement)
+    # define data
+    original_data = pvp.load_csv(pvp.file_molecules, seperator=[',', ';'])
 
-# export to csv
-pvp.export_csv(pvp.cleaned_molecules, removed_molecules_without_measurement)
-pvp.export_csv(pvp.unique_molecules, removed_duplicate_data)
+    # clean molecule data
+    data_all_molecules = pipeline(original_data,
+                                remove_unused_columns,
+                                create_time_order,
+                                fill_null_values,
+                                remove_molecules)
+
+    data_unique_molecules = pipeline(original_data,
+                                remove_unused_columns,
+                                create_time_order,
+                                fill_null_values,
+                                remove_molecules,
+                                delete_duplicates)
+
+    if pvp.photolysis == 1:
+        metadata = pvp.load_csv(pvp.file_sample_meta, seperator=[',', ';'])
+        data_all_molecules = create_radiation_order(metadata, data_all_molecules)
+
+    # export to csv
+    pvp.export_csv(pvp.cleaned_molecules, data_all_molecules)
+    pvp.export_csv(pvp.unique_molecules, data_unique_molecules)

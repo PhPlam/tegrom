@@ -1,9 +1,14 @@
 # Name: Philipp Plamper
-# Date: 27. october 2022
+# Date: 07. march 2023
 
 import pandas as pd
 import P000_path_variables_preprocess as pvp
 
+
+###
+# currently not in use
+# usage can lead to errors
+###
 
 ##################################################################################
 #map Ids and get metadata#########################################################
@@ -55,15 +60,20 @@ def extract_metadata(combined_metadata):
 #call functions###################################################################
 ##################################################################################
 
-# define data
-sample_1 = pvp.load_csv(pvp.file_sample_meta, seperator=';')
-sample_2 = pvp.load_csv(pvp.file_sample_join, seperator=';')
-time_list = []
+if __name__ == '__main__':
+    
+    print('Script currently not in use. Use bash script for preprocessing.')
+    quit()
 
-# calculate
-combined_metadata = map_ids(sample_1, sample_2)
-extracted_metadata = extract_metadata(combined_metadata)
-#removed_measurements = remove_measurements(extracted_metadata, time_list, pvp.column_param)
+    # define data
+    sample_1 = pvp.load_csv(pvp.file_sample_meta, seperator=';')
+    sample_2 = pvp.load_csv(pvp.file_sample_join, seperator=';')
+    time_list = []
 
-# export to csv
-pvp.export_csv(pvp.metadata, extracted_metadata)
+    # calculate
+    combined_metadata = map_ids(sample_1, sample_2)
+    extracted_metadata = extract_metadata(combined_metadata)
+    #removed_measurements = remove_measurements(extracted_metadata, time_list, pvp.column_param)
+
+    # export to csv
+    pvp.export_csv(pvp.metadata, extracted_metadata)
