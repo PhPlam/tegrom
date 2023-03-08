@@ -1,6 +1,12 @@
 # Name: Philipp Plamper 
 # Date: 27. january 2023
 
+###
+# SI Figure 6
+# in Paper: "A temporal graph to predict chemical transformations in complex dissolved organic matter"
+# Authors: Philipp Plamper, Oliver J. Lechtenfeld, Peter Herzsprung, Anika Groß
+###
+
 import numpy as np
 import matplotlib.pyplot as plt
 
