@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 26. january 2023
+# Date: 08. march 2023
 
 import pandas as pd
 from neo4j import GraphDatabase
@@ -38,10 +38,10 @@ def calc_weights(tendencies, upper_limit, lower_limit):
     for row in tendencies.itertuples():
         if row.intensity_trend >= upper_limit:
             res = row.intensity_trend/MAX # current intensity trend / maximum intensity trend
-            weight_list.append(res * (row.int/row.avg_int))
+            weight_list.append(res * (row.int))#/row.avg_int))
         elif row.intensity_trend <= lower_limit:
             res = (1-row.intensity_trend)/(1-MIN) # (1 - current intensity trend) / (1 - minimum intensity trend)
-            weight_list.append(res * (row.int/row.avg_int))
+            weight_list.append(res * (row.int))#/row.avg_int))
         else:
             weight_list.append(0)
 
@@ -86,7 +86,7 @@ def normalize_weights(session_temporal, query_params):
             "sum(t." + query_params['prop_extra_11'] + ") as sum_weight "
         "MATCH (:" + query_params['label_node'] + ")-[t1:" + query_params['label_predicted_edge'] + "]->(m1:" + query_params['label_node'] + ") "
         "WHERE m1." + query_params['prop_node_name'] + " = fs AND m1." + query_params['prop_node_snapshot'] + " = mid "
-        "SET t1." + query_params['prop_extra_15'] + " = t1." + query_params['prop_extra_11'] + "/sum_weight"
+        "SET t1." + query_params['prop_extra_15'] + " = round(t1." + query_params['prop_extra_11'] + "/sum_weight, 3)"
     )
 
     print('done: normalize weights')

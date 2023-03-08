@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 06. march 2023
+# Date: 08. march 2023
 
 import os
 import time
@@ -96,7 +96,7 @@ def create_property_intensity_trend(session, query_params):
     session.run(
         "MATCH (m1:" + query_params['label_node'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + ") "
         "WITH (m2." + query_params['prop_node_value'] + "/m1." + query_params['prop_node_value'] + ") as trend, m1, m2, s "
-        "SET s." + query_params['prop_edge_value_2'] + " = trend "
+        "SET s." + query_params['prop_edge_value_2'] + " = round(trend, 3) "
     )
     print('done: create property ' + query_params['prop_edge_value_2'])
 

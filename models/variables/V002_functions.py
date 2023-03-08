@@ -117,6 +117,7 @@ def get_share_transformation_units(session, query_params, transition_property):
 # type = 'average' -> steepness of slope = average increase
 # type = 'total' -> increase from first to last measurement on slope (distance) = total increase
 # 'total' formula -> percentage increase = (final value - starting value)/|starting value| * 100
+# e.g. https://www.omnicalculator.com/math/percentage-increase 
 def calculate_increase(df_transformation_unit_count, df_time, type):
     time_list = df_time['property_time'].to_list()
     del time_list[-1]
@@ -125,7 +126,7 @@ def calculate_increase(df_transformation_unit_count, df_time, type):
     for tu in df_transformation_unit_count.transformation_unit:
         pick_tu = df_transformation_unit_count[df_transformation_unit_count.transformation_unit == tu]
         values = pick_tu.iloc[0,2:].values.tolist()
-
+        
         # calculate angle 
         res = stats.linregress(time_list, values)
 
