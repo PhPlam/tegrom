@@ -1,5 +1,11 @@
 # Name: Philipp Plamper
-# Date: 24. january 2023
+# Date: 09. march 2023
+
+###
+# SI Algorithm 2
+# in Paper: "A temporal graph to predict chemical transformations in complex dissolved organic matter"
+# Authors: Philipp Plamper, Oliver J. Lechtenfeld, Peter Herzsprung, Anika Groß
+###
 
 import pandas as pd
 from neo4j import GraphDatabase
@@ -11,16 +17,22 @@ import C000_path_variables_create as pvc
 
 # predict likely occurring transformations
 # Transformation Prediction Algorithm
+# SI Algorithm 2 part 1 up to line 29
 def predict_likely_occurring_transformations(session, upper_limit, lower_limit, query_params):
     increasing_intensity_df = session.run(
+        # see algorithm line 11-12
         "MATCH (m1:" + query_params['label_node'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + ") "
+        # see algorithm line 13-18
         "WHERE s." + query_params['prop_edge_value_2'] + " > " + str(upper_limit) + 
             " AND m1." + query_params['prop_node_snapshot'] + " = m2." + query_params['prop_node_snapshot'] + " - 1 "
         "WITH m1, m2, s "
+        # see algorithm line 19-21
         "MATCH (m3:" + query_params['label_node'] + ")-[pot:" + query_params['label_potential_edge'] + "]->(m2) "
         "WHERE m3." + query_params['prop_node_snapshot'] + " = m1." + query_params['prop_node_snapshot'] +
         " WITH m3, m2, m1, s, pot "
+        # see algorithm line 22-23
         "MATCH (m3)-[s2:" + query_params['label_same_as'] + "]->(m4:" + query_params['label_node'] + ") "
+        # see algorithm line 24-29
         "WHERE s2." + query_params['prop_edge_value_2'] + " < " + str(lower_limit) +
             " AND m3." + query_params['prop_node_snapshot'] + " = m1." + query_params['prop_node_snapshot'] +
             " AND m4." + query_params['prop_node_snapshot'] + " = m2." + query_params['prop_node_snapshot'] +
@@ -78,6 +90,8 @@ def calculate_transformation_units(occ_trans, query_params):
     return occ_trans
 
 # create relationship PREDICTED_TRANSFORMATION with calculated occurring transformations
+# SI Algorithm 2 part 2
+# see algorithm line 30-33
 def create_relationship_predicted_transformation(session, calc_weights, query_params):
     for index, row in calc_weights.iterrows():
         session.run(
