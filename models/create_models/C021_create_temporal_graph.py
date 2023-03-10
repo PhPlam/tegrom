@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 08. march 2023
+# Date: 09. march 2023
 
 import os
 import time
@@ -55,8 +55,8 @@ def create_relationship_potential_transformation(session, transform_file_path, q
     session.run(
         "CALL apoc.periodic.iterate("
         "'LOAD CSV WITH HEADERS FROM \"file:///" + transform_file_path + "\" AS row RETURN row', "
-        "'WITH row.new_formula AS from_node, "
-            "row.formula_string AS to_node, "
+        "'WITH row.new_formula AS to_node, "
+            "row.formula_string AS from_node, "
             "row.tu_C AS C, "
             "row.tu_H AS H, "
             "row.tu_N AS N, "

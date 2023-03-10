@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 07. march 2023
+# Date: 09. march 2023
 
 ###
 # Figure 5 (C)
@@ -7,6 +7,8 @@
 # Authors: Philipp Plamper, Oliver J. Lechtenfeld, Peter Herzsprung, Anika Groß
 ###
 
+import sys
+import select
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -23,13 +25,26 @@ def get_single_transformation_unit(df_transformation_unit_count):
     print('choose a transformation unit to visualize development. \nlist of all transformation units: ')
     list_transformation_units = df_transformation_unit_count.transformation_unit.to_list()
     print(list_transformation_units)
-    transformation_unit = input('Choose a transformation unit (default: ' + list_transformation_units[0] + '): ') or list_transformation_units[0]
+    #transformation_unit = input('Choose a transformation unit (default: ' + list_transformation_units[0] + '): ') or list_transformation_units[0]
+    print('Choose a transformation unit (default after 10 seconds: ' + list_transformation_units[0] + '): ')
+    input_tu, _, _ = select.select( [sys.stdin], [], [], 10 )
+
+    if input_tu:
+        transformation_unit = sys.stdin.readline().strip()
+    else:
+        transformation_unit = list_transformation_units[0]
+
+    print('selected transformation unit: ', transformation_unit)
     
-    # get properties of picked transformation unit
-    pick_transformation_unit  = df_transformation_unit_count[df_transformation_unit_count.transformation_unit == transformation_unit].copy()
-    
-    # get standard deviation of share
-    pick_transformation_unit['std'] = np.std(pick_transformation_unit.iloc[0,2:].values.tolist())
+    try: 
+        # get properties of picked transformation unit
+        pick_transformation_unit  = df_transformation_unit_count[df_transformation_unit_count.transformation_unit == transformation_unit].copy()
+
+        # get standard deviation of share
+        pick_transformation_unit['std'] = np.std(pick_transformation_unit.iloc[0,2:].values.tolist())
+    except IndexError:
+        print('Transformation unit not valid')
+        quit()
 
     return pick_transformation_unit
 
