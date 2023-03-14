@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 09. march 2023
+# Date: 014. march 2023
 
 ###
 # Figure 5 (C)
@@ -57,7 +57,7 @@ def visualize_single_transformation_unit(single_transformation_unit, df_time, ph
     del time_list[0]
 
     # only if photolysis experiment
-    if photolysis == 1:
+    if photolysis == True:
         radiation_diff = df_time.rad_diff.to_list()
         del radiation_diff[0]
 
@@ -82,7 +82,7 @@ def visualize_single_transformation_unit(single_transformation_unit, df_time, ph
     plt.xticks(np.arange(min(time_list), max(time_list)+1, 1.0))
     
     # only if photolysis experiment
-    if photolysis == 1:
+    if photolysis == True:
         # first - second x
         axTicks = ax1.get_xticks()   
         ax2 = ax1.twiny()

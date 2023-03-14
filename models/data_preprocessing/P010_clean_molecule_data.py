@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 07. march 2023
+# Date: 14. march 2023
 
 import pandas as pd
 import P000_path_variables_preprocess as pvp
@@ -116,7 +116,7 @@ if __name__ == '__main__':
                                 remove_molecules,
                                 delete_duplicates)
 
-    if pvp.photolysis == 1:
+    if pvp.photolysis == True:
         metadata = pvp.load_csv(pvp.file_sample_meta, seperator=[',', ';'])
         data_all_molecules = create_radiation_order(metadata, data_all_molecules)
 

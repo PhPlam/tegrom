@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 06. march 2023
+# Date: 14. march 2023
 
 ### parameter for ###
 ### database connection ### 
@@ -23,9 +23,8 @@ lower_limit = 0.975 # below considered as decreasing intensity
 
 # belongs the data to a photolysis experiment
 # changes the functionality if set to wrong parameter
-# e.g. the data contains the column 'radiation_dose'
-# 1 - yes, 0 - no
-photolysis = 0
+# e.g. the data contains the column 'radiation_dose'no
+photolysis = False
 
 ### names of ###
 ### all files used for model ###

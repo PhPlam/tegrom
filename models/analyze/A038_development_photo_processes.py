@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 06. march 2023
+# Date: 14. march 2023
 
 ###
 # SI Figure 10
@@ -36,7 +36,7 @@ def visualize_share_photo_processes(df_share_processes, df_time, photolysis):
     del time_list[0]
 
     # only if photolysis experiment
-    if photolysis == 1:
+    if photolysis == True:
         radiation_diff = df_time.rad_diff.to_list()
         del radiation_diff[0]
 
@@ -51,7 +51,7 @@ def visualize_share_photo_processes(df_share_processes, df_time, photolysis):
     plt.yticks(fontsize=14)
 
     # only if photolysis experiment
-    if photolysis == 1:
+    if photolysis == True:
         # second x-axis
         ax1Ticks = ax1.get_xticks()   
         ax2Ticks = ax1Ticks
