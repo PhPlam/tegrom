@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 09. march 2023
+# Date: 24. march 2023
 
 import os
 import time
@@ -14,7 +14,7 @@ import C000_path_variables_create as pvc
 def create_nodes_molecule(session, formula_file_path, query_params):
     session.run(
         "LOAD CSV WITH HEADERS FROM 'file:///" + formula_file_path + "' AS row "
-        "CREATE (m:" + query_params['label_node'] + " { "
+        "CREATE (m:" + query_params['label_node'] + query_params['nodes_temporal'] + " { "
          + query_params['prop_node_name'] + " : row.formula_string, "
          + query_params['prop_node_value'] + " : toFloat(row.peak_relint_tic), "
          + query_params['prop_node_snapshot'] + " : toInteger(row.timepoint), "
@@ -31,13 +31,13 @@ def create_nodes_molecule(session, formula_file_path, query_params):
          # + query_params['prop_extra_14'] + " : row.formula_class, "
          + query_params['prop_extra_16'] + " : toInteger(row.formula_mass_nominal)})"
     )
-    print('done: create ' + query_params['label_node'] + ' nodes')
+    print('done: create ' + query_params['label_node'] + query_params['nodes_temporal'] + ' nodes')
 
 # create constraint molecular_formula in combination with point in time is unique
 def create_contraint(session, query_params):
     session.run(
-        "CREATE CONSTRAINT FOR (m:" 
-        + query_params['label_node'] + ") REQUIRE (m." 
+        "CREATE CONSTRAINT FOR (m" 
+        + query_params['nodes_temporal'] + ") REQUIRE (m." 
         + query_params['prop_node_name'] + ", m." 
         + query_params['prop_node_snapshot'] + ") IS NODE KEY"
     )
@@ -45,8 +45,8 @@ def create_contraint(session, query_params):
 
 # create index on formula strings
 def create_index(session, query_params):
-    session.run("CREATE INDEX FOR (m:" 
-        + query_params['label_node'] + ") ON (m." 
+    session.run("CREATE INDEX FOR (m" 
+        + query_params['nodes_temporal'] + ") ON (m." 
         + query_params['prop_node_name'] + ")")
     print('done: create index on ' + query_params['prop_node_name'])
 
@@ -64,7 +64,7 @@ def create_relationship_potential_transformation(session, transform_file_path, q
             "row.tu_S AS S, "
             "row.is_addition AS is_addition, "
             "row.transformation_unit as transformation_unit "
-        "MATCH (m:" + query_params['label_node'] + "), (m2:" + query_params['label_node'] + ") "
+        "MATCH (m:" + query_params['label_node'] + query_params['nodes_temporal'] + "), (m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "WHERE m." + query_params['prop_node_name'] + " = from_node "
             "AND m2." + query_params['prop_node_name'] + " = to_node "
             "AND m." + query_params['prop_node_snapshot'] + " = m2." + query_params['prop_node_snapshot'] + "-1 "
@@ -84,7 +84,7 @@ def create_relationship_potential_transformation(session, transform_file_path, q
 # create SAME_AS relationship
 def create_relationship_same_as(session, query_params):
     session.run(
-        "MATCH (m1:" + query_params['label_node'] + "), (m2:" + query_params['label_node'] + ") "
+        "MATCH (m1:" + query_params['label_node'] + query_params['nodes_temporal'] + "), (m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "WHERE m2." + query_params['prop_node_name'] + " = m1." + query_params['prop_node_name'] + " " 
             "AND m2." + query_params['prop_node_snapshot'] + " = m1." + query_params['prop_node_snapshot'] + " + 1 "
         "CREATE (m1)-[:" + query_params['label_same_as'] + "]->(m2)"
@@ -94,7 +94,7 @@ def create_relationship_same_as(session, query_params):
 # create intensity_trend property
 def create_property_intensity_trend(session, query_params):
     session.run(
-        "MATCH (m1:" + query_params['label_node'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + ") "
+        "MATCH (m1:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "WITH (m2." + query_params['prop_node_value'] + "/m1." + query_params['prop_node_value'] + ") as trend, m1, m2, s "
         "SET s." + query_params['prop_edge_value_2'] + " = round(trend, 3) "
     )
@@ -104,13 +104,13 @@ def create_property_intensity_trend(session, query_params):
 # delete molecules without edges of type pot
 def delete_molecules_without_transformation(session, query_params):
     session.run(
-        "MATCH (m:" + query_params['label_node'] + ") "
-        "WHERE NOT EXISTS ((m)-[:" + query_params['label_potential_edge'] + "]->(:" + query_params['label_node'] + ")) "
-        "AND NOT EXISTS ((:" + query_params['label_node'] + ")-[:" + query_params['label_potential_edge'] + "]->(m)) "
+        "MATCH (m:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
+        "WHERE NOT EXISTS ((m)-[:" + query_params['label_potential_edge'] + "]->(:" + query_params['label_node'] + query_params['nodes_temporal'] + ")) "
+        "AND NOT EXISTS ((:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[:" + query_params['label_potential_edge'] + "]->(m)) "
         "DETACH DELETE m"
     )
 
-    print("done: delete " + query_params['label_node'] + " without edges of type " + query_params['label_potential_edge'])
+    print("done: delete " + query_params['label_node'] + query_params['nodes_temporal'] + " without edges of type " + query_params['label_potential_edge'])
 
 
 ##################################################################################

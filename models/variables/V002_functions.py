@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 07. march 2023
+# Date: 24. march 2023
 
 import os
 import pandas as pd
@@ -28,7 +28,7 @@ def connect_to_database(host, user, passwd, db_name):
 
 def graph_get_time(session, query_params):
     df_time = session.run(
-        "MATCH (m:" + query_params['label_node'] + ") "
+        "MATCH (m:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "RETURN count(m) as count_nodes, "
             "m." + query_params['prop_node_snapshot'] + " as property_time, "
             "m." + query_params['prop_extra_12'] + " as radiation_dose "
@@ -48,7 +48,7 @@ def graph_get_time(session, query_params):
 
 def graph_get_member_intensity_trend(session, query_params, lower, upper, trend):
     df_member_trend = session.run(
-        "MATCH (m:" + query_params['label_node'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + ") "
+        "MATCH (m:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "WHERE " + str(lower) + " <= s." + query_params['prop_edge_value_2'] + " <= " + str(upper) + " "
         "RETURN m." + query_params['prop_node_snapshot'] + "+1 as property_time, "
             "count(s) as " + trend + " "
@@ -60,7 +60,7 @@ def graph_get_member_intensity_trend(session, query_params, lower, upper, trend)
 
 def graph_get_transformations(session, edge_type, query_params):
     df_transformations = session.run(
-        "MATCH (m1:" + query_params['label_node'] + ")-[c:" + edge_type + "]->(m2:" + query_params['label_node'] + ") "
+        "MATCH (m1:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[c:" + edge_type + "]->(m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "RETURN m1." + query_params['prop_node_snapshot'] + "+1 as property_time, "
             "count(c) as count_relationships"
     ).to_df()
@@ -78,9 +78,9 @@ def get_share_transformation_units(session, query_params, transition_property):
     df_transformation_unit_count = pd.DataFrame()
     for ele in time_list:
         count_predicted = session.run(
-            "MATCH (:" + query_params['label_node'] + ")-[t:" + query_params['label_predicted_edge'] + "]->(:" + query_params['label_node'] + ") "
+            "MATCH (:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[t:" + query_params['label_predicted_edge'] + "]->(:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
             "WITH DISTINCT t." + query_params['prop_edge_value_1'] + " as transformation_unit "
-            "OPTIONAL MATCH (m:" + query_params['label_node'] + ")-[t:" + query_params['label_predicted_edge'] + "]->(:" + query_params['label_node'] + ") "
+            "OPTIONAL MATCH (m:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[t:" + query_params['label_predicted_edge'] + "]->(:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
             "WHERE t." + query_params['prop_edge_value_1'] + " = transformation_unit "
                 "AND m." + query_params['prop_node_snapshot'] + "  = " + str(ele) + " "
             "RETURN transformation_unit as transformation_unit, " 
@@ -156,13 +156,13 @@ def calculate_increase(df_transformation_unit_count, df_time, type):
 # label propagation algorithm
 def get_properties_top_communities(session, query_params, algorithm):
     properties_communities = session.run(
-        "MATCH (m:" + query_params['label_node'] + ") "
+        "MATCH (m:" + query_params['label_node'] + query_params['nodes_light'] + ") "
         "WITH m.community_" + algorithm + " as community, count(*) as member, "
             "avg(m." + query_params['prop_extra_2'] + query_params['prop_extra_1'] + ") as avg_hc, "
             "avg(m." + query_params['prop_extra_4'] + query_params['prop_extra_1'] + ") as avg_oc "
         "ORDER BY member DESC "
         "LIMIT 5 "
-        "OPTIONAL MATCH (m:" + query_params['label_node'] + ")-[ct:" + query_params['label_chemical_edge'] + "]->(m2:" + query_params['label_node'] + ") "
+        "OPTIONAL MATCH (m:" + query_params['label_node'] + query_params['nodes_light'] + ")-[ct:" + query_params['label_chemical_edge'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_light'] + ") "
         "WHERE m.community_" + algorithm + " = community "
             "AND m2.community_" + algorithm + " = community "
         "RETURN community, member, avg_hc, avg_oc, "

@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 02. february 2023
+# Date: 24. march 2023
 
 import numpy as np
 import pandas as pd
@@ -20,7 +20,7 @@ def export_properties(session, properties_communities, query_params, algorithm):
     for community in top_list:
         
         df_tu_top_five_occurrence = session.run(
-            "MATCH (m:" + query_params['label_node'] + ")-[ct:" + query_params['label_chemical_edge'] + "]->(m2:" + query_params['label_node'] + ") "
+            "MATCH (m:" + query_params['label_node'] + query_params['nodes_light'] + ")-[ct:" + query_params['label_chemical_edge'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_light'] + ") "
             "WHERE m.community_" + algorithm + " = " + str(community) + " "
                 "AND m2.community_" + algorithm + " = " + str(community) + " "
             "WITH ct." + query_params['prop_edge_value_1'] + " as tu, "
@@ -62,7 +62,7 @@ def export_properties(session, properties_communities, query_params, algorithm):
 if __name__ == '__main__':
     print('----------------------')
     # create session to database and analyze graph
-    session = pva.pf.connect_to_database(pva.host, pva.user, pva.passwd, pva.db_name_light)
+    session = pva.pf.connect_to_database(pva.host, pva.user, pva.passwd, pva.db_name_temporal)
     
     properties_communities = pva.pf.get_properties_top_communities(session, pva.query_params, algorithm='lpa')
     export_properties(session, properties_communities, pva.query_params, algorithm='lpa')

@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 27. january 2023
+# Date: 24. march 2023
 
 ###
 # SI Figure 6
@@ -18,7 +18,7 @@ import A000_path_variables_analyze as pva
 
 def get_out_degree(session, query_params):
     df_degree = session.run(
-        "MATCH (m:" + query_params['label_node'] + ")-[prt:" + query_params['label_predicted_edge'] + "]->(:" + query_params['label_node'] + ") "
+        "MATCH (m:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[prt:" + query_params['label_predicted_edge'] + "]->(:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "WITH m." + query_params['prop_node_name'] + " as fs, m." + query_params['prop_node_snapshot'] + " as pit, count(prt) as cnt_prt "
         "RETURN cnt_prt, count(cnt_prt) as sum_cnt "
         "ORDER BY cnt_prt"
