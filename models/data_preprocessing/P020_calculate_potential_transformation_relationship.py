@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 09. march 2023
+# Date: 14. march 2023
 
 ###
 # SI Algorithm 1
@@ -19,21 +19,21 @@ import P000_path_variables_preprocess as pvp
 # see SI Algorithm 1
 def calculate_formula_relationships(formula_strings, transformation_unit):
     # create empty list to store dictionaries with calculated relationships
-    # see algorithm line 4-5
+    # see algorithm line 4
     formula_list = []
     # initiate progress bar
     bar_calculate_relationships = Bar('calculate relationships:', max = len(formula_strings.index))
 
     # iterate through dataframe of molecular formulas
-    # see algorithm line 6-7
+    # see algorithm line 5
     for mol_formula in formula_strings.itertuples():
         bar_calculate_relationships.next()
         # iterate through dataframe of transformation units
-        # see algorithm line 8-9
+        # see algorithm line 6
         for trans_unit in transformation_unit.itertuples():
             # calculate new molecules from given molecules and transformation units in direction: photoaddition
             # check if transformation unit exist as photo addition in data
-            # see algorithm line 10-11
+            # see algorithm line 7-8
             if int(trans_unit.plus) == 1:
                 # create empty dictionary for new formulas
                 formula_dict = {}
@@ -42,7 +42,7 @@ def calculate_formula_relationships(formula_strings, transformation_unit):
 
                 # calculate possible new atom count in molecule
                 # calculation: formula + transformation_unit = new_formula
-                # see algorithm line 12-14
+                # see algorithm line 9
                 new_C = mol_formula.C + trans_unit.C
                 new_H = mol_formula.H + trans_unit.H
                 new_O = mol_formula.O + trans_unit.O
@@ -67,17 +67,17 @@ def calculate_formula_relationships(formula_strings, transformation_unit):
                 }
                 formula_dict['new_formula'] = create_string_from_calculated_atoms(formula_dict)
                 # check if calculated molecule exists in original molecule data
-                # see algorithm line 15-17
+                # see algorithm line 10
                 if formula_dict['new_formula'] in formula_strings['formula_string'].values:
                     # create strings from atoms of transformation units
                     formula_dict['transformation_unit'] = create_strings_transformation_unit(formula_dict)
                     # append dictionary to list
-                    # see algorithm line 18-20
+                    # see algorithm line 11
                     formula_list.append(formula_dict)
 
             # calculate new molecules from given molecules and transformation units in direction: photodegradation
             # choose if transformation unit exist as photo elimination in data
-            # see algorithm line 21-22
+            # see algorithm line 12-13
             if int(trans_unit.minus) == 1:
                 # define exist as True
                 # if molecule of calculated relationship has atom < 0 
@@ -91,7 +91,7 @@ def calculate_formula_relationships(formula_strings, transformation_unit):
                 # calculate possible new molecule
                 # calculation: formula - transformation_unit = new_formula
                 # skip if count < 0
-                # see algorithm line 23-25
+                # see algorithm line 14
                 new_C = mol_formula.C - trans_unit.C if mol_formula.C - trans_unit.C >= 0 else -1
                 if new_C == -1: exist = False
                 new_H = mol_formula.H - trans_unit.H if mol_formula.H - trans_unit.H >= 0 else -1
@@ -123,18 +123,18 @@ def calculate_formula_relationships(formula_strings, transformation_unit):
                     }
                     formula_dict['new_formula'] = create_string_from_calculated_atoms(formula_dict)
                     # check if calculated molecule exists in original molecule data
-                    # see algorithm line 26-28
+                    # see algorithm line 15
                     if formula_dict['new_formula'] in formula_strings['formula_string'].values:
                         # create strings from atoms of transformation units
                         formula_dict['transformation_unit'] = create_strings_transformation_unit(formula_dict)
                         # append dictionary to list
-                        # see algorithm line 29-31
+                        # see algorithm line 16
                         formula_list.append(formula_dict)
 
     bar_calculate_relationships.finish()
     molecule_df = pd.DataFrame(formula_list)
     print('done: calculate new molecules photoaddition')
-    # see algorithm line 32-33
+    # see algorithm line 17
     return molecule_df
 
 # create strings from calculated atom count

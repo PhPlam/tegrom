@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 06. march 2023
+# Date: 14. march 2023
 
 ###
 # Figure 4
@@ -24,7 +24,7 @@ def analyze_structure(session, query_params, df_time, photolysis):
     standard_deviation = np.std(np.array(df_time['count_nodes'], df_time['property_time']))
 
     # only if photolysis experiment
-    if photolysis == 1: 
+    if photolysis == True: 
         radiation_diff = df_time.rad_diff.to_list()
         del radiation_diff[0]
 
@@ -88,7 +88,7 @@ def analyze_structure(session, query_params, df_time, photolysis):
     plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
     # only if photolysis experiment
-    if photolysis == 1: 
+    if photolysis == True: 
         # second plot - second x-axis
         axTicks = ax_sec.get_xticks()   
         ax_rad = ax_sec.twiny()
@@ -118,7 +118,7 @@ def analyze_structure(session, query_params, df_time, photolysis):
     ax2.legend(loc='best', bbox_to_anchor=(0.57, 1))
 
     # only if photolysis experiment
-    if photolysis == 1: 
+    if photolysis == True: 
         # third plot - second x-axis
         axTicks = ax.get_xticks()   
         ax_rad = ax.twiny()
