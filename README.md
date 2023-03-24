@@ -43,12 +43,15 @@ tested on Manjaro Linux (24. march 2023)
 
 1. Download and run Neo4j Desktop [Link](https://neo4j.com/download/) 
 2. Create a new project (no whitespace or special characters):
-    * image here
+   
+   ![create_new_project](https://user-images.githubusercontent.com/91727135/227484285-ca96d4a9-2288-4d92-acb8-83bdeff48713.png)
+   
 3. Go to project and add a new local database
     * Name: e.g. MoleculeGraph
     * Password: e.g. test1234  
     * “Create”
-    * image here
+    
+    ![add_local_db](https://user-images.githubusercontent.com/91727135/227484203-404f2b6c-9543-4043-87ad-dc966b0aab42.png)
     
 4. Allow data from external sources
     * open the settings of the database (three dots on the right side)
@@ -57,12 +60,14 @@ tested on Manjaro Linux (24. march 2023)
     * comment the line with “#”
         * e.g. “#dbms.directories.import=import”
     * “Apply” and “Close”
-    * image here 
+   
+    ![ext_src](https://user-images.githubusercontent.com/91727135/227484243-89dc7648-8f63-460a-9a7c-9e524cb7b9f1.png)
 
 5. Install the APOC and the Graph Data Science Library Plugin
     * Click on the database (a window should appear on the right side)
     * Go to “Plugins” and install APOC and Graph Data Science Library
-    * image here
+    
+    ![plugins](https://user-images.githubusercontent.com/91727135/227484313-12fae12d-2ed9-4983-bf11-7c99554e5771.png)
 
 6. Start the database
 
