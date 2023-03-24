@@ -1,7 +1,6 @@
 # A temporal graph model for environmental data in Neo4j
 
 Owner: Philipp Plamper  
-Mail: philipp.plamper@hs-anhalt.de  
 Date: 24. march 2023  
   
 This project belongs to the publications in the following paper: "A temporal graph to predict chemical transformations in complex dissolved organic matter" (Philipp Plamper, Oliver J. Lechtenfeld, Peter Herzsprung, Anika Groß)  
