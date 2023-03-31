@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 14. march 2023
+# Date: 28. march 2023
 
 import pandas as pd
 import P000_path_variables_preprocess as pvp
@@ -81,7 +81,7 @@ def remove_molecules_without_measurement(shrinked_data, metadata):
 
 # remove duplicate formula strings
 def delete_duplicates(removed_molecules_without_measurement):
-    data = removed_molecules_without_measurement[['measurement_id', 'formula_string', 'C', 'H', 'O', 'N', 'S']]
+    data = removed_molecules_without_measurement[['formula_string', 'C', 'H', 'O', 'N', 'S']]
     data = data.drop_duplicates(subset=['formula_string'])
     print('done: remove duplicate formula strings')
     return data
