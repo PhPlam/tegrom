@@ -1,0 +1,5 @@
+build image:
+docker build -t tegrom:latest .
+
+run container:
+docker run --publish=7474:7474 --publish=7687:7687 --name tegrom -d tegrom
