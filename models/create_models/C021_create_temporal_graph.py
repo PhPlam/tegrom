@@ -119,7 +119,7 @@ def delete_molecules_without_transformation(session, query_params):
 
 if __name__ == '__main__':
     # create database and establish connection
-    pvc.create_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
+    #pvc.create_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
     # wait a few seconds for database creation
     time.sleep(5)
     session = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
