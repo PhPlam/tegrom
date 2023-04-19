@@ -1,13 +1,14 @@
 # A temporal graph model for environmental data in Neo4j
 
 Owner: Philipp Plamper  
-Date: 27. march 2023  
+Date: 19. april 2023  
   
-This project belongs to the publications in the following paper: paper here
+This project contains our implementation and source code for the paper "A temporal graph model to predict chemical transformations in complex dissolved organic matter" (Philipp Plamper, Oliver J. Lechtenfeld, Peter Herzsprung, Anika Groß)  
+
+We present a novel approach based on a temporal graph to predict chemical transformations of DOM based on molecular data gathered from FT-ICR-MS. The temporal graph approach shall enable us 1) to model the highly dynamic nature of the DOM and 2) to gain new insights on underlying chemical reactions and their temporal dynamics based on graph analytics.
   
-The scripts contain methods to create a temporal graph from molecule data acquired over several discrete measurements. Additionally, several methods are provided to analyze the created temporal graph.
-
-
+The experimental data from FT-ICR-MS in this project are from the paper "Photochemically Induced Changes of Dissolved Organic Matter in a Humic-Rich and Forested Stream" (Christin Wilske, Peter Herzsprung, Oliver J. Lechtenfeld, Norbert Kamjunke, Wolf von Tümpling) (https://doi.org/10.3390/w12020331) 
+  
 ### Graph Model
 
 ![graph_model_v4](https://user-images.githubusercontent.com/91727135/223053780-73f2dbd3-be5c-4022-8868-0edfa99d8e7b.png)
