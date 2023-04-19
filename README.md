@@ -7,7 +7,7 @@ This project contains our implementation and source code for the paper "A tempor
 
 We present a novel approach based on a temporal graph to predict chemical transformations of DOM based on molecular data gathered from FT-ICR-MS. The temporal graph approach shall enable us 1) to model the highly dynamic nature of the DOM and 2) to gain new insights on underlying chemical reactions and their temporal dynamics based on graph analytics.
   
-The experimental data from FT-ICR-MS in this project are from the paper "Photochemically Induced Changes of Dissolved Organic Matter in a Humic-Rich and Forested Stream" (Christin Wilske, Peter Herzsprung, Oliver J. Lechtenfeld, Norbert Kamjunke, Wolf von Tümpling) (https://doi.org/10.3390/w12020331) 
+The experimental data from FT-ICR-MS used in this project were originally used in paper "Photochemically Induced Changes of Dissolved Organic Matter in a Humic-Rich and Forested Stream" (Christin Wilske, Peter Herzsprung, Oliver J. Lechtenfeld, Norbert Kamjunke, Wolf von Tümpling) (https://doi.org/10.3390/w12020331) 
   
 ### Graph Model
 
