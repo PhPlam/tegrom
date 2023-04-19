@@ -24,6 +24,10 @@ COPY requirements /home/requirements
 # install libraries from requirements
 RUN pip install -r /home/requirements/requirements.txt
 
-# todo
 # run scripts
-# remove enterprise functions/handling of those functions
+#RUN cd /home/models/data_preprocessing \
+#    && bash P099_run_preprocessing_scripts.sh \
+#    && cd /home/models/create_models \
+#    && bash C099_run_graph_scripts.sh \
+#    && cd /home/models/analyze \
+#    && bash A099_run_analysis.sh
