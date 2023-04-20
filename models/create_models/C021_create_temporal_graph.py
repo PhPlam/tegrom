@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 06. april 2023
+# Date: 21. april 2023
 
 import os
 import time
@@ -119,9 +119,7 @@ def delete_molecules_without_transformation(session, query_params):
 
 if __name__ == '__main__':
     # create database and establish connection
-    #pvc.create_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
-    # wait a few seconds for database creation
-    time.sleep(5)
+    pvc.create_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
     session = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
 
     # create graph
