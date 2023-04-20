@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 08. march 2023
+# Date: 24. march 2023
 
 import pandas as pd
 from neo4j import GraphDatabase
@@ -12,9 +12,9 @@ import C000_path_variables_create as pvc
 # get property intensity_trend from SAME_AS relationship
 def get_tendencies(session_temporal, query_params):
     tendencies = session_temporal.run(
-        "MATCH (m:" + query_params['label_node'] + ") "
+        "MATCH (m:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "WITH m." + query_params['prop_node_snapshot'] + " as sid, avg(m." + query_params['prop_node_value'] + ") as avg_int " 
-        "MATCH (m1:" + query_params['label_node'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + ") "
+        "MATCH (m1:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "WHERE m1." + query_params['prop_node_snapshot'] + " = sid "
         "RETURN m1." + query_params['prop_node_name'] + " AS from_formula, "
             "m1." + query_params['prop_node_snapshot'] + " AS from_mid, "
@@ -55,7 +55,7 @@ def calc_weights(tendencies, upper_limit, lower_limit):
 def calc_temp_weights(tendency_weights, session_temporal, query_params):
     for index, row in tendency_weights.iterrows():
         session_temporal.run(
-            "MATCH (m1:" + query_params['label_node'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + ") "
+            "MATCH (m1:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
             "WHERE m1." + query_params['prop_node_name'] + " = $from_formula AND m1." + query_params['prop_node_snapshot'] + " = $from_mid "
                 "AND m2." + query_params['prop_node_name'] + " = $to_formula AND m2." + query_params['prop_node_snapshot'] + " = $to_mid "
             "SET s." + query_params['prop_extra_10'] + " = $tendency_weight "
@@ -70,9 +70,9 @@ def calc_temp_weights(tendency_weights, session_temporal, query_params):
 # add the final weights to the graph
 def add_weights(session_temporal, upper_limit, lower_limit, query_params):
     tendency_weights = session_temporal.run(
-        "MATCH (m1:" + query_params['label_node'] + ")-[prt:" + query_params['label_predicted_edge'] + "]->(m2:" + query_params['label_node'] + "), "
-            "(m1)-[s1:" + query_params['label_same_as'] + "]->(:" + query_params['label_node'] + "), "
-            "(:" + query_params['label_node'] + ")-[s2:" + query_params['label_same_as'] + "]->(m2) "
+        "MATCH (m1:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[prt:" + query_params['label_predicted_edge'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_temporal'] + "), "
+            "(m1)-[s1:" + query_params['label_same_as'] + "]->(:" + query_params['label_node'] + query_params['nodes_temporal'] + "), "
+            "(:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[s2:" + query_params['label_same_as'] + "]->(m2) "
         "SET prt." + query_params['prop_extra_11'] + " = s1." + query_params['prop_extra_10'] + " + s2." + query_params['prop_extra_10'] + " "
     ).to_df()
 
@@ -81,10 +81,10 @@ def add_weights(session_temporal, upper_limit, lower_limit, query_params):
 # normalize incoming weights
 def normalize_weights(session_temporal, query_params):
     session_temporal.run(
-        "MATCH (:" + query_params['label_node'] + ")-[t:" + query_params['label_predicted_edge'] + "]->(m:" + query_params['label_node'] + ") " 
+        "MATCH (:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[t:" + query_params['label_predicted_edge'] + "]->(m:" + query_params['label_node'] + query_params['nodes_temporal'] + ") " 
         "WITH m." + query_params['prop_node_name'] + " as fs, m." + query_params['prop_node_snapshot'] + " as mid, "
             "sum(t." + query_params['prop_extra_11'] + ") as sum_weight "
-        "MATCH (:" + query_params['label_node'] + ")-[t1:" + query_params['label_predicted_edge'] + "]->(m1:" + query_params['label_node'] + ") "
+        "MATCH (:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[t1:" + query_params['label_predicted_edge'] + "]->(m1:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "WHERE m1." + query_params['prop_node_name'] + " = fs AND m1." + query_params['prop_node_snapshot'] + " = mid "
         "SET t1." + query_params['prop_extra_15'] + " = round(t1." + query_params['prop_extra_11'] + "/sum_weight, 3)"
     )

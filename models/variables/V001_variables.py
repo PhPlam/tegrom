@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 14. march 2023
+# Date: 06. april 2023
 
 ### parameter for ###
 ### database connection ### 
@@ -73,7 +73,9 @@ metadata = 'sample_metadata.csv'
 # and do not contain information for themselves (at least not intentionally)
 
 model_params = {
-    'label_node' : 'Molecule', # String; label nodes
+    'label_node' : 'Molecule', # String; base label nodes
+    'nodes_temporal' : ':Temporal', # String; label nodes temporal graph
+    'nodes_light' : ':Light', # String; label nodes light temporal graph
     'label_same_as' : 'SAME_AS', # String; label edges
     'label_potential_edge' : 'POTENTIAL_TRANSFORMATION', # String; label edges
     'label_predicted_edge' : 'PREDICTED_TRANSFORMATION', # String; label edges

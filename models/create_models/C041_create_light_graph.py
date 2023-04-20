@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 02. february 2023
+# Date: 24. march 2023
 
 from neo4j import GraphDatabase
 import C000_path_variables_create as pvc
@@ -12,9 +12,9 @@ import C000_path_variables_create as pvc
 # get all potential transformation relationships
 def get_relationships(session_temporal, query_params):
     new_model_paths = session_temporal.run(
-        "MATCH (m1:" + query_params['label_node'] + ")-[p:" + query_params['label_potential_edge'] + "]->(m2:" + query_params['label_node'] + ") "
-        "OPTIONAL MATCH (m1)-[s1:" + query_params['label_same_as'] + "]->(:" + query_params['label_node'] + ") "
-        "OPTIONAL MATCH (:" + query_params['label_node'] + ")-[s2:" + query_params['label_same_as'] + "]->(m2) "
+        "MATCH (m1:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[p:" + query_params['label_potential_edge'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
+        "OPTIONAL MATCH (m1)-[s1:" + query_params['label_same_as'] + "]->(:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
+        "OPTIONAL MATCH (:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[s2:" + query_params['label_same_as'] + "]->(m2) "
         "WHERE m2." + query_params['prop_node_snapshot'] + " = m1." + query_params['prop_node_snapshot'] + " + 1 "
         "RETURN m1." + query_params['prop_node_name'] + " as from_node, " 
         "m1." + query_params['prop_node_value'] + " as from_node_value, " 
@@ -35,9 +35,9 @@ def get_relationships(session_temporal, query_params):
 
 
 # create molecule nodes from unique formula strings
-def create_nodes_molecule(session_temporal, session_light, query_params):
+def create_nodes_molecule(session_temporal, query_params):
     df_unique_mol = session_temporal.run(
-        "MATCH (m:" + query_params['label_node'] + ") "
+        "MATCH (m:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "RETURN m." + query_params['prop_node_name'] + " as node_string, "
             "m." + query_params['prop_extra_1'] + " as C, "
             "m." + query_params['prop_extra_2'] + " as H, "
@@ -52,8 +52,8 @@ def create_nodes_molecule(session_temporal, session_light, query_params):
     ).to_df()
 
     for index, row in df_unique_mol.iterrows():
-        session_light.run(
-            "CREATE (:" + query_params['label_node'] + " {" + query_params['prop_node_name'] + ":$node_string, "        
+        session_temporal.run(
+            "CREATE (:" + query_params['label_node'] + query_params['nodes_light'] + " {" + query_params['prop_node_name'] + ":$node_string, "        
                     + query_params['prop_extra_1'] + " : toInteger($C), "
                     + query_params['prop_extra_2'] + " : toInteger($H), "
                     + query_params['prop_extra_3'] + " : toInteger($N), "
@@ -78,22 +78,22 @@ def create_nodes_molecule(session_temporal, session_light, query_params):
                             'occ_count' : row['occ_count']
                             })
 
-    print('done: create nodes ' + query_params['label_node'])
+    print('done: create nodes ' + query_params['label_node'] + query_params['nodes_light'])
 
 
 # create index on formula string
-def create_index(session_light, query_params):
-    session_light.run(
-        "CREATE INDEX FOR (m:" + query_params['label_node'] + ") ON (m." + query_params['prop_node_name'] + ")"
+def create_index(session_temporal, query_params):
+    session_temporal.run(
+        "CREATE INDEX FOR (m" + query_params['nodes_light'] + ") ON (m." + query_params['prop_node_name'] + ")"
     )
 
     print('done: create index on formula string')
 
 
 # create CHEMICAL_TRANSFORMATION relationship
-def create_relationship_chemical_transformation(session_temporal, session_light, query_params):
+def create_relationship_chemical_transformation(session_temporal, query_params):
     df_pot_rel = session_temporal.run(
-        "MATCH (m1:" + query_params['label_node'] + ")-[pot:" + query_params['label_potential_edge'] + "]->(m2:" + query_params['label_node'] + ") "
+        "MATCH (m1:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[pot:" + query_params['label_potential_edge'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         "RETURN  m1." + query_params['prop_node_name'] + " as from_node, "
             "m2." + query_params['prop_node_name'] + " as to_node, "
             "pot." + query_params['prop_edge_value_1'] + " as edge_string, "
@@ -106,8 +106,8 @@ def create_relationship_chemical_transformation(session_temporal, session_light,
     ).to_df()
 
     for index, row in df_pot_rel.iterrows():
-        session_light.run(
-            "MATCH (m1:" + query_params['label_node'] + "), (m2:" + query_params['label_node'] + ") "
+        session_temporal.run(
+            "MATCH (m1:" + query_params['label_node'] + query_params['nodes_light'] + "), (m2:" + query_params['label_node'] + query_params['nodes_light'] + ") "
             "WHERE m1." + query_params['prop_node_name'] + " = $from_node "
                 "AND m2." + query_params['prop_node_name'] + " = $to_node "
             "CREATE (m1)-[:" + query_params['label_chemical_edge'] + " { "
@@ -132,7 +132,7 @@ def create_relationship_chemical_transformation(session_temporal, session_light,
 
 
 # create and set properties at relationship CHEMICAL_TRANSRFORMATION
-def set_properties_chemical_transformation(session_light, new_model_paths, query_params):
+def set_properties_chemical_transformation(session_temporal, new_model_paths, query_params):
     for i in range (1,new_model_paths['to_node_time'].max()+1):
         is_prt_list = []
         new_model_paths_trim = new_model_paths[new_model_paths['to_node_time'] == i].copy()
@@ -145,8 +145,8 @@ def set_properties_chemical_transformation(session_light, new_model_paths, query
         new_model_paths_trim['predicted'] = is_prt_list
 
         for index, row in new_model_paths_trim.iterrows():
-            session_light.run(
-                "MATCH (m1:" + query_params['label_node'] + ")-[c:" + query_params['label_chemical_edge'] + "]->(m2:" + query_params['label_node'] + ") "
+            session_temporal.run(
+                "MATCH (m1:" + query_params['label_node'] + query_params['nodes_light'] + ")-[c:" + query_params['label_chemical_edge'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_light'] + ") "
                 "WHERE m1." + query_params['prop_node_name'] + " = $from_node "
                     "AND m2." + query_params['prop_node_name'] + " = $to_node "
                     "AND c." + query_params['prop_edge_value_1'] + " = $edge_string "
@@ -182,9 +182,9 @@ def set_properties_chemical_transformation(session_light, new_model_paths, query
 
 
 # property 'transition_count' = number of potential transformations between two molecules 
-def create_property_transition_count(session_light, query_params):
-    session_light.run(
-        "MATCH (m1:" + query_params['label_node'] + ")-[c:" + query_params['label_chemical_edge'] + "]->(:" + query_params['label_node'] + ") "
+def create_property_transition_count(session_temporal, query_params):
+    session_temporal.run(
+        "MATCH (m1:" + query_params['label_node'] + query_params['nodes_light'] + ")-[c:" + query_params['label_chemical_edge'] + "]->(:" + query_params['label_node'] + query_params['nodes_light'] + ") "
         "WITH m1, c, size(keys(c))-6 as keys "
         "SET c." + query_params['prop_extra_8'] + " = keys "
         "RETURN m1." + query_params['prop_node_name'] + ", keys LIMIT 5 "
@@ -194,16 +194,16 @@ def create_property_transition_count(session_light, query_params):
 
 
 # property 'prt_count' = number of transitions of type predicted transformation in temporal graph model
-def create_property_count_predicted_transformation(session_light, new_model_paths, query_params):
-    session_light.run(
-        "MATCH (m1:" + query_params['label_node'] + ")-[c:" + query_params['label_chemical_edge'] + "]->(:" + query_params['label_node'] + ") "
+def create_property_count_predicted_transformation(session_temporal, new_model_paths, query_params):
+    session_temporal.run(
+        "MATCH (m1:" + query_params['label_node'] + query_params['nodes_light'] + ")-[c:" + query_params['label_chemical_edge'] + "]->(:" + query_params['label_node'] + query_params['nodes_light'] + ") "
         "SET c." + query_params['prop_extra_9'] + " = 0 "
         "RETURN count(*)"
     )
 
     for i in range(1,new_model_paths['to_node_time'].max()+1):
-        session_light.run(
-            "MATCH (m1:" + query_params['label_node'] + ")-[c:" + query_params['label_chemical_edge'] + "]->(:" + query_params['label_node'] + ") "
+        session_temporal.run(
+            "MATCH (m1:" + query_params['label_node'] + query_params['nodes_light'] + ")-[c:" + query_params['label_chemical_edge'] + "]->(:" + query_params['label_node'] + query_params['nodes_light'] + ") "
             "WHERE c.transition_" + str(i) + "[5] = 1 "
             "SET c." + query_params['prop_extra_9'] + " = c.""" + query_params['prop_extra_9'] + " + 1 "
             "RETURN count(*)"
@@ -211,16 +211,16 @@ def create_property_count_predicted_transformation(session_light, new_model_path
 
     print('done: done: create property ' + query_params['prop_extra_9'])
 
-def delete_nodes_without_predicted_transformation(session_light, query_params):
-    session_light.run(
-        "MATCH (:" + query_params['label_node'] + ")-[ct:" + query_params['label_chemical_edge'] + "]->(:" + query_params['label_node'] + ") "
+def delete_nodes_without_predicted_transformation(session_temporal, query_params):
+    session_temporal.run(
+        "MATCH (:" + query_params['label_node'] + query_params['nodes_light'] + ")-[ct:" + query_params['label_chemical_edge'] + "]->(:" + query_params['label_node'] + query_params['nodes_light'] + ") "
         "WHERE ct." + query_params['prop_extra_9'] + " = 0 "
         "DELETE ct"   
     )
 
-    session_light.run(
-        "MATCH (m:" + query_params['label_node'] + ") "
-        "WHERE NOT EXISTS ((m)-[:" + query_params['label_chemical_edge'] + "]-(:" + query_params['label_node'] + ")) "
+    session_temporal.run(
+        "MATCH (m:" + query_params['label_node'] + query_params['nodes_light'] + ") "
+        "WHERE NOT EXISTS ((m)-[:" + query_params['label_chemical_edge'] + "]-(:" + query_params['label_node'] + query_params['nodes_light'] + ")) "
         "DELETE m"   
     )
 
@@ -233,22 +233,22 @@ def delete_nodes_without_predicted_transformation(session_light, query_params):
 
 if __name__ == '__main__':
     # create database for light temporal graph
-    pvc.create_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_light)
+    # pvc.create_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_light)
 
     # connect to temporal graph model
     session_temporal = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
     new_model_paths = get_relationships(session_temporal, pvc.query_params)
 
     # connect to light temporal model
-    session_light = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_light)
-    create_nodes_molecule(session_temporal, session_light, pvc.query_params)
-    create_index(session_light, pvc.query_params)
-    create_relationship_chemical_transformation(session_temporal, session_light, pvc.query_params)
-    set_properties_chemical_transformation(session_light, new_model_paths, pvc.query_params)
-    create_property_transition_count(session_light, pvc.query_params)
-    create_property_count_predicted_transformation(session_light, new_model_paths, pvc.query_params)
-    delete_nodes_without_predicted_transformation(session_light, pvc.query_params)
+    #session_light = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_light)
+    create_nodes_molecule(session_temporal, pvc.query_params)
+    create_index(session_temporal, pvc.query_params)
+    create_relationship_chemical_transformation(session_temporal, pvc.query_params)
+    set_properties_chemical_transformation(session_temporal, new_model_paths, pvc.query_params)
+    create_property_transition_count(session_temporal, pvc.query_params)
+    create_property_count_predicted_transformation(session_temporal, new_model_paths, pvc.query_params)
+    delete_nodes_without_predicted_transformation(session_temporal, pvc.query_params)
 
     # close sessions
     session_temporal.close()
-    session_light.close()
+    #session_light.close()

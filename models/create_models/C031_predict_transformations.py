@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 14. march 2023
+# Date: 24. march 2023
 
 ###
 # SI Algorithm 2
@@ -22,7 +22,7 @@ def predict_likely_occurring_transformations(session, upper_limit, lower_limit, 
     increasing_intensity_df = session.run(
         # iterate through molecules 
         # see algorithm line 7
-        "MATCH (m1:" + query_params['label_node'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + ") "
+        "MATCH (m1:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         # get intensity trend of molecules from preceding snapshot and continue of increasing
         # see algorithm line 8-10
         "WHERE s." + query_params['prop_edge_value_2'] + " > " + str(upper_limit) + 
@@ -30,12 +30,12 @@ def predict_likely_occurring_transformations(session, upper_limit, lower_limit, 
         "WITH m1, m2, s "
         # collect nods with potential transformation edge
         # see algorithm line 11-12
-        "MATCH (m3:" + query_params['label_node'] + ")-[pot:" + query_params['label_potential_edge'] + "]->(m2) "
+        "MATCH (m3:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[pot:" + query_params['label_potential_edge'] + "]->(m2) "
         "WHERE m3." + query_params['prop_node_snapshot'] + " = m1." + query_params['prop_node_snapshot'] +
         " WITH m3, m2, m1, s, pot "
         # iterate through collected nodes and get their intensity trend
         # see algorithm line 13-15
-        "MATCH (m3)-[s2:" + query_params['label_same_as'] + "]->(m4:" + query_params['label_node'] + ") "
+        "MATCH (m3)-[s2:" + query_params['label_same_as'] + "]->(m4:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         # continue if intensity trend is decreasing 
         # see algorithm line 16
         "WHERE s2." + query_params['prop_edge_value_2'] + " < " + str(lower_limit) +
@@ -100,7 +100,7 @@ def calculate_transformation_units(occ_trans, query_params):
 def create_relationship_predicted_transformation(session, calc_weights, query_params):
     for index, row in calc_weights.iterrows():
         session.run(
-            "MATCH (m1:" + query_params['label_node'] + "), (m2:" + query_params['label_node'] + ") "
+            "MATCH (m1:" + query_params['label_node'] + query_params['nodes_temporal'] + "), (m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
             "WHERE m1." + query_params['prop_node_name'] + " = $from_node "
                 "AND m2." + query_params['prop_node_name'] + " = $to_node "
                 "AND m1." + query_params['prop_node_snapshot'] + " = $from_time "

@@ -1,4 +1,3 @@
 # Create temporal graph
 
-Owner: Philipp Plamper
-Date: 19. september 2022
+Date: 19. april 2023

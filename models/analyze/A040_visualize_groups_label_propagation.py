@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 02. february 2023
+# Date: 24.march 2023
 
 ###
 # SI Figure 12
@@ -19,7 +19,7 @@ import A000_path_variables_analyze as pva
 # get member of top five communities
 def member_top_five(session, query_params, community_list, algorithm):
     df_communities = session.run(
-        "MATCH (m:" + query_params['label_node'] + ") "
+        "MATCH (m:" + query_params['label_node'] + query_params['nodes_light'] + ") "
         "WHERE m.community_" + algorithm + " IN " + str(community_list) + " "
         "RETURN m." + query_params['prop_node_name'] + " as molecular_formula, "
         "m.community_" + algorithm + " as community, "
@@ -76,7 +76,7 @@ def visualize_communities(df_communities, algorithm):
 if __name__ == '__main__':
     print('----------------------')
     # create session to database and analyze graph
-    session = pva.pf.connect_to_database(pva.host, pva.user, pva.passwd, pva.db_name_light)
+    session = pva.pf.connect_to_database(pva.host, pva.user, pva.passwd, pva.db_name_temporal)
     
     community_list = [x for x in pva.pf.get_properties_top_communities(session, pva.query_params, algorithm='lpa').community]
     df_communities = member_top_five(session, pva.query_params, community_list, algorithm='lpa')
