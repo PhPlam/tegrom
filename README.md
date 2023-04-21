@@ -21,7 +21,7 @@ tested on Manjaro Linux (24. march 2023)
 ### Software Versions
 
 - Neo4j Desktop [Link](https://neo4j.com/download/) 
-> Desktop version 1.5.7 (21. april 2023)
+> Desktop version 1.5.7 (21. april 2023)  
 > Database version 5.3.0 (21. april 2023)
 - Python version 3.10.9 
 - neo4j (Python driver) [Link](https://neo4j.com/docs/api/python-driver/current/)
