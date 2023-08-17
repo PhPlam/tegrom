@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 24. march 2023
+# Date: 17. august 2023
 
 import pandas as pd
 from neo4j import GraphDatabase
@@ -29,21 +29,12 @@ def get_tendencies(session_temporal, query_params):
     return tendencies
 
 # calculate tendency weight for every intensity trend (intermediate weight)
-def calc_weights(tendencies, upper_limit, lower_limit):
-    MAX = tendencies.intensity_trend.max()
-    MIN = tendencies.intensity_trend.min()
-
+def calc_weights(tendencies):
     weight_list = []
 
     for row in tendencies.itertuples():
-        if row.intensity_trend >= upper_limit:
-            res = row.intensity_trend/MAX # current intensity trend / maximum intensity trend
-            weight_list.append(res * (row.int))#/row.avg_int))
-        elif row.intensity_trend <= lower_limit:
-            res = (1-row.intensity_trend)/(1-MIN) # (1 - current intensity trend) / (1 - minimum intensity trend)
-            weight_list.append(res * (row.int))#/row.avg_int))
-        else:
-            weight_list.append(0)
+        res = row.int * abs(row.intensity_trend)
+        weight_list.append(res)
 
     tendencies['tendency_weight'] = weight_list
 
@@ -101,7 +92,7 @@ if __name__ == '__main__':
 
     # calculate weights and add to graph
     tendencies = get_tendencies(session_temporal, pvc.query_params)
-    tendency_weights = calc_weights(tendencies, pvc.upper_limit, pvc.lower_limit)
+    tendency_weights = calc_weights(tendencies)
     calc_temp_weights(tendency_weights, session_temporal, pvc.query_params)
     add_weights(session_temporal, pvc.upper_limit, pvc.lower_limit, pvc.query_params)
     normalize_weights(session_temporal, pvc.query_params)

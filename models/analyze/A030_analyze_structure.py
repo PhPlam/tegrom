@@ -56,7 +56,6 @@ def analyze_structure(session, query_params, df_time, photolysis):
     edge_type = query_params['label_predicted_edge']
     transformations_type_b = pva.pf.graph_get_transformations(session, edge_type, query_params)
 
-
     ### create the plot #############################
 
     fig = plt.figure(figsize=(14,9))
@@ -101,7 +100,7 @@ def analyze_structure(session, query_params, df_time, photolysis):
     ax = plt.subplot(313)#, sharex=ax_sec)
     ax.bar(transformations_type_a.property_time-0.2, transformations_type_a.count_relationships, color='forestgreen', width=0.4, label='"POTENTIAL_TRANSFORMATION"')
     ax.set_xlabel('transition', fontsize=16, fontweight='bold')
-    ax.set_xticks(np.arange(1, len(df_time), 1), fontsize=13)
+    #ax.set_xticks(np.arange(1, len(df_time), 1), fontsize=13)
     ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     ax.set_ylabel('number of \n transformations', fontsize=15, fontweight='bold', color='forestgreen')
     ax.yaxis.set_tick_params(labelsize=14)
