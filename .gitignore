@@ -5,3 +5,4 @@
 **/models/analyze/analyze_results/*.csv
 **/test/notebooks/results/*.png
 **/instructions/*
+**/.idea/*
