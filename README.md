@@ -1,7 +1,7 @@
 # A temporal graph model for environmental data in Neo4j
 
 Owner: Philipp Plamper  
-Date: 19. april 2023  
+Date: 31. may 2023  
   
 This project contains our implementation and source code for the paper "A temporal graph model to predict chemical transformations in complex dissolved organic matter" (Philipp Plamper, Oliver J. Lechtenfeld, Peter Herzsprung, Anika Groß)  
 
@@ -21,10 +21,11 @@ tested on Manjaro Linux (24. march 2023)
 ### Software Versions
 
 - Neo4j Desktop [Link](https://neo4j.com/download/) 
-> current version 1.5.7 (24. march 2023)
-- Python 3.10.6
+> Desktop version 1.5.7 (21. april 2023)  
+> Database version 5.3.0 (21. april 2023)
+- Python version 3.10.9 
 - neo4j (Python driver) [Link](https://neo4j.com/docs/api/python-driver/current/)
-> current version 5.6.0 (24. march 2023) 
+> version 5.6.0 (21. april 2023) 
 
 ### Project structure
 
