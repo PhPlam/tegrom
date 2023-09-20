@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 014. march 2023
+# Date: 28. august 2023
 
 ###
 # Figure 5 (C)
@@ -63,7 +63,7 @@ def visualize_single_transformation_unit(single_transformation_unit, df_time, ph
 
     std_tu = single_transformation_unit.iloc[0,-1]
 
-    fig = plt.figure(figsize=(12,4))
+    fig = plt.figure(figsize=(11,3))
 
     # first plot
     ax1 = plt.subplot()
@@ -74,8 +74,9 @@ def visualize_single_transformation_unit(single_transformation_unit, df_time, ph
     plt.axhline(np.mean(list_share)-std_tu, linewidth=0.5, linestyle='--', color='purple')
     plt.axhspan(np.mean(list_share)-std_tu, np.mean(list_share)+std_tu, alpha=0.05, color='purple')
     # first - legend
-    plt.legend(fontsize=14, loc='upper left', bbox_to_anchor=(1, 1))
-    plt.xlabel('transition', fontsize=15, fontweight='bold')
+    #plt.legend(fontsize=14, loc='upper left', bbox_to_anchor=(1, 1))
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.3), ncol=3, fontsize=14, framealpha=1)
+    plt.xlabel('transition', fontsize=16, fontweight='bold')
     plt.xticks(fontsize=14)
     plt.yticks(np.arange(np.round(min(list_share),0), max(list_share), 1), fontsize=14)
     plt.ylabel('share in %', fontsize=15, fontweight='bold')

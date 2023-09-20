@@ -20,6 +20,7 @@ import A000_path_variables_analyze as pva
 ##################################################################################
 
 def visualize_transformation_units(df_tu, query_params):
+
     fig = plt.figure(figsize=(12,6))
     col = np.where(df_tu.is_addition==1,'green','orange')
 

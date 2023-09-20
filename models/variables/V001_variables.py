@@ -23,7 +23,7 @@ lower_limit = -0.025 # below considered as decreasing intensity
 
 # belongs the data to a photolysis experiment
 # changes the functionality if set to wrong parameter
-# e.g. the data contains the column 'radiation_dose'no
+# e.g. the data contains the column 'radiation_dose'
 photolysis = False
 
 ### names of ###
