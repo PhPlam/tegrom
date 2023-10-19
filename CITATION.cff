@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Plamper"
+  given-names: "Philipp"
+title: "tegrom - Temporal graph model on DOM"
+version: 1.0.0
+date-released: 2023-05-31
+url: "https://github.com/PhPlam/tegrom"
