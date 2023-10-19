@@ -3,7 +3,7 @@ message: "If you use this software, please cite it as below."
 authors:
 - family-names: "Plamper"
   given-names: "Philipp"
-title: "tegrom - Temporal graph model on DOM"
-version: 1.0.0
-date-released: 2023-05-31
+title: "Temporal graph model on DOM (tegrom)"
+version: v1.10-23
+date-released: 2023-10-19
 url: "https://github.com/PhPlam/tegrom"
