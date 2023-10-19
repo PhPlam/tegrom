@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 24. march 2023
+# Date: 19. october 2023
 
 from neo4j import GraphDatabase
 import C000_path_variables_create as pvc
@@ -132,13 +132,14 @@ def create_relationship_chemical_transformation(session_temporal, query_params):
 
 
 # create and set properties at relationship CHEMICAL_TRANSRFORMATION
-def set_properties_chemical_transformation(session_temporal, new_model_paths, query_params):
+def set_properties_chemical_transformation(session_temporal, new_model_paths, query_params, lower_limit, upper_limit):
     for i in range (1,new_model_paths['to_node_time'].max()+1):
         is_prt_list = []
         new_model_paths_trim = new_model_paths[new_model_paths['to_node_time'] == i].copy()
         
         for row in new_model_paths_trim.itertuples():
-            if (0 < getattr(row, 'from_node_edge_value') < 0.975 and getattr(row, 'to_node_edge_value') > 1.025):
+            #if (0 < getattr(row, 'from_node_edge_value') < 0.975 and getattr(row, 'to_node_edge_value') > 1.025):
+            if (getattr(row, 'from_node_edge_value') < lower_limit and getattr(row, 'to_node_edge_value') > upper_limit):
                 is_prt_list.append(1)
             else:
                 is_prt_list.append(0)
@@ -244,7 +245,7 @@ if __name__ == '__main__':
     create_nodes_molecule(session_temporal, pvc.query_params)
     create_index(session_temporal, pvc.query_params)
     create_relationship_chemical_transformation(session_temporal, pvc.query_params)
-    set_properties_chemical_transformation(session_temporal, new_model_paths, pvc.query_params)
+    set_properties_chemical_transformation(session_temporal, new_model_paths, pvc.query_params, pvc.lower_limit, pvc.upper_limit)
     create_property_transition_count(session_temporal, pvc.query_params)
     create_property_count_predicted_transformation(session_temporal, new_model_paths, pvc.query_params)
     delete_nodes_without_predicted_transformation(session_temporal, pvc.query_params)

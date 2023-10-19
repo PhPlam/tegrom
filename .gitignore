@@ -3,5 +3,7 @@
 **/test/*/.ipynb_checkpoints
 **/models/analyze/analyze_results/*.png
 **/models/analyze/analyze_results/*.csv
+**/models/files_for_model/data_*/*
 **/test/notebooks/results/*.png
 **/instructions/*
+**/.idea/*

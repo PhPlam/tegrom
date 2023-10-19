@@ -25,8 +25,8 @@ def predict_likely_occurring_transformations(session, upper_limit, lower_limit, 
         "MATCH (m1:" + query_params['label_node'] + query_params['nodes_temporal'] + ")-[s:" + query_params['label_same_as'] + "]->(m2:" + query_params['label_node'] + query_params['nodes_temporal'] + ") "
         # get intensity trend of molecules from preceding snapshot and continue of increasing
         # see algorithm line 8-10
-        "WHERE s." + query_params['prop_edge_value_2'] + " > " + str(upper_limit) + 
-            " AND m1." + query_params['prop_node_snapshot'] + " = m2." + query_params['prop_node_snapshot'] + " - 1 "
+        "WHERE s." + query_params['prop_edge_value_2'] + " > " + str(upper_limit) +
+        " AND m1." + query_params['prop_node_snapshot'] + " = m2." + query_params['prop_node_snapshot'] + " - 1 "
         "WITH m1, m2, s "
         # collect nods with potential transformation edge
         # see algorithm line 11-12

@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 14. march 2023
+# Date: 28. august 2023
 
 ###
 # Figure 4
@@ -37,7 +37,7 @@ def analyze_structure(session, query_params, df_time, photolysis):
     
     # decreasing
     trend = 'decreasing'
-    lower = 0 # choose lower number than possible in data, important for generic cypher query structure
+    lower = -100 # choose lower number than possible in data, important for generic cypher query structure
     upper = pva.lower_limit
     trend_decr = pva.pf.graph_get_member_intensity_trend(session, query_params, lower, upper, trend)
 
@@ -56,7 +56,6 @@ def analyze_structure(session, query_params, df_time, photolysis):
     edge_type = query_params['label_predicted_edge']
     transformations_type_b = pva.pf.graph_get_transformations(session, edge_type, query_params)
 
-
     ### create the plot #############################
 
     fig = plt.figure(figsize=(14,9))
@@ -70,10 +69,10 @@ def analyze_structure(session, query_params, df_time, photolysis):
     plt.axhspan(df_time.count_nodes.mean()-standard_deviation, df_time.count_nodes.mean()+standard_deviation, alpha=0.05, color='purple')
     plt.xlabel('time', fontsize=16, fontweight='bold')
     plt.ylabel('nodes \n "Molecule"', fontsize=15, fontweight='bold')
-    plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=3, fontsize=14, framealpha=1)
     plt.xticks(np.arange(0, len(df_time), 1), fontsize=14)
     plt.yticks(fontsize=14)
-    plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    #plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
     # second plot
     ax_sec = plt.subplot(312)#, sharex=ax1)
@@ -82,10 +81,12 @@ def analyze_structure(session, query_params, df_time, photolysis):
     plt.bar(trend_incr.property_time, trend_incr.increasing, color = 'olivedrab', width=0.6)
     plt.xlabel('transition', fontsize=16, fontweight='bold')
     plt.ylabel('edges \n "SAME_AS"', fontsize=15, fontweight='bold')
-    plt.legend(['consistent intensity', 'decreasing intensity', 'inreasing intensity'], loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
+    #plt.legend(['consistent intensity', 'decreasing intensity', 'inreasing intensity'], loc='upper left', bbox_to_anchor=(1, 1), fontsize=14)
+    plt.legend(['consistent intensity', 'decreasing intensity', 'inreasing intensity'], loc='upper center',
+               bbox_to_anchor=(0.5, 1.15), ncol=3, fontsize=14, framealpha=1)
     plt.xticks(np.arange(1, len(df_time), 1), fontsize=14)
     plt.yticks(fontsize=14)
-    plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    #plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
     # only if photolysis experiment
     if photolysis == True: 
@@ -101,21 +102,27 @@ def analyze_structure(session, query_params, df_time, photolysis):
     ax = plt.subplot(313)#, sharex=ax_sec)
     ax.bar(transformations_type_a.property_time-0.2, transformations_type_a.count_relationships, color='forestgreen', width=0.4, label='"POTENTIAL_TRANSFORMATION"')
     ax.set_xlabel('transition', fontsize=16, fontweight='bold')
-    ax.set_xticks(np.arange(1, len(df_time), 1), fontsize=13)
-    ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    #ax.set_xticks(np.arange(1, len(df_time), 1), fontsize=13)
+    plt.xticks(np.arange(1, len(df_time), 1), fontsize=14)
     ax.set_ylabel('number of \n transformations', fontsize=15, fontweight='bold', color='forestgreen')
     ax.yaxis.set_tick_params(labelsize=14)
     ax.xaxis.set_tick_params(labelsize=14)
-    ax.legend(loc='best')
+    #ax.legend(loc='best')
+    ax.legend(loc='upper center', bbox_to_anchor=(0.3, 1.15), fontsize=14, framealpha=1)
 
     # third plot - second y-axis
     ax2 = ax.twinx()
     ax2.bar(transformations_type_b.property_time+0.2, transformations_type_b.count_relationships, color='sandybrown', width=0.4, label='"PREDICTED_TRANSFORMATION"')
     ax2.set_ylabel('number of \n transformations', fontsize=15, fontweight='bold', color='sandybrown')
-    ax2.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    #ax2.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     ax2.yaxis.set_tick_params(labelsize=14)
     ax2.set_yticks(np.arange(0, max(transformations_type_b.count_relationships), 1000))
-    ax2.legend(loc='best', bbox_to_anchor=(0.57, 1))
+    #ax2.legend(loc='best', bbox_to_anchor=(0.57, 1))
+    ax2.legend(loc='upper center', bbox_to_anchor=(0.7, 1.15), fontsize=14, framealpha=1)
+
+    ax.set_zorder(1)
+    ax.set_frame_on(False)
+    ax2.set_frame_on(True)
 
     # only if photolysis experiment
     if photolysis == True: 

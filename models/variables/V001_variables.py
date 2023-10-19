@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 06. april 2023
+# Date: 17. august 2023
 
 ### parameter for ###
 ### database connection ### 
@@ -18,12 +18,12 @@ db_name_light = 'modellight' # name of smashed graph
 # db_name_rev from test: can the smashed graph be converted back to the temporal graph
 
 # define threshold for intensity trend 
-upper_limit = 1.025 # above considered as increasing intensity
-lower_limit = 0.975 # below considered as decreasing intensity
+upper_limit = 0.025 # above considered as increasing intensity
+lower_limit = -0.025 # below considered as decreasing intensity
 
 # belongs the data to a photolysis experiment
 # changes the functionality if set to wrong parameter
-# e.g. the data contains the column 'radiation_dose'no
+# e.g. the data contains the column 'radiation_dose'
 photolysis = False
 
 ### names of ###
