@@ -3,8 +3,14 @@ message: "If you use this software, please cite it as below."
 authors:
 - family-names: "Plamper"
   given-names: "Philipp"
+- family-names: "Lechtenfeld"
+  given-names: "Oliver J."
+- family-names: "Herzsprung"
+  given-names: "Peter"
+- family-names: "Groß"
+  given-names: "Anika"
 title: "Temporal graph model on DOM (tegrom)"
-version: v2.10-23
-date-released: 2023-10-19
+version: v3.10-23
+date-released: 2023-10-20
 doi: 10.5281/zenodo.10021669
 url: "https://github.com/PhPlam/tegrom"
