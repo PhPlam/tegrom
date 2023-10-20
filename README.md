@@ -15,7 +15,7 @@ The experimental data from FT-ICR-MS used in this project were originally used i
 ![graph_model_v4](https://user-images.githubusercontent.com/91727135/223053780-73f2dbd3-be5c-4022-8868-0edfa99d8e7b.png)
 
 # Instructions to set up temporal graph in a Neo4j Desktop instance
-tested on Manjaro Linux (24. march 2023)
+tested on Manjaro Linux (20. october 2023)
 
 ## Project
 
