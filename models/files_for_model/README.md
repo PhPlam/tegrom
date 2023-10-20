@@ -1,6 +1,5 @@
 # Used Files
 
-Name: Philipp Plamper  
-Origin: Helmholtz-Zentrum für Umweltforschung UFZ Leipzig  
-Date: 28. march 2023
+Owner: Oliver J. Lechtenfeld, Peter Herzsprung 
+Origin: Helmholtz-Zentrum für Umweltforschung UFZ Leipzig
 

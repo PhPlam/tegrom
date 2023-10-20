@@ -7,3 +7,4 @@
 **/test/notebooks/results/*.png
 **/instructions/*
 **/.idea/*
+**/test/*
