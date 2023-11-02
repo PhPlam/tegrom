@@ -139,3 +139,4 @@ tested on Manjaro Linux (20. october 2023)
     * execute Bash script “A099_run_analysis.sh”  
     $ sh models/analyze/A099_run_analysis.sh
 
+
