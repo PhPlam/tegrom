@@ -15,8 +15,8 @@ def create_nodes_molecule(session, formula_file_path, query_params):
     session.run(
         "LOAD CSV WITH HEADERS FROM 'file:///" + formula_file_path + "' AS row "
         "CREATE (m:" + query_params['label_node'] + query_params['nodes_temporal'] + " { "
-         + query_params['prop_node_name'] + " : row.formula_string, "
-         + query_params['prop_node_value'] + " : toFloat(row.peak_relint_tic), "
+         + query_params['prop_node_name'] + " : row.cd_name, "
+         + query_params['prop_node_value'] + " : toFloat(row.free_bikes), "
          + query_params['prop_node_snapshot'] + " : toInteger(row.timepoint), "
          + query_params['prop_extra_1'] + " : toInteger(row.C), "
          + query_params['prop_extra_2'] + " : toInteger(row.H), "
@@ -55,8 +55,8 @@ def create_relationship_potential_transformation(session, transform_file_path, q
     session.run(
         "CALL apoc.periodic.iterate("
         "'LOAD CSV WITH HEADERS FROM \"file:///" + transform_file_path + "\" AS row RETURN row', "
-        "'WITH row.new_formula AS to_node, "
-            "row.formula_string AS from_node, "
+        "'WITH row.to_cd AS to_node, "
+            "row.from_cd AS from_node, "
             "row.tu_C AS C, "
             "row.tu_H AS H, "
             "row.tu_N AS N, "
@@ -121,6 +121,7 @@ if __name__ == '__main__':
     # create database and establish connection
     pvc.create_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
     session = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
+    time.sleep(10)
 
     # create graph
     create_nodes_molecule(session, pvc.formula_file_path, pvc.query_params)

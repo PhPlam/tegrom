@@ -61,38 +61,43 @@ def predict_likely_occurring_transformations(session, upper_limit, lower_limit, 
 
 # take predicted likely occurring transformations and create strings of transformation units
 def calculate_transformation_units(occ_trans, query_params):
-    tu_list = []
-    
-    for row in occ_trans.itertuples(): # index=False
-        tu_string = ""
+    try:
+        tu_list = []
 
-        if row.C < 0: tu_string = "-" + tu_string + "C" + str(abs(row.C)) + " "
-        elif row.C > 0: tu_string = tu_string + "C" + str(row.C) + " "
-        else: tu_string
+        for row in occ_trans.itertuples(): # index=False
+            tu_string = ""
 
-        if row.H < 0: tu_string = tu_string + "-H" + str(abs(row.H)) + " "
-        elif row.H > 0: tu_string = tu_string + "H" + str(row.H) + " "
-        else: tu_string
+            if row.C < 0: tu_string = "-" + tu_string + "C" + str(abs(row.C)) + " "
+            elif row.C > 0: tu_string = tu_string + "C" + str(row.C) + " "
+            else: tu_string
 
-        if row.O < 0: tu_string = tu_string + "-O" + str(abs(row.O)) + " "
-        elif row.O > 0: tu_string = tu_string + "O" + str(row.O) + " "
-        else: tu_string
+            if row.H < 0: tu_string = tu_string + "-H" + str(abs(row.H)) + " "
+            elif row.H > 0: tu_string = tu_string + "H" + str(row.H) + " "
+            else: tu_string
 
-        if row.N < 0: tu_string = tu_string + "-N" + str(abs(row.N)) + " "
-        elif row.N > 0: tu_string = tu_string + "N" + str(row.N) + " "
-        else: tu_string
+            if row.O < 0: tu_string = tu_string + "-O" + str(abs(row.O)) + " "
+            elif row.O > 0: tu_string = tu_string + "O" + str(row.O) + " "
+            else: tu_string
 
-        if row.S < 0: tu_string = tu_string + "-S" + str(abs(row.S)) + " "
-        elif row.S > 0: tu_string = tu_string + "S" + str(row.S) + " "
-        else: tu_string
+            if row.N < 0: tu_string = tu_string + "-N" + str(abs(row.N)) + " "
+            elif row.N > 0: tu_string = tu_string + "N" + str(row.N) + " "
+            else: tu_string
 
-        tu_string = tu_string.rstrip()
-        tu_list.append(tu_string)
-    
-    occ_trans['edge_string'] = tu_list
-    
-    print('done: calculate strings '+ query_params['prop_edge_value_1'])
-    return occ_trans
+            if row.S < 0: tu_string = tu_string + "-S" + str(abs(row.S)) + " "
+            elif row.S > 0: tu_string = tu_string + "S" + str(row.S) + " "
+            else: tu_string
+
+            tu_string = tu_string.rstrip()
+            tu_list.append(tu_string)
+
+        occ_trans['edge_string'] = tu_list
+
+        print('done: calculate strings '+ query_params['prop_edge_value_1'])
+        return occ_trans
+    except Exception:
+        print('info: no transformation units found')
+        occ_trans['edge_string'] = ""
+        return occ_trans
 
 # create relationship PREDICTED_TRANSFORMATION with calculated occurring transformations
 # SI Algorithm 2 part 2

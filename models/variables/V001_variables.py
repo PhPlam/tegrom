@@ -31,17 +31,19 @@ photolysis = False
 ### from UFZ ###
 
 # from UFZ assigned molecular formulas and several properties
-file_molecules = 'molecule_formulas.csv'
+#file_molecules = 'molecule_formulas.csv'
+file_molecules = 'bike_graph.csv'
 
 # from UFZ given transformation units
-file_transformation_units = 'transformations_handwritten.csv'
+#file_transformation_units = 'transformations_handwritten.csv'
+file_transformation_units = 'pot_routes.csv'
 
 # from UFZ metadata of sample
-file_sample_meta = 'sample_data.csv'
+#file_sample_meta = 'sample_data.csv'
 
 # from UFZ metadata of measurements
 # currently not in use
-file_sample_join = 'Photodatensatz_Graphanalyse_meas.metadata_2020-09-10.csv'
+#file_sample_join = 'Photodatensatz_Graphanalyse_meas.metadata_2020-09-10.csv'
 
 ### names of ###
 ### created files ###
@@ -53,12 +55,14 @@ unique_molecules = 'molecule_formulas_unique.csv'
 
 # cleaned assigned molecular formulas 
 # e.g. filled null values, remove molecule formulas with specific atom count
-cleaned_molecules = 'molecule_formulas_cleaned.csv'
+#cleaned_molecules = 'molecule_formulas_cleaned.csv'
+cleaned_molecules = 'nodes_citibike_cd.csv'
 
 # calculated edges
 # contains the possible edges between molecular formulas
 # based on transformation units
-relationships = 'molecule_formulas_relationships.csv'
+#relationships = 'molecule_formulas_relationships.csv'
+relationships = 'edges_potential_routes.csv'
 
 # combined metadata
 # combination of metadata from sample and measurement
@@ -73,13 +77,13 @@ metadata = 'sample_metadata.csv'
 # and do not contain information for themselves (at least not intentionally)
 
 model_params = {
-    'label_node' : 'Molecule', # String; base label nodes
+    'label_node' : 'CommunityDistrict', # String; base label nodes
     'nodes_temporal' : ':Temporal', # String; label nodes temporal graph
     'nodes_light' : ':Light', # String; label nodes light temporal graph
     'label_same_as' : 'SAME_AS', # String; label edges
-    'label_potential_edge' : 'POTENTIAL_TRANSFORMATION', # String; label edges
-    'label_predicted_edge' : 'PREDICTED_TRANSFORMATION', # String; label edges
-    'label_chemical_edge' : 'CHEMICAL_TRANSFORMATION', # String; label edges
+    'label_potential_edge' : 'POTENTIAL_ROUTE', # String; label edges
+    'label_predicted_edge' : 'PREDICTED_ROUTE', # String; label edges
+    'label_chemical_edge' : 'ROUTE', # String; label edges
     'prop_node_name' : 'molecular_formula', # property name; String
     'prop_node_value' : 'normalized_intensity', # property value; Float
     'prop_node_snapshot' : 'snapshot', # property time; Integer
