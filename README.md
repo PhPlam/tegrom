@@ -5,7 +5,7 @@ Date: 20. november 2023
 
 This project contains our implementation and source code for a snapshot-based knowledge graph model. 
 The novel approach is based on a temporal graph and is able to predict interactions between nodes in succeeding snapshots. 
-A practical application in environmental chemistry is already shown in the paper "A temporal graph model to predict chemical transformations in complex dissolved organic matter" (Philipp Plamper, Oliver J. Lechtenfeld, Peter Herzsprung, Anika Groß) (https://doi.org/10.1021/acs.est.3c00351)
+A practical application in environmental chemistry is already shown in the paper "A temporal graph model to predict chemical transformations in complex dissolved organic matter" (Philipp Plamper, Oliver J. Lechtenfeld, Peter Herzsprung, Anika Groß) (https://doi.org/10.1021/acs.est.3c00351).
   
 The experimental data from FT-ICR-MS used in this project were originally used in paper "Photochemically Induced Changes of Dissolved Organic Matter in a Humic-Rich and Forested Stream" (Christin Wilske, Peter Herzsprung, Oliver J. Lechtenfeld, Norbert Kamjunke, Wolf von Tümpling) (https://doi.org/10.3390/w12020331). 
   
