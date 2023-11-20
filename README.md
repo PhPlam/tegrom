@@ -1,4 +1,4 @@
-# A temporal graph model for environmental data in Neo4j
+# A snapshot-based graph model for multivariate time series in Neo4j
 
 Authors: Philipp Plamper, Oliver J. Lechtenfeld, Anika Groß  
 Date: 20. november 2023  
