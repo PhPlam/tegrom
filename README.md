@@ -9,7 +9,7 @@ A practical application is already shown in the paper "A temporal graph model to
   
 The experimental data from FT-ICR-MS used in this project were originally used in paper "Photochemically Induced Changes of Dissolved Organic Matter in a Humic-Rich and Forested Stream" (Christin Wilske, Peter Herzsprung, Oliver J. Lechtenfeld, Norbert Kamjunke, Wolf von Tümpling) (https://doi.org/10.3390/w12020331) 
   
-### Graph Model
+### Graph Model in chemical application
 
 ![graph_model_v4](https://user-images.githubusercontent.com/91727135/223053780-73f2dbd3-be5c-4022-8868-0edfa99d8e7b.png)
 
