@@ -18,8 +18,8 @@ db_name_light = 'modellight' # name of smashed graph
 # db_name_rev from test: can the smashed graph be converted back to the temporal graph
 
 # define threshold for intensity trend 
-upper_limit = 0.025 # above considered as increasing intensity
-lower_limit = -0.025 # below considered as decreasing intensity
+upper_limit = 0.01 # above considered as increasing intensity
+lower_limit = -0.01 # below considered as decreasing intensity
 
 # belongs the data to a photolysis experiment
 # changes the functionality if set to wrong parameter
@@ -56,13 +56,13 @@ unique_molecules = 'molecule_formulas_unique.csv'
 # cleaned assigned molecular formulas 
 # e.g. filled null values, remove molecule formulas with specific atom count
 #cleaned_molecules = 'molecule_formulas_cleaned.csv'
-cleaned_molecules = 'nodes_citibike_cd.csv'
+cleaned_molecules = 'citibike_nodes.csv'
 
 # calculated edges
 # contains the possible edges between molecular formulas
 # based on transformation units
 #relationships = 'molecule_formulas_relationships.csv'
-relationships = 'edges_potential_routes.csv'
+relationships = 'citibike_potential_routes.csv'
 
 # combined metadata
 # combination of metadata from sample and measurement
