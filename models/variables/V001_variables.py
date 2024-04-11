@@ -9,7 +9,7 @@ host = 'bolt://localhost:7687' # default: bolt://localhost:7687
 
 # username and password for neo4j instance
 user = 'neo4j' # default: neo4j
-passwd = 'test1234' # default: neo4j or 1234 or test1234
+passwd = 'Test1234' # default: neo4j or 1234 or test1234
 
 # names for neo4j databases
 db_name_temporal = 'modeltemporal' # name of temporal graph
