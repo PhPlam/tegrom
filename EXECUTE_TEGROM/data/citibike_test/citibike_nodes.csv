@@ -1,0 +1,976 @@
+timepoint,cd_name,empty_slots,free_bikes,slots
+0,Bay Ridge and Dyker Heights (CD10),27,105,146
+0,Bedford Stuyvesant (CD3),937,316,1372
+0,Belmont and East Tremont (CD6),307,84,425
+0,Borough Park (CD12),29,212,252
+0,Brownsville (CD16),365,84,459
+0,Bushwick (CD4),927,436,1449
+0,Central Harlem (CD10),446,539,1092
+0,Clinton and Chelsea (CD4),1714,1209,3438
+0,Crown Heights and Prospect Heights (CD8),759,243,1108
+0,East Flatbush (CD17),32,530,589
+0,East Harlem (CD11),519,578,1209
+0,East New York and Starrett City (CD5),44,17,66
+0,Elmhurst and Corona (CD4),303,671,1013
+0,Financial District (CD1),681,1885,2809
+0,Flatbush and Midwood (CD14),74,413,526
+0,Fordham and University Heights (CD5),606,265,955
+0,Fort Greene and Brooklyn Heights (CD2),1277,1724,3275
+0,Greenpoint and Williamsburg (CD1),1291,1929,3453
+0,Greenwich Village and Soho (CD2),831,1878,3060
+0,Highbridge and Concourse (CD4),588,598,1289
+0,Hunts Point and Longwood (CD2),246,215,491
+0,Jackson Heights (CD3),967,744,1783
+0,Kingsbridge Heights and Bedford (CD7),524,398,1026
+0,Long Island City and Astoria (CD1),1400,1483,3046
+0,Lower East Side and Chinatown (CD3),1934,1529,3864
+0,Midtown (CD5),2384,1285,4178
+0,Morningside Heights and Hamilton Heights (CD9),723,259,1095
+0,Morrisania and Crotona (CD3),356,396,830
+0,Mott Haven and Melrose (CD1),492,558,1151
+0,Park Slope and Carroll Gardens (CD6),672,1239,2132
+0,Ridgewood and Maspeth (CD5),721,595,1380
+0,Riverdale and Fieldston (CD8),155,11,167
+0,South Crown Heights and Lefferts Gardens (CD9),496,579,1128
+0,Stuyvesant Town and Turtle Bay (CD6),1543,639,2496
+0,Sunset Park (CD7),560,1066,1699
+0,Upper East Side (CD8),1213,627,2088
+0,Upper West Side (CD7),1121,462,1884
+0,Washington Heights and Inwood (CD12),797,600,1515
+0,Woodside and Sunnyside (CD2),1061,1035,2218
+1,Bay Ridge and Dyker Heights (CD10),28,104,146
+1,Bedford Stuyvesant (CD3),948,305,1372
+1,Belmont and East Tremont (CD6),303,89,425
+1,Borough Park (CD12),32,208,252
+1,Brownsville (CD16),362,86,459
+1,Bushwick (CD4),883,472,1449
+1,Central Harlem (CD10),432,550,1092
+1,Clinton and Chelsea (CD4),1566,1363,3438
+1,Crown Heights and Prospect Heights (CD8),748,251,1108
+1,East Flatbush (CD17),30,533,589
+1,East Harlem (CD11),515,578,1209
+1,East New York and Starrett City (CD5),46,15,66
+1,Elmhurst and Corona (CD4),300,673,1013
+1,Financial District (CD1),851,1720,2809
+1,Flatbush and Midwood (CD14),71,418,526
+1,Fordham and University Heights (CD5),602,269,955
+1,Fort Greene and Brooklyn Heights (CD2),1299,1702,3275
+1,Greenpoint and Williamsburg (CD1),1214,2011,3453
+1,Greenwich Village and Soho (CD2),761,1941,3060
+1,Highbridge and Concourse (CD4),583,598,1289
+1,Hunts Point and Longwood (CD2),238,224,491
+1,Jackson Heights (CD3),954,757,1783
+1,Kingsbridge Heights and Bedford (CD7),520,403,1026
+1,Long Island City and Astoria (CD1),1363,1511,3046
+1,Lower East Side and Chinatown (CD3),1683,1800,3864
+1,Midtown (CD5),2785,871,4178
+1,Morningside Heights and Hamilton Heights (CD9),718,263,1095
+1,Morrisania and Crotona (CD3),343,408,830
+1,Mott Haven and Melrose (CD1),492,560,1151
+1,Park Slope and Carroll Gardens (CD6),578,1315,2132
+1,Ridgewood and Maspeth (CD5),706,607,1380
+1,Riverdale and Fieldston (CD8),156,10,167
+1,South Crown Heights and Lefferts Gardens (CD9),487,590,1128
+1,Stuyvesant Town and Turtle Bay (CD6),1628,583,2496
+1,Sunset Park (CD7),536,1089,1699
+1,Upper East Side (CD8),1108,723,2088
+1,Upper West Side (CD7),931,639,1884
+1,Washington Heights and Inwood (CD12),785,609,1515
+1,Woodside and Sunnyside (CD2),1084,1012,2218
+2,Bay Ridge and Dyker Heights (CD10),24,108,146
+2,Bedford Stuyvesant (CD3),926,328,1372
+2,Belmont and East Tremont (CD6),304,87,425
+2,Borough Park (CD12),24,217,252
+2,Brownsville (CD16),358,91,459
+2,Bushwick (CD4),877,481,1449
+2,Central Harlem (CD10),396,589,1092
+2,Clinton and Chelsea (CD4),1451,1421,3438
+2,Crown Heights and Prospect Heights (CD8),735,256,1108
+2,East Flatbush (CD17),28,536,589
+2,East Harlem (CD11),495,598,1209
+2,East New York and Starrett City (CD5),45,16,66
+2,Elmhurst and Corona (CD4),308,667,1013
+2,Financial District (CD1),883,1699,2809
+2,Flatbush and Midwood (CD14),78,415,526
+2,Fordham and University Heights (CD5),602,276,955
+2,Fort Greene and Brooklyn Heights (CD2),1237,1752,3275
+2,Greenpoint and Williamsburg (CD1),1131,2091,3453
+2,Greenwich Village and Soho (CD2),784,1930,3060
+2,Highbridge and Concourse (CD4),575,607,1289
+2,Hunts Point and Longwood (CD2),232,232,491
+2,Jackson Heights (CD3),943,768,1783
+2,Kingsbridge Heights and Bedford (CD7),514,408,1026
+2,Long Island City and Astoria (CD1),1319,1554,3046
+2,Lower East Side and Chinatown (CD3),1426,2052,3864
+2,Midtown (CD5),2924,736,4178
+2,Morningside Heights and Hamilton Heights (CD9),715,263,1095
+2,Morrisania and Crotona (CD3),333,422,830
+2,Mott Haven and Melrose (CD1),501,552,1151
+2,Park Slope and Carroll Gardens (CD6),526,1362,2132
+2,Ridgewood and Maspeth (CD5),694,619,1380
+2,Riverdale and Fieldston (CD8),155,11,167
+2,South Crown Heights and Lefferts Gardens (CD9),478,600,1128
+2,Stuyvesant Town and Turtle Bay (CD6),1615,600,2496
+2,Sunset Park (CD7),511,1118,1699
+2,Upper East Side (CD8),1104,715,2088
+2,Upper West Side (CD7),790,781,1884
+2,Washington Heights and Inwood (CD12),791,605,1515
+2,Woodside and Sunnyside (CD2),1073,1022,2218
+3,Bay Ridge and Dyker Heights (CD10),24,108,146
+3,Bedford Stuyvesant (CD3),898,344,1372
+3,Belmont and East Tremont (CD6),302,92,425
+3,Borough Park (CD12),25,216,252
+3,Brownsville (CD16),351,97,459
+3,Bushwick (CD4),864,494,1449
+3,Central Harlem (CD10),401,586,1092
+3,Clinton and Chelsea (CD4),1434,1470,3438
+3,Crown Heights and Prospect Heights (CD8),687,306,1108
+3,East Flatbush (CD17),30,534,589
+3,East Harlem (CD11),459,635,1209
+3,East New York and Starrett City (CD5),47,14,66
+3,Elmhurst and Corona (CD4),305,671,1013
+3,Financial District (CD1),931,1627,2809
+3,Flatbush and Midwood (CD14),68,425,526
+3,Fordham and University Heights (CD5),588,288,955
+3,Fort Greene and Brooklyn Heights (CD2),1223,1759,3275
+3,Greenpoint and Williamsburg (CD1),1067,2156,3453
+3,Greenwich Village and Soho (CD2),826,1877,3060
+3,Highbridge and Concourse (CD4),576,605,1289
+3,Hunts Point and Longwood (CD2),231,232,491
+3,Jackson Heights (CD3),929,781,1783
+3,Kingsbridge Heights and Bedford (CD7),522,399,1026
+3,Long Island City and Astoria (CD1),1300,1574,3046
+3,Lower East Side and Chinatown (CD3),1254,2215,3864
+3,Midtown (CD5),3008,644,4178
+3,Morningside Heights and Hamilton Heights (CD9),720,265,1095
+3,Morrisania and Crotona (CD3),326,429,830
+3,Mott Haven and Melrose (CD1),493,560,1151
+3,Park Slope and Carroll Gardens (CD6),534,1354,2132
+3,Ridgewood and Maspeth (CD5),683,630,1380
+3,Riverdale and Fieldston (CD8),155,11,167
+3,South Crown Heights and Lefferts Gardens (CD9),471,605,1128
+3,Stuyvesant Town and Turtle Bay (CD6),1558,657,2496
+3,Sunset Park (CD7),523,1104,1699
+3,Upper East Side (CD8),1086,737,2088
+3,Upper West Side (CD7),764,806,1884
+3,Washington Heights and Inwood (CD12),796,601,1515
+3,Woodside and Sunnyside (CD2),1080,1015,2218
+4,Bay Ridge and Dyker Heights (CD10),23,109,146
+4,Bedford Stuyvesant (CD3),868,376,1372
+4,Belmont and East Tremont (CD6),303,92,425
+4,Borough Park (CD12),25,216,252
+4,Brownsville (CD16),349,99,459
+4,Bushwick (CD4),847,511,1449
+4,Central Harlem (CD10),388,598,1092
+4,Clinton and Chelsea (CD4),1370,1519,3438
+4,Crown Heights and Prospect Heights (CD8),658,336,1108
+4,East Flatbush (CD17),28,536,589
+4,East Harlem (CD11),449,645,1209
+4,East New York and Starrett City (CD5),48,13,66
+4,Elmhurst and Corona (CD4),302,673,1013
+4,Financial District (CD1),935,1623,2809
+4,Flatbush and Midwood (CD14),54,437,526
+4,Fordham and University Heights (CD5),585,290,955
+4,Fort Greene and Brooklyn Heights (CD2),1227,1755,3275
+4,Greenpoint and Williamsburg (CD1),1002,2236,3453
+4,Greenwich Village and Soho (CD2),921,1781,3060
+4,Highbridge and Concourse (CD4),568,610,1289
+4,Hunts Point and Longwood (CD2),226,239,491
+4,Jackson Heights (CD3),921,794,1783
+4,Kingsbridge Heights and Bedford (CD7),522,399,1026
+4,Long Island City and Astoria (CD1),1286,1589,3046
+4,Lower East Side and Chinatown (CD3),1175,2304,3864
+4,Midtown (CD5),3129,529,4178
+4,Morningside Heights and Hamilton Heights (CD9),688,294,1094
+4,Morrisania and Crotona (CD3),336,420,830
+4,Mott Haven and Melrose (CD1),485,567,1151
+4,Park Slope and Carroll Gardens (CD6),556,1340,2132
+4,Ridgewood and Maspeth (CD5),672,642,1380
+4,Riverdale and Fieldston (CD8),156,10,167
+4,South Crown Heights and Lefferts Gardens (CD9),442,632,1128
+4,Stuyvesant Town and Turtle Bay (CD6),1506,707,2496
+4,Sunset Park (CD7),531,1097,1699
+4,Upper East Side (CD8),1073,755,2088
+4,Upper West Side (CD7),735,853,1884
+4,Washington Heights and Inwood (CD12),786,609,1515
+4,Woodside and Sunnyside (CD2),1095,1000,2218
+5,Bay Ridge and Dyker Heights (CD10),22,110,146
+5,Bedford Stuyvesant (CD3),804,437,1372
+5,Belmont and East Tremont (CD6),298,96,425
+5,Borough Park (CD12),23,218,252
+5,Brownsville (CD16),345,104,459
+5,Bushwick (CD4),823,531,1449
+5,Central Harlem (CD10),358,627,1092
+5,Clinton and Chelsea (CD4),1404,1488,3438
+5,Crown Heights and Prospect Heights (CD8),621,367,1108
+5,East Flatbush (CD17),19,545,589
+5,East Harlem (CD11),427,671,1209
+5,East New York and Starrett City (CD5),49,12,66
+5,Elmhurst and Corona (CD4),297,679,1013
+5,Financial District (CD1),953,1634,2809
+5,Flatbush and Midwood (CD14),43,448,526
+5,Fordham and University Heights (CD5),585,288,955
+5,Fort Greene and Brooklyn Heights (CD2),1255,1752,3275
+5,Greenpoint and Williamsburg (CD1),1035,2205,3453
+5,Greenwich Village and Soho (CD2),981,1719,3060
+5,Highbridge and Concourse (CD4),557,624,1289
+5,Hunts Point and Longwood (CD2),224,240,491
+5,Jackson Heights (CD3),914,798,1783
+5,Kingsbridge Heights and Bedford (CD7),528,392,1026
+5,Long Island City and Astoria (CD1),1263,1606,3046
+5,Lower East Side and Chinatown (CD3),1103,2369,3864
+5,Midtown (CD5),3234,450,4178
+5,Morningside Heights and Hamilton Heights (CD9),698,287,1094
+5,Morrisania and Crotona (CD3),334,418,830
+5,Mott Haven and Melrose (CD1),481,569,1151
+5,Park Slope and Carroll Gardens (CD6),538,1353,2132
+5,Ridgewood and Maspeth (CD5),670,644,1380
+5,Riverdale and Fieldston (CD8),156,10,167
+5,South Crown Heights and Lefferts Gardens (CD9),436,633,1128
+5,Stuyvesant Town and Turtle Bay (CD6),1451,774,2496
+5,Sunset Park (CD7),532,1095,1699
+5,Upper East Side (CD8),1106,763,2088
+5,Upper West Side (CD7),721,882,1884
+5,Washington Heights and Inwood (CD12),785,611,1515
+5,Woodside and Sunnyside (CD2),1094,998,2218
+6,Bay Ridge and Dyker Heights (CD10),22,110,146
+6,Bedford Stuyvesant (CD3),768,474,1372
+6,Belmont and East Tremont (CD6),295,99,425
+6,Borough Park (CD12),21,220,252
+6,Brownsville (CD16),346,102,459
+6,Bushwick (CD4),820,538,1449
+6,Central Harlem (CD10),356,630,1092
+6,Clinton and Chelsea (CD4),1381,1512,3438
+6,Crown Heights and Prospect Heights (CD8),606,387,1108
+6,East Flatbush (CD17),21,543,589
+6,East Harlem (CD11),415,684,1209
+6,East New York and Starrett City (CD5),49,12,66
+6,Elmhurst and Corona (CD4),297,681,1013
+6,Financial District (CD1),960,1629,2809
+6,Flatbush and Midwood (CD14),36,454,526
+6,Fordham and University Heights (CD5),587,289,955
+6,Fort Greene and Brooklyn Heights (CD2),1239,1781,3275
+6,Greenpoint and Williamsburg (CD1),1058,2181,3453
+6,Greenwich Village and Soho (CD2),1026,1671,3060
+6,Highbridge and Concourse (CD4),565,618,1289
+6,Hunts Point and Longwood (CD2),227,238,491
+6,Jackson Heights (CD3),910,804,1783
+6,Kingsbridge Heights and Bedford (CD7),526,393,1026
+6,Long Island City and Astoria (CD1),1253,1616,3046
+6,Lower East Side and Chinatown (CD3),1063,2416,3864
+6,Midtown (CD5),3259,431,4178
+6,Morningside Heights and Hamilton Heights (CD9),694,290,1094
+6,Morrisania and Crotona (CD3),326,424,830
+6,Mott Haven and Melrose (CD1),479,571,1151
+6,Park Slope and Carroll Gardens (CD6),544,1347,2132
+6,Ridgewood and Maspeth (CD5),656,659,1380
+6,Riverdale and Fieldston (CD8),156,10,167
+6,South Crown Heights and Lefferts Gardens (CD9),420,648,1128
+6,Stuyvesant Town and Turtle Bay (CD6),1428,793,2496
+6,Sunset Park (CD7),527,1098,1699
+6,Upper East Side (CD8),1086,780,2088
+6,Upper West Side (CD7),709,899,1884
+6,Washington Heights and Inwood (CD12),780,615,1515
+6,Woodside and Sunnyside (CD2),1083,1013,2218
+7,Bay Ridge and Dyker Heights (CD10),22,109,146
+7,Bedford Stuyvesant (CD3),761,489,1372
+7,Belmont and East Tremont (CD6),295,98,425
+7,Borough Park (CD12),22,219,252
+7,Brownsville (CD16),344,104,459
+7,Bushwick (CD4),805,551,1449
+7,Central Harlem (CD10),349,640,1092
+7,Clinton and Chelsea (CD4),1359,1552,3438
+7,Crown Heights and Prospect Heights (CD8),596,400,1108
+7,East Flatbush (CD17),20,545,589
+7,East Harlem (CD11),414,685,1209
+7,East New York and Starrett City (CD5),49,12,66
+7,Elmhurst and Corona (CD4),296,682,1013
+7,Financial District (CD1),962,1634,2809
+7,Flatbush and Midwood (CD14),30,461,526
+7,Fordham and University Heights (CD5),580,297,955
+7,Fort Greene and Brooklyn Heights (CD2),1277,1755,3275
+7,Greenpoint and Williamsburg (CD1),1065,2179,3453
+7,Greenwich Village and Soho (CD2),1058,1641,3060
+7,Highbridge and Concourse (CD4),561,623,1289
+7,Hunts Point and Longwood (CD2),229,236,491
+7,Jackson Heights (CD3),907,807,1783
+7,Kingsbridge Heights and Bedford (CD7),525,396,1026
+7,Long Island City and Astoria (CD1),1234,1636,3046
+7,Lower East Side and Chinatown (CD3),1086,2406,3864
+7,Midtown (CD5),3230,478,4178
+7,Morningside Heights and Hamilton Heights (CD9),698,282,1094
+7,Morrisania and Crotona (CD3),325,427,830
+7,Mott Haven and Melrose (CD1),466,584,1151
+7,Park Slope and Carroll Gardens (CD6),546,1351,2132
+7,Ridgewood and Maspeth (CD5),644,674,1380
+7,Riverdale and Fieldston (CD8),156,10,167
+7,South Crown Heights and Lefferts Gardens (CD9),419,653,1128
+7,Stuyvesant Town and Turtle Bay (CD6),1404,825,2496
+7,Sunset Park (CD7),527,1100,1699
+7,Upper East Side (CD8),1069,796,2088
+7,Upper West Side (CD7),692,927,1884
+7,Washington Heights and Inwood (CD12),781,614,1515
+7,Woodside and Sunnyside (CD2),1084,1011,2218
+8,Bay Ridge and Dyker Heights (CD10),22,110,146
+8,Bedford Stuyvesant (CD3),752,500,1372
+8,Belmont and East Tremont (CD6),293,100,425
+8,Borough Park (CD12),22,219,252
+8,Brownsville (CD16),341,107,459
+8,Bushwick (CD4),802,560,1449
+8,Central Harlem (CD10),344,649,1092
+8,Clinton and Chelsea (CD4),1374,1570,3438
+8,Crown Heights and Prospect Heights (CD8),581,425,1108
+8,East Flatbush (CD17),20,545,589
+8,East Harlem (CD11),419,682,1209
+8,East New York and Starrett City (CD5),49,12,66
+8,Elmhurst and Corona (CD4),297,681,1013
+8,Financial District (CD1),970,1622,2809
+8,Flatbush and Midwood (CD14),29,462,526
+8,Fordham and University Heights (CD5),579,298,955
+8,Fort Greene and Brooklyn Heights (CD2),1289,1752,3275
+8,Greenpoint and Williamsburg (CD1),1074,2182,3453
+8,Greenwich Village and Soho (CD2),1086,1620,3060
+8,Highbridge and Concourse (CD4),565,622,1289
+8,Hunts Point and Longwood (CD2),232,237,491
+8,Jackson Heights (CD3),906,808,1783
+8,Kingsbridge Heights and Bedford (CD7),522,398,1026
+8,Long Island City and Astoria (CD1),1226,1645,3046
+8,Lower East Side and Chinatown (CD3),1088,2420,3864
+8,Midtown (CD5),3264,472,4178
+8,Morningside Heights and Hamilton Heights (CD9),700,280,1094
+8,Morrisania and Crotona (CD3),324,428,830
+8,Mott Haven and Melrose (CD1),465,586,1151
+8,Park Slope and Carroll Gardens (CD6),545,1353,2132
+8,Ridgewood and Maspeth (CD5),641,678,1380
+8,Riverdale and Fieldston (CD8),156,10,167
+8,South Crown Heights and Lefferts Gardens (CD9),412,662,1128
+8,Stuyvesant Town and Turtle Bay (CD6),1407,826,2496
+8,Sunset Park (CD7),526,1102,1699
+8,Upper East Side (CD8),1101,777,2088
+8,Upper West Side (CD7),697,935,1884
+8,Washington Heights and Inwood (CD12),778,620,1515
+8,Woodside and Sunnyside (CD2),1059,1034,2218
+9,Bay Ridge and Dyker Heights (CD10),22,110,146
+9,Bedford Stuyvesant (CD3),743,511,1372
+9,Belmont and East Tremont (CD6),294,99,425
+9,Borough Park (CD12),22,219,252
+9,Brownsville (CD16),339,109,459
+9,Bushwick (CD4),809,555,1449
+9,Central Harlem (CD10),341,651,1092
+9,Clinton and Chelsea (CD4),1390,1574,3438
+9,Crown Heights and Prospect Heights (CD8),580,425,1108
+9,East Flatbush (CD17),19,546,589
+9,East Harlem (CD11),413,685,1209
+9,East New York and Starrett City (CD5),50,11,66
+9,Elmhurst and Corona (CD4),296,681,1013
+9,Financial District (CD1),974,1627,2809
+9,Flatbush and Midwood (CD14),30,461,526
+9,Fordham and University Heights (CD5),581,296,955
+9,Fort Greene and Brooklyn Heights (CD2),1293,1751,3275
+9,Greenpoint and Williamsburg (CD1),1070,2194,3453
+9,Greenwich Village and Soho (CD2),1148,1575,3060
+9,Highbridge and Concourse (CD4),566,623,1289
+9,Hunts Point and Longwood (CD2),233,236,491
+9,Jackson Heights (CD3),908,806,1783
+9,Kingsbridge Heights and Bedford (CD7),521,398,1026
+9,Long Island City and Astoria (CD1),1204,1670,3046
+9,Lower East Side and Chinatown (CD3),1047,2431,3864
+9,Midtown (CD5),3233,508,4178
+9,Morningside Heights and Hamilton Heights (CD9),673,308,1094
+9,Morrisania and Crotona (CD3),324,429,830
+9,Mott Haven and Melrose (CD1),463,588,1151
+9,Park Slope and Carroll Gardens (CD6),542,1363,2132
+9,Ridgewood and Maspeth (CD5),644,679,1380
+9,Riverdale and Fieldston (CD8),156,10,167
+9,South Crown Heights and Lefferts Gardens (CD9),416,656,1128
+9,Stuyvesant Town and Turtle Bay (CD6),1386,851,2496
+9,Sunset Park (CD7),527,1102,1699
+9,Upper East Side (CD8),1104,776,2088
+9,Upper West Side (CD7),690,946,1884
+9,Washington Heights and Inwood (CD12),779,619,1515
+9,Woodside and Sunnyside (CD2),1059,1035,2218
+10,Bay Ridge and Dyker Heights (CD10),22,110,146
+10,Bedford Stuyvesant (CD3),743,512,1372
+10,Belmont and East Tremont (CD6),295,99,425
+10,Borough Park (CD12),22,219,252
+10,Brownsville (CD16),340,108,459
+10,Bushwick (CD4),808,555,1449
+10,Central Harlem (CD10),337,655,1092
+10,Clinton and Chelsea (CD4),1353,1610,3438
+10,Crown Heights and Prospect Heights (CD8),579,427,1108
+10,East Flatbush (CD17),19,546,589
+10,East Harlem (CD11),413,689,1209
+10,East New York and Starrett City (CD5),49,12,66
+10,Elmhurst and Corona (CD4),293,684,1013
+10,Financial District (CD1),972,1632,2809
+10,Flatbush and Midwood (CD14),30,461,526
+10,Fordham and University Heights (CD5),581,298,955
+10,Fort Greene and Brooklyn Heights (CD2),1293,1755,3275
+10,Greenpoint and Williamsburg (CD1),1077,2193,3453
+10,Greenwich Village and Soho (CD2),1133,1589,3060
+10,Highbridge and Concourse (CD4),571,620,1289
+10,Hunts Point and Longwood (CD2),234,235,491
+10,Jackson Heights (CD3),913,801,1783
+10,Kingsbridge Heights and Bedford (CD7),520,402,1026
+10,Long Island City and Astoria (CD1),1202,1675,3046
+10,Lower East Side and Chinatown (CD3),1071,2425,3864
+10,Midtown (CD5),3200,548,4178
+10,Morningside Heights and Hamilton Heights (CD9),681,301,1094
+10,Morrisania and Crotona (CD3),323,430,830
+10,Mott Haven and Melrose (CD1),465,587,1151
+10,Park Slope and Carroll Gardens (CD6),544,1360,2132
+10,Ridgewood and Maspeth (CD5),634,689,1380
+10,Riverdale and Fieldston (CD8),156,10,167
+10,South Crown Heights and Lefferts Gardens (CD9),422,655,1128
+10,Stuyvesant Town and Turtle Bay (CD6),1374,870,2496
+10,Sunset Park (CD7),527,1104,1699
+10,Upper East Side (CD8),1103,779,2088
+10,Upper West Side (CD7),668,966,1884
+10,Washington Heights and Inwood (CD12),780,620,1515
+10,Woodside and Sunnyside (CD2),1056,1037,2218
+11,Bay Ridge and Dyker Heights (CD10),22,110,146
+11,Bedford Stuyvesant (CD3),729,528,1372
+11,Belmont and East Tremont (CD6),293,101,425
+11,Borough Park (CD12),22,219,252
+11,Brownsville (CD16),339,108,459
+11,Bushwick (CD4),807,559,1449
+11,Central Harlem (CD10),325,668,1092
+11,Clinton and Chelsea (CD4),1371,1591,3438
+11,Crown Heights and Prospect Heights (CD8),584,426,1108
+11,East Flatbush (CD17),20,545,589
+11,East Harlem (CD11),415,687,1209
+11,East New York and Starrett City (CD5),49,12,66
+11,Elmhurst and Corona (CD4),294,683,1013
+11,Financial District (CD1),981,1624,2809
+11,Flatbush and Midwood (CD14),32,459,526
+11,Fordham and University Heights (CD5),581,298,955
+11,Fort Greene and Brooklyn Heights (CD2),1294,1755,3275
+11,Greenpoint and Williamsburg (CD1),1081,2191,3453
+11,Greenwich Village and Soho (CD2),1055,1598,3060
+11,Highbridge and Concourse (CD4),571,620,1289
+11,Hunts Point and Longwood (CD2),235,234,491
+11,Jackson Heights (CD3),914,799,1783
+11,Kingsbridge Heights and Bedford (CD7),520,402,1026
+11,Long Island City and Astoria (CD1),1207,1668,3046
+11,Lower East Side and Chinatown (CD3),1078,2434,3864
+11,Midtown (CD5),3208,552,4178
+11,Morningside Heights and Hamilton Heights (CD9),682,303,1094
+11,Morrisania and Crotona (CD3),325,428,830
+11,Mott Haven and Melrose (CD1),465,587,1151
+11,Park Slope and Carroll Gardens (CD6),542,1364,2132
+11,Ridgewood and Maspeth (CD5),619,703,1380
+11,Riverdale and Fieldston (CD8),156,10,167
+11,South Crown Heights and Lefferts Gardens (CD9),428,652,1128
+11,Stuyvesant Town and Turtle Bay (CD6),1395,864,2496
+11,Sunset Park (CD7),527,1105,1699
+11,Upper East Side (CD8),1116,776,2088
+11,Upper West Side (CD7),627,1011,1884
+11,Washington Heights and Inwood (CD12),782,618,1515
+11,Woodside and Sunnyside (CD2),1058,1038,2218
+12,Bay Ridge and Dyker Heights (CD10),22,110,146
+12,Bedford Stuyvesant (CD3),738,525,1372
+12,Belmont and East Tremont (CD6),293,101,425
+12,Borough Park (CD12),22,219,252
+12,Brownsville (CD16),340,107,459
+12,Bushwick (CD4),812,554,1449
+12,Central Harlem (CD10),330,662,1092
+12,Clinton and Chelsea (CD4),1415,1545,3438
+12,Crown Heights and Prospect Heights (CD8),592,419,1108
+12,East Flatbush (CD17),24,542,589
+12,East Harlem (CD11),425,682,1209
+12,East New York and Starrett City (CD5),48,13,66
+12,Elmhurst and Corona (CD4),293,683,1013
+12,Financial District (CD1),963,1616,2809
+12,Flatbush and Midwood (CD14),38,455,526
+12,Fordham and University Heights (CD5),584,295,955
+12,Fort Greene and Brooklyn Heights (CD2),1283,1769,3275
+12,Greenpoint and Williamsburg (CD1),1087,2179,3453
+12,Greenwich Village and Soho (CD2),1054,1600,3060
+12,Highbridge and Concourse (CD4),567,622,1289
+12,Hunts Point and Longwood (CD2),236,232,491
+12,Jackson Heights (CD3),920,794,1783
+12,Kingsbridge Heights and Bedford (CD7),519,402,1026
+12,Long Island City and Astoria (CD1),1224,1654,3046
+12,Lower East Side and Chinatown (CD3),1110,2406,3864
+12,Midtown (CD5),3154,604,4178
+12,Morningside Heights and Hamilton Heights (CD9),690,297,1094
+12,Morrisania and Crotona (CD3),330,426,830
+12,Mott Haven and Melrose (CD1),462,589,1151
+12,Park Slope and Carroll Gardens (CD6),540,1365,2132
+12,Ridgewood and Maspeth (CD5),630,692,1380
+12,Riverdale and Fieldston (CD8),156,10,167
+12,South Crown Heights and Lefferts Gardens (CD9),433,647,1128
+12,Stuyvesant Town and Turtle Bay (CD6),1397,866,2496
+12,Sunset Park (CD7),529,1103,1699
+12,Upper East Side (CD8),1111,781,2088
+12,Upper West Side (CD7),662,972,1884
+12,Washington Heights and Inwood (CD12),789,612,1515
+12,Woodside and Sunnyside (CD2),1076,1027,2218
+13,Bay Ridge and Dyker Heights (CD10),24,108,146
+13,Bedford Stuyvesant (CD3),763,504,1372
+13,Belmont and East Tremont (CD6),293,101,425
+13,Borough Park (CD12),23,218,252
+13,Brownsville (CD16),344,104,459
+13,Bushwick (CD4),827,536,1449
+13,Central Harlem (CD10),356,636,1092
+13,Clinton and Chelsea (CD4),1540,1423,3438
+13,Crown Heights and Prospect Heights (CD8),633,378,1108
+13,East Flatbush (CD17),24,542,589
+13,East Harlem (CD11),430,678,1209
+13,East New York and Starrett City (CD5),48,13,66
+13,Elmhurst and Corona (CD4),288,686,1013
+13,Financial District (CD1),966,1619,2809
+13,Flatbush and Midwood (CD14),40,453,526
+13,Fordham and University Heights (CD5),591,288,955
+13,Fort Greene and Brooklyn Heights (CD2),1294,1757,3275
+13,Greenpoint and Williamsburg (CD1),1120,2141,3453
+13,Greenwich Village and Soho (CD2),1039,1624,3060
+13,Highbridge and Concourse (CD4),566,622,1289
+13,Hunts Point and Longwood (CD2),237,230,491
+13,Jackson Heights (CD3),935,775,1783
+13,Kingsbridge Heights and Bedford (CD7),519,403,1026
+13,Long Island City and Astoria (CD1),1246,1634,3046
+13,Lower East Side and Chinatown (CD3),1250,2260,3864
+13,Midtown (CD5),3053,704,4178
+13,Morningside Heights and Hamilton Heights (CD9),683,304,1094
+13,Morrisania and Crotona (CD3),332,423,830
+13,Mott Haven and Melrose (CD1),464,588,1151
+13,Park Slope and Carroll Gardens (CD6),543,1363,2132
+13,Ridgewood and Maspeth (CD5),647,680,1380
+13,Riverdale and Fieldston (CD8),157,9,167
+13,South Crown Heights and Lefferts Gardens (CD9),438,641,1128
+13,Stuyvesant Town and Turtle Bay (CD6),1411,853,2496
+13,Sunset Park (CD7),548,1084,1699
+13,Upper East Side (CD8),1119,769,2088
+13,Upper West Side (CD7),744,889,1884
+13,Washington Heights and Inwood (CD12),798,604,1515
+13,Woodside and Sunnyside (CD2),1084,1020,2218
+14,Bay Ridge and Dyker Heights (CD10),28,104,146
+14,Bedford Stuyvesant (CD3),817,451,1372
+14,Belmont and East Tremont (CD6),297,96,425
+14,Borough Park (CD12),31,210,252
+14,Brownsville (CD16),348,102,459
+14,Bushwick (CD4),837,529,1449
+14,Central Harlem (CD10),421,575,1092
+14,Clinton and Chelsea (CD4),1715,1242,3438
+14,Crown Heights and Prospect Heights (CD8),730,283,1108
+14,East Flatbush (CD17),33,534,589
+14,East Harlem (CD11),452,655,1209
+14,East New York and Starrett City (CD5),48,13,66
+14,Elmhurst and Corona (CD4),281,693,1013
+14,Financial District (CD1),888,1690,2809
+14,Flatbush and Midwood (CD14),50,443,526
+14,Fordham and University Heights (CD5),601,277,955
+14,Fort Greene and Brooklyn Heights (CD2),1309,1732,3275
+14,Greenpoint and Williamsburg (CD1),1205,2045,3453
+14,Greenwich Village and Soho (CD2),1061,1604,3060
+14,Highbridge and Concourse (CD4),574,616,1289
+14,Hunts Point and Longwood (CD2),243,224,491
+14,Jackson Heights (CD3),962,747,1783
+14,Kingsbridge Heights and Bedford (CD7),532,393,1026
+14,Long Island City and Astoria (CD1),1302,1577,3046
+14,Lower East Side and Chinatown (CD3),1505,2015,3864
+14,Midtown (CD5),2659,1105,4178
+14,Morningside Heights and Hamilton Heights (CD9),693,297,1094
+14,Morrisania and Crotona (CD3),334,422,830
+14,Mott Haven and Melrose (CD1),455,596,1151
+14,Park Slope and Carroll Gardens (CD6),572,1330,2132
+14,Ridgewood and Maspeth (CD5),680,645,1380
+14,Riverdale and Fieldston (CD8),159,7,167
+14,South Crown Heights and Lefferts Gardens (CD9),452,628,1128
+14,Stuyvesant Town and Turtle Bay (CD6),1481,792,2496
+14,Sunset Park (CD7),563,1067,1699
+14,Upper East Side (CD8),1152,713,2088
+14,Upper West Side (CD7),993,646,1884
+14,Washington Heights and Inwood (CD12),819,579,1515
+14,Woodside and Sunnyside (CD2),1077,1026,2218
+15,Bay Ridge and Dyker Heights (CD10),33,100,146
+15,Bedford Stuyvesant (CD3),907,363,1372
+15,Belmont and East Tremont (CD6),304,89,425
+15,Borough Park (CD12),36,204,252
+15,Brownsville (CD16),359,91,459
+15,Bushwick (CD4),861,508,1449
+15,Central Harlem (CD10),439,552,1092
+15,Clinton and Chelsea (CD4),1825,1134,3438
+15,Crown Heights and Prospect Heights (CD8),762,246,1108
+15,East Flatbush (CD17),32,533,589
+15,East Harlem (CD11),451,651,1209
+15,East New York and Starrett City (CD5),47,14,66
+15,Elmhurst and Corona (CD4),280,692,1013
+15,Financial District (CD1),691,1882,2809
+15,Flatbush and Midwood (CD14),63,430,526
+15,Fordham and University Heights (CD5),616,263,955
+15,Fort Greene and Brooklyn Heights (CD2),1252,1776,3275
+15,Greenpoint and Williamsburg (CD1),1317,1937,3453
+15,Greenwich Village and Soho (CD2),1028,1625,3060
+15,Highbridge and Concourse (CD4),578,615,1289
+15,Hunts Point and Longwood (CD2),242,227,491
+15,Jackson Heights (CD3),972,736,1783
+15,Kingsbridge Heights and Bedford (CD7),529,395,1026
+15,Long Island City and Astoria (CD1),1408,1467,3046
+15,Lower East Side and Chinatown (CD3),1995,1529,3864
+15,Midtown (CD5),1745,2005,4178
+15,Morningside Heights and Hamilton Heights (CD9),681,309,1094
+15,Morrisania and Crotona (CD3),324,434,830
+15,Mott Haven and Melrose (CD1),440,611,1151
+15,Park Slope and Carroll Gardens (CD6),686,1224,2132
+15,Ridgewood and Maspeth (CD5),708,614,1380
+15,Riverdale and Fieldston (CD8),158,8,167
+15,South Crown Heights and Lefferts Gardens (CD9),476,602,1128
+15,Stuyvesant Town and Turtle Bay (CD6),1472,787,2496
+15,Sunset Park (CD7),581,1051,1699
+15,Upper East Side (CD8),1297,563,2088
+15,Upper West Side (CD7),1284,347,1884
+15,Washington Heights and Inwood (CD12),808,588,1515
+15,Woodside and Sunnyside (CD2),1025,1078,2218
+16,Bay Ridge and Dyker Heights (CD10),30,102,146
+16,Bedford Stuyvesant (CD3),959,313,1372
+16,Belmont and East Tremont (CD6),312,82,425
+16,Borough Park (CD12),33,207,252
+16,Brownsville (CD16),365,86,459
+16,Bushwick (CD4),884,485,1449
+16,Central Harlem (CD10),448,540,1092
+16,Clinton and Chelsea (CD4),1757,1209,3438
+16,Crown Heights and Prospect Heights (CD8),775,229,1108
+16,East Flatbush (CD17),29,536,589
+16,East Harlem (CD11),473,633,1209
+16,East New York and Starrett City (CD5),47,14,66
+16,Elmhurst and Corona (CD4),279,694,1013
+16,Financial District (CD1),409,2139,2809
+16,Flatbush and Midwood (CD14),67,427,526
+16,Fordham and University Heights (CD5),616,269,955
+16,Fort Greene and Brooklyn Heights (CD2),1208,1801,3275
+16,Greenpoint and Williamsburg (CD1),1356,1889,3453
+16,Greenwich Village and Soho (CD2),842,1818,3060
+16,Highbridge and Concourse (CD4),586,609,1289
+16,Hunts Point and Longwood (CD2),244,225,491
+16,Jackson Heights (CD3),980,726,1783
+16,Kingsbridge Heights and Bedford (CD7),525,403,1026
+16,Long Island City and Astoria (CD1),1429,1444,3046
+16,Lower East Side and Chinatown (CD3),2285,1250,3864
+16,Midtown (CD5),1264,2482,4178
+16,Morningside Heights and Hamilton Heights (CD9),655,334,1094
+16,Morrisania and Crotona (CD3),325,433,830
+16,Mott Haven and Melrose (CD1),444,610,1151
+16,Park Slope and Carroll Gardens (CD6),732,1180,2132
+16,Ridgewood and Maspeth (CD5),724,598,1380
+16,Riverdale and Fieldston (CD8),158,8,167
+16,South Crown Heights and Lefferts Gardens (CD9),489,587,1128
+16,Stuyvesant Town and Turtle Bay (CD6),1318,934,2496
+16,Sunset Park (CD7),571,1062,1699
+16,Upper East Side (CD8),1285,584,2088
+16,Upper West Side (CD7),1358,291,1884
+16,Washington Heights and Inwood (CD12),800,596,1515
+16,Woodside and Sunnyside (CD2),1015,1084,2218
+17,Bay Ridge and Dyker Heights (CD10),31,101,146
+17,Bedford Stuyvesant (CD3),967,294,1372
+17,Belmont and East Tremont (CD6),310,84,425
+17,Borough Park (CD12),30,209,252
+17,Brownsville (CD16),367,82,459
+17,Bushwick (CD4),905,454,1449
+17,Central Harlem (CD10),457,527,1092
+17,Clinton and Chelsea (CD4),1687,1245,3438
+17,Crown Heights and Prospect Heights (CD8),815,203,1128
+17,East Flatbush (CD17),32,530,589
+17,East Harlem (CD11),486,612,1209
+17,East New York and Starrett City (CD5),45,16,66
+17,Elmhurst and Corona (CD4),278,692,1013
+17,Financial District (CD1),355,2171,2809
+17,Flatbush and Midwood (CD14),65,427,526
+17,Fordham and University Heights (CD5),612,265,955
+17,Fort Greene and Brooklyn Heights (CD2),1156,1832,3275
+17,Greenpoint and Williamsburg (CD1),1322,1892,3453
+17,Greenwich Village and Soho (CD2),754,1871,3060
+17,Highbridge and Concourse (CD4),578,611,1289
+17,Hunts Point and Longwood (CD2),241,226,491
+17,Jackson Heights (CD3),984,721,1783
+17,Kingsbridge Heights and Bedford (CD7),520,406,1026
+17,Long Island City and Astoria (CD1),1420,1434,3046
+17,Lower East Side and Chinatown (CD3),2329,1157,3864
+17,Midtown (CD5),1067,2651,4178
+17,Morningside Heights and Hamilton Heights (CD9),630,348,1094
+17,Morrisania and Crotona (CD3),329,425,830
+17,Mott Haven and Melrose (CD1),431,616,1151
+17,Park Slope and Carroll Gardens (CD6),727,1172,2132
+17,Ridgewood and Maspeth (CD5),728,593,1380
+17,Riverdale and Fieldston (CD8),159,7,167
+17,South Crown Heights and Lefferts Gardens (CD9),488,586,1128
+17,Stuyvesant Town and Turtle Bay (CD6),1264,969,2496
+17,Sunset Park (CD7),561,1065,1699
+17,Upper East Side (CD8),1221,630,2088
+17,Upper West Side (CD7),1376,252,1884
+17,Washington Heights and Inwood (CD12),794,594,1515
+17,Woodside and Sunnyside (CD2),999,1086,2218
+18,Bay Ridge and Dyker Heights (CD10),33,99,146
+18,Bedford Stuyvesant (CD3),1008,275,1397
+18,Belmont and East Tremont (CD6),309,84,425
+18,Borough Park (CD12),30,208,252
+18,Brownsville (CD16),369,80,459
+18,Bushwick (CD4),918,441,1449
+18,Central Harlem (CD10),475,510,1092
+18,Clinton and Chelsea (CD4),1670,1265,3438
+18,Crown Heights and Prospect Heights (CD8),842,221,1152
+18,East Flatbush (CD17),32,532,589
+18,East Harlem (CD11),494,603,1210
+18,East New York and Starrett City (CD5),45,16,66
+18,Elmhurst and Corona (CD4),273,699,1013
+18,Financial District (CD1),338,2188,2809
+18,Flatbush and Midwood (CD14),67,430,526
+18,Fordham and University Heights (CD5),621,258,955
+18,Fort Greene and Brooklyn Heights (CD2),1179,1810,3275
+18,Greenpoint and Williamsburg (CD1),1314,1895,3453
+18,Greenwich Village and Soho (CD2),715,1905,3060
+18,Highbridge and Concourse (CD4),566,615,1289
+18,Hunts Point and Longwood (CD2),246,221,491
+18,Jackson Heights (CD3),996,707,1783
+18,Kingsbridge Heights and Bedford (CD7),521,408,1026
+18,Long Island City and Astoria (CD1),1424,1424,3046
+18,Lower East Side and Chinatown (CD3),2383,1113,3871
+18,Midtown (CD5),1172,2659,4324
+18,Morningside Heights and Hamilton Heights (CD9),618,359,1094
+18,Morrisania and Crotona (CD3),334,420,830
+18,Mott Haven and Melrose (CD1),429,615,1151
+18,Park Slope and Carroll Gardens (CD6),740,1154,2132
+18,Ridgewood and Maspeth (CD5),736,583,1380
+18,Riverdale and Fieldston (CD8),159,7,167
+18,South Crown Heights and Lefferts Gardens (CD9),483,592,1128
+18,Stuyvesant Town and Turtle Bay (CD6),1245,991,2496
+18,Sunset Park (CD7),571,1053,1699
+18,Upper East Side (CD8),1192,655,2088
+18,Upper West Side (CD7),1389,239,1884
+18,Washington Heights and Inwood (CD12),804,584,1515
+18,Woodside and Sunnyside (CD2),1001,1075,2218
+19,Bay Ridge and Dyker Heights (CD10),30,102,146
+19,Bedford Stuyvesant (CD3),1019,268,1397
+19,Belmont and East Tremont (CD6),309,83,425
+19,Borough Park (CD12),28,210,252
+19,Brownsville (CD16),371,79,459
+19,Bushwick (CD4),925,434,1449
+19,Central Harlem (CD10),490,500,1092
+19,Clinton and Chelsea (CD4),1683,1251,3438
+19,Crown Heights and Prospect Heights (CD8),861,203,1152
+19,East Flatbush (CD17),29,532,589
+19,East Harlem (CD11),502,594,1210
+19,East New York and Starrett City (CD5),43,18,66
+19,Elmhurst and Corona (CD4),273,700,1013
+19,Financial District (CD1),358,2182,2809
+19,Flatbush and Midwood (CD14),67,430,526
+19,Fordham and University Heights (CD5),615,263,955
+19,Fort Greene and Brooklyn Heights (CD2),1175,1809,3275
+19,Greenpoint and Williamsburg (CD1),1321,1909,3476
+19,Greenwich Village and Soho (CD2),708,1908,3060
+19,Highbridge and Concourse (CD4),559,625,1289
+19,Hunts Point and Longwood (CD2),249,215,491
+19,Jackson Heights (CD3),1000,704,1783
+19,Kingsbridge Heights and Bedford (CD7),521,408,1026
+19,Long Island City and Astoria (CD1),1422,1425,3046
+19,Lower East Side and Chinatown (CD3),2390,1104,3873
+19,Midtown (CD5),1214,2636,4324
+19,Morningside Heights and Hamilton Heights (CD9),608,370,1094
+19,Morrisania and Crotona (CD3),341,412,830
+19,Mott Haven and Melrose (CD1),424,620,1151
+19,Park Slope and Carroll Gardens (CD6),737,1156,2132
+19,Ridgewood and Maspeth (CD5),749,571,1380
+19,Riverdale and Fieldston (CD8),157,9,167
+19,South Crown Heights and Lefferts Gardens (CD9),491,581,1128
+19,Stuyvesant Town and Turtle Bay (CD6),1253,985,2496
+19,Sunset Park (CD7),579,1045,1699
+19,Upper East Side (CD8),1189,662,2088
+19,Upper West Side (CD7),1413,202,1884
+19,Washington Heights and Inwood (CD12),806,582,1515
+19,Woodside and Sunnyside (CD2),999,1072,2218
+20,Bay Ridge and Dyker Heights (CD10),33,99,146
+20,Bedford Stuyvesant (CD3),1017,265,1397
+20,Belmont and East Tremont (CD6),312,78,425
+20,Borough Park (CD12),28,209,252
+20,Brownsville (CD16),373,74,459
+20,Bushwick (CD4),912,448,1449
+20,Central Harlem (CD10),493,491,1092
+20,Clinton and Chelsea (CD4),1600,1327,3438
+20,Crown Heights and Prospect Heights (CD8),879,183,1152
+20,East Flatbush (CD17),28,535,589
+20,East Harlem (CD11),516,581,1210
+20,East New York and Starrett City (CD5),47,14,66
+20,Elmhurst and Corona (CD4),272,701,1013
+20,Financial District (CD1),369,2170,2809
+20,Flatbush and Midwood (CD14),65,433,526
+20,Fordham and University Heights (CD5),614,265,955
+20,Fort Greene and Brooklyn Heights (CD2),1137,1844,3275
+20,Greenpoint and Williamsburg (CD1),1349,1900,3499
+20,Greenwich Village and Soho (CD2),741,1886,3060
+20,Highbridge and Concourse (CD4),587,595,1289
+20,Hunts Point and Longwood (CD2),248,215,491
+20,Jackson Heights (CD3),1002,703,1783
+20,Kingsbridge Heights and Bedford (CD7),512,415,1026
+20,Long Island City and Astoria (CD1),1427,1413,3046
+20,Lower East Side and Chinatown (CD3),2390,1091,3873
+20,Midtown (CD5),1214,2636,4324
+20,Morningside Heights and Hamilton Heights (CD9),608,370,1094
+20,Morrisania and Crotona (CD3),343,411,830
+20,Mott Haven and Melrose (CD1),430,613,1151
+20,Park Slope and Carroll Gardens (CD6),771,1120,2132
+20,Ridgewood and Maspeth (CD5),767,554,1380
+20,Riverdale and Fieldston (CD8),158,8,167
+20,South Crown Heights and Lefferts Gardens (CD9),494,579,1128
+20,Stuyvesant Town and Turtle Bay (CD6),1226,1005,2496
+20,Sunset Park (CD7),583,1040,1699
+20,Upper East Side (CD8),1184,662,2088
+20,Upper West Side (CD7),1388,225,1884
+20,Washington Heights and Inwood (CD12),809,581,1515
+20,Woodside and Sunnyside (CD2),1015,1054,2218
+21,Bay Ridge and Dyker Heights (CD10),34,98,146
+21,Bedford Stuyvesant (CD3),1030,274,1417
+21,Belmont and East Tremont (CD6),315,75,425
+21,Borough Park (CD12),23,214,252
+21,Brownsville (CD16),372,75,459
+21,Bushwick (CD4),914,442,1449
+21,Central Harlem (CD10),493,491,1092
+21,Clinton and Chelsea (CD4),1704,1233,3438
+21,Crown Heights and Prospect Heights (CD8),895,169,1152
+21,East Flatbush (CD17),35,528,589
+21,East Harlem (CD11),535,565,1210
+21,East New York and Starrett City (CD5),49,12,66
+21,Elmhurst and Corona (CD4),274,700,1013
+21,Financial District (CD1),377,2162,2805
+21,Flatbush and Midwood (CD14),75,423,526
+21,Fordham and University Heights (CD5),610,269,955
+21,Fort Greene and Brooklyn Heights (CD2),1124,1850,3274
+21,Greenpoint and Williamsburg (CD1),1334,1910,3499
+21,Greenwich Village and Soho (CD2),738,1884,3060
+21,Highbridge and Concourse (CD4),604,581,1289
+21,Hunts Point and Longwood (CD2),252,211,491
+21,Jackson Heights (CD3),999,706,1783
+21,Kingsbridge Heights and Bedford (CD7),520,407,1026
+21,Long Island City and Astoria (CD1),1443,1399,3046
+21,Lower East Side and Chinatown (CD3),2364,1105,3873
+21,Midtown (CD5),1342,2510,4324
+21,Morningside Heights and Hamilton Heights (CD9),619,358,1094
+21,Morrisania and Crotona (CD3),348,406,830
+21,Mott Haven and Melrose (CD1),429,612,1151
+21,Park Slope and Carroll Gardens (CD6),777,1115,2132
+21,Ridgewood and Maspeth (CD5),762,558,1380
+21,Riverdale and Fieldston (CD8),155,10,167
+21,South Crown Heights and Lefferts Gardens (CD9),500,573,1128
+21,Stuyvesant Town and Turtle Bay (CD6),1232,1003,2496
+21,Sunset Park (CD7),593,1031,1699
+21,Upper East Side (CD8),1192,642,2088
+21,Upper West Side (CD7),1403,212,1884
+21,Washington Heights and Inwood (CD12),803,578,1505
+21,Woodside and Sunnyside (CD2),1032,1036,2218
+22,Bay Ridge and Dyker Heights (CD10),37,95,146
+22,Bedford Stuyvesant (CD3),1048,252,1417
+22,Belmont and East Tremont (CD6),314,76,425
+22,Borough Park (CD12),26,209,252
+22,Brownsville (CD16),371,76,459
+22,Bushwick (CD4),938,415,1449
+22,Central Harlem (CD10),483,496,1092
+22,Clinton and Chelsea (CD4),1684,1242,3438
+22,Crown Heights and Prospect Heights (CD8),870,188,1152
+22,East Flatbush (CD17),40,523,589
+22,East Harlem (CD11),530,557,1210
+22,East New York and Starrett City (CD5),49,10,66
+22,Elmhurst and Corona (CD4),289,681,1013
+22,Financial District (CD1),373,2143,2805
+22,Flatbush and Midwood (CD14),68,429,526
+22,Fordham and University Heights (CD5),607,271,955
+22,Fort Greene and Brooklyn Heights (CD2),1147,1824,3274
+22,Greenpoint and Williamsburg (CD1),1322,1906,3499
+22,Greenwich Village and Soho (CD2),805,1804,3060
+22,Highbridge and Concourse (CD4),589,593,1289
+22,Hunts Point and Longwood (CD2),245,217,491
+22,Jackson Heights (CD3),995,705,1783
+22,Kingsbridge Heights and Bedford (CD7),533,392,1026
+22,Long Island City and Astoria (CD1),1450,1385,3046
+22,Lower East Side and Chinatown (CD3),2365,1099,3873
+22,Midtown (CD5),1414,2402,4324
+22,Morningside Heights and Hamilton Heights (CD9),625,346,1094
+22,Morrisania and Crotona (CD3),370,383,830
+22,Mott Haven and Melrose (CD1),442,594,1151
+22,Park Slope and Carroll Gardens (CD6),774,1105,2132
+22,Ridgewood and Maspeth (CD5),766,548,1380
+22,Riverdale and Fieldston (CD8),153,12,167
+22,South Crown Heights and Lefferts Gardens (CD9),485,589,1128
+22,Stuyvesant Town and Turtle Bay (CD6),1273,947,2496
+22,Sunset Park (CD7),596,1023,1699
+22,Upper East Side (CD8),1227,603,2088
+22,Upper West Side (CD7),1408,205,1884
+22,Washington Heights and Inwood (CD12),822,554,1505
+22,Woodside and Sunnyside (CD2),1033,1036,2218
+23,Bay Ridge and Dyker Heights (CD10),35,97,146
+23,Bedford Stuyvesant (CD3),1030,273,1417
+23,Belmont and East Tremont (CD6),305,86,425
+23,Borough Park (CD12),28,207,252
+23,Brownsville (CD16),370,77,459
+23,Bushwick (CD4),960,390,1449
+23,Central Harlem (CD10),486,491,1092
+23,Clinton and Chelsea (CD4),1657,1259,3438
+23,Crown Heights and Prospect Heights (CD8),837,225,1152
+23,East Flatbush (CD17),40,522,589
+23,East Harlem (CD11),537,552,1210
+23,East New York and Starrett City (CD5),50,11,66
+23,Elmhurst and Corona (CD4),293,679,1013
+23,Financial District (CD1),468,2063,2805
+23,Flatbush and Midwood (CD14),63,433,526
+23,Fordham and University Heights (CD5),603,270,955
+23,Fort Greene and Brooklyn Heights (CD2),1185,1776,3274
+23,Greenpoint and Williamsburg (CD1),1305,1917,3499
+23,Greenwich Village and Soho (CD2),760,1845,3060
+23,Highbridge and Concourse (CD4),587,593,1289
+23,Hunts Point and Longwood (CD2),241,222,491
+23,Jackson Heights (CD3),982,719,1783
+23,Kingsbridge Heights and Bedford (CD7),533,394,1026
+23,Long Island City and Astoria (CD1),1460,1384,3046
+23,Lower East Side and Chinatown (CD3),2288,1174,3873
+23,Midtown (CD5),1702,2114,4324
+23,Morningside Heights and Hamilton Heights (CD9),642,324,1094
+23,Morrisania and Crotona (CD3),369,381,830
+23,Mott Haven and Melrose (CD1),450,590,1151
+23,Park Slope and Carroll Gardens (CD6),751,1136,2132
+23,Ridgewood and Maspeth (CD5),744,570,1380
+23,Riverdale and Fieldston (CD8),153,13,167
+23,South Crown Heights and Lefferts Gardens (CD9),500,573,1128
+23,Stuyvesant Town and Turtle Bay (CD6),1330,893,2496
+23,Sunset Park (CD7),587,1033,1699
+23,Upper East Side (CD8),1262,574,2088
+23,Upper West Side (CD7),1280,330,1884
+23,Washington Heights and Inwood (CD12),816,564,1505
+23,Woodside and Sunnyside (CD2),1040,1026,2218
+24,Bay Ridge and Dyker Heights (CD10),35,97,146
+24,Bedford Stuyvesant (CD3),1017,282,1417
+24,Belmont and East Tremont (CD6),311,80,425
+24,Borough Park (CD12),26,209,252
+24,Brownsville (CD16),367,80,459
+24,Bushwick (CD4),948,407,1449
+24,Central Harlem (CD10),440,536,1092
+24,Clinton and Chelsea (CD4),1527,1371,3438
+24,Crown Heights and Prospect Heights (CD8),807,254,1152
+24,East Flatbush (CD17),34,527,589
+24,East Harlem (CD11),516,572,1210
+24,East New York and Starrett City (CD5),49,12,66
+24,Elmhurst and Corona (CD4),293,679,1013
+24,Financial District (CD1),647,1889,2806
+24,Flatbush and Midwood (CD14),48,447,526
+24,Fordham and University Heights (CD5),594,280,955
+24,Fort Greene and Brooklyn Heights (CD2),1182,1788,3274
+24,Greenpoint and Williamsburg (CD1),1305,1914,3499
+24,Greenwich Village and Soho (CD2),773,1841,3060
+24,Highbridge and Concourse (CD4),586,593,1289
+24,Hunts Point and Longwood (CD2),234,228,491
+24,Jackson Heights (CD3),965,736,1783
+24,Kingsbridge Heights and Bedford (CD7),540,387,1026
+24,Long Island City and Astoria (CD1),1408,1425,3046
+24,Lower East Side and Chinatown (CD3),2000,1453,3873
+24,Midtown (CD5),2379,1438,4324
+24,Morningside Heights and Hamilton Heights (CD9),660,309,1094
+24,Morrisania and Crotona (CD3),357,394,831
+24,Mott Haven and Melrose (CD1),444,589,1151
+24,Park Slope and Carroll Gardens (CD6),682,1204,2132
+24,Ridgewood and Maspeth (CD5),736,580,1380
+24,Riverdale and Fieldston (CD8),152,14,167
+24,South Crown Heights and Lefferts Gardens (CD9),497,572,1128
+24,Stuyvesant Town and Turtle Bay (CD6),1443,772,2496
+24,Sunset Park (CD7),586,1033,1699
+24,Upper East Side (CD8),1195,662,2088
+24,Upper West Side (CD7),1126,478,1884
+24,Washington Heights and Inwood (CD12),816,560,1505
+24,Woodside and Sunnyside (CD2),1082,977,2218

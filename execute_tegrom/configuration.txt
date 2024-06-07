@@ -1,2 +1,0 @@
-# add configurations
-e.g. DB-Name, Variables

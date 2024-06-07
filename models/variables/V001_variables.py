@@ -1,25 +1,34 @@
 # Name: Philipp Plamper
 # Date: 17. august 2023
 
+
+
+import V003_remote_conf
+
 ### parameter for ###
 ### database connection ### 
 
 # host + port
 host = 'bolt://localhost:7687' # default: bolt://localhost:7687
+#host = rcf.host
 
 # username and password for neo4j instance
 user = 'neo4j' # default: neo4j
 passwd = 'Test1234' # default: neo4j or 1234 or test1234
+#user = rcf.user
+#passwd = rcf.passwd
 
 # names for neo4j databases
 db_name_temporal = 'modeltemporal' # name of temporal graph
 db_name_light = 'modellight' # name of smashed graph
-#db_name_rev = 'modeltransformback' # for testing; name of reverted graph
-# db_name_rev from test: can the smashed graph be converted back to the temporal graph
+#db_name_temporal = rcf.db_name_temporal
+#db_name_light = rcf.db_name_light
 
 # define threshold for intensity trend 
 upper_limit = 0.025 # above considered as increasing intensity
 lower_limit = -0.025 # below considered as decreasing intensity
+#upper_limit = rcf.upper_limit
+#lower_limit = rcf.lower_limit
 
 # belongs the data to a photolysis experiment
 # changes the functionality if set to wrong parameter
