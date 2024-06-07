@@ -53,7 +53,7 @@ then
 fi
 
 # export results
-mkdir ${DATADIR}${DATA}/results
+mkdir ${DATADIR}${DATA}/results 2> /dev/null
 cp ${ANALYZEDIR}/analyze_results/*.png ${DATADIR}${DATA}/results
 
 # cleaning steps
