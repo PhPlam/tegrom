@@ -120,7 +120,10 @@ def delete_molecules_without_transformation(session, query_params):
 if __name__ == '__main__':
     # create database and establish connection
     pvc.create_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
+    time.sleep(5)
+
     session = pvc.pf.connect_to_database(pvc.host, pvc.user, pvc.passwd, pvc.db_name_temporal)
+    time.sleep(5)
 
     # create graph
     create_nodes_molecule(session, pvc.formula_file_path, pvc.query_params)

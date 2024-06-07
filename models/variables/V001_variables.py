@@ -1,34 +1,33 @@
 # Name: Philipp Plamper
-# Date: 17. august 2023
+# Date: 07. june 2024
 
-
-
-import V003_remote_conf
+# 'V003_remote_conf' needs to be pushed from "EXECUTE TEGROM"-Script
+import V003_remote_conf as rcf
 
 ### parameter for ###
 ### database connection ### 
 
 # host + port
-host = 'bolt://localhost:7687' # default: bolt://localhost:7687
-#host = rcf.host
+#host = 'bolt://localhost:7687' # default: bolt://localhost:7687
+host = rcf.host
 
 # username and password for neo4j instance
-user = 'neo4j' # default: neo4j
-passwd = 'Test1234' # default: neo4j or 1234 or test1234
-#user = rcf.user
-#passwd = rcf.passwd
+#user = 'neo4j' # default: neo4j
+#passwd = 'Test1234' # default: neo4j or 1234 or test1234
+user = rcf.user
+passwd = rcf.passwd
 
 # names for neo4j databases
-db_name_temporal = 'modeltemporal' # name of temporal graph
-db_name_light = 'modellight' # name of smashed graph
-#db_name_temporal = rcf.db_name_temporal
-#db_name_light = rcf.db_name_light
+#db_name_temporal = 'modeltemporal' # name of temporal graph
+#db_name_light = 'modellight' # name of smashed graph
+db_name_temporal = rcf.db_name_temporal
+db_name_light = rcf.db_name_light
 
 # define threshold for intensity trend 
-upper_limit = 0.025 # above considered as increasing intensity
-lower_limit = -0.025 # below considered as decreasing intensity
-#upper_limit = rcf.upper_limit
-#lower_limit = rcf.lower_limit
+#upper_limit = 0.025 # above considered as increasing intensity
+#lower_limit = -0.025 # below considered as decreasing intensity
+upper_limit = rcf.upper_limit
+lower_limit = rcf.lower_limit
 
 # belongs the data to a photolysis experiment
 # changes the functionality if set to wrong parameter
@@ -40,12 +39,15 @@ photolysis = False
 ### from UFZ ###
 
 # from UFZ assigned molecular formulas and several properties
-file_molecules = 'molecule_formulas.csv'
+#file_molecules = 'molecule_formulas.csv'
+file_molecules = rcf.file_molecules
 
 # from UFZ given transformation units
-file_transformation_units = 'transformations_handwritten.csv'
+#file_transformation_units = 'transformations_handwritten.csv'
+file_transformation_units = rcf.file_transformation_units
 
 # from UFZ metadata of sample
+# currently not in use
 file_sample_meta = 'sample_data.csv'
 
 # from UFZ metadata of measurements

@@ -1,3 +1,8 @@
+# Name: Philipp Plamper
+# Date: 07. june 2024
+
+# pushed to project from "EXECUTE_TEGROM/configuration.txt" as "V003_remote_conf.py
+
 ###parameter for database connection_____________________
 host = 'bolt://localhost:7687' # default: bolt://localhost:7687
 user = 'neo4j' # default: neo4j
@@ -5,14 +10,12 @@ passwd = 'Test1234' # default: Test1234
 
 
 ###names for neo4j databases_____________________________
-db_name_temporal = 'modeltemporal' # name of temporal graph
-db_name_light = 'modellight' # name of smashed graph
+db_name_temporal = 'modeltemporal' # name of temporal graph, default: modeltemporal
+db_name_light = 'modellight' # name of smashed graph, default: modellight
 
 ###name of files_________________________________________
-# assigned molecular formulas by mass spectrometry
-file_molecules = 'molecule_formulas.csv'
-# transformation units
-file_transformation_units = 'transformations_handwritten.csv'
+file_molecules = 'molecule_formulas.csv' # assigned molecular formulas by mass spectrometry, default: molecule_formulas.csv
+file_transformation_units = 'transformations_handwritten.csv' # transformation units, default: transformations_handwritten.csv
 
 ###threshold for intensity trend_________________________
 upper_limit = 0.025 # above considered as increasing intensity, default: 0.025

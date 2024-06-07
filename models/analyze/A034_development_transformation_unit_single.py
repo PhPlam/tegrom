@@ -1,5 +1,5 @@
 # Name: Philipp Plamper 
-# Date: 28. august 2023
+# Date: 07. june 2024
 
 ###
 # Figure 5 (C)
@@ -50,7 +50,7 @@ def get_single_transformation_unit(df_transformation_unit_count):
 
 
 # visualize development of a single transformation unit
-def visualize_single_transformation_unit(single_transformation_unit, df_time, photolysis):
+def visualize_single_transformation_unit(single_transformation_unit, df_time, photolysis, n):
     transformation_unit = single_transformation_unit.transformation_unit.values[0]
     list_share = single_transformation_unit.iloc[0,2:-1].values.tolist()
     time_list = df_time.property_time.to_list()
@@ -94,9 +94,10 @@ def visualize_single_transformation_unit(single_transformation_unit, df_time, ph
 
     plt.tight_layout()
     
-    name = 'graph_development_single_transformation_unit.png'
+    name = 'development_single_' + str(n) + '.png'
     plt.savefig(pva.export_path_prefix + name, dpi=150, bbox_inches='tight')
     print('done: create plot ' + name)
+    plt.close()
 
 
 ##################################################################################
@@ -109,9 +110,16 @@ if __name__ == '__main__':
     session = pva.pf.connect_to_database(pva.host, pva.user, pva.passwd, pva.db_name_temporal)
 
     df_transformation_unit_count = pva.pf.get_share_transformation_units(session, pva.query_params, transition_property='share')
-    single_transformation_unit = get_single_transformation_unit(df_transformation_unit_count)
     df_time = pva.pf.graph_get_time(session, pva.query_params)
-    visualize_single_transformation_unit(single_transformation_unit, df_time, pva.photolysis)
-    
+    #single_transformation_unit = get_single_transformation_unit(df_transformation_unit_count)
+
+    list_transformation_units = df_transformation_unit_count.transformation_unit.to_list()
+    n = 0
+    for transformation in list_transformation_units:
+        single_transformation_unit = df_transformation_unit_count[df_transformation_unit_count.transformation_unit == transformation].copy()
+        single_transformation_unit['std'] = np.std(single_transformation_unit.iloc[0, 2:].values.tolist())
+        visualize_single_transformation_unit(single_transformation_unit, df_time, pva.photolysis, n)
+        n+=1
+
     # end session
     session.close()

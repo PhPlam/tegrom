@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 07. march 2023
+# Date: 07. june 2024
 
 import pandas as pd
 import os
@@ -9,6 +9,8 @@ import sys
 path_prefix = str(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]) # get system path to variables
 path_prefix = path_prefix.replace('\\', '/') # necessary for application in Windows
 sys.path.insert(0, path_prefix)
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../variables')))
 
 import variables.V001_variables as pv
 
