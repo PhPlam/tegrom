@@ -1,5 +1,5 @@
 # Name: Philipp Plamper
-# Date: 07. june 2024
+# Date: 13. june 2024
 
 # 'V003_remote_conf' needs to be pushed from "EXECUTE TEGROM"-Script
 import V003_remote_conf as rcf
@@ -8,20 +8,20 @@ import V003_remote_conf as rcf
 ### database connection ### 
 
 # host + port
-#host = 'bolt://localhost:7687' # default: bolt://localhost:7687
-host = rcf.host
+host = 'bolt://localhost:7687' # default: bolt://localhost:7687
+#host = rcf.host
 
 # username and password for neo4j instance
-#user = 'neo4j' # default: neo4j
-#passwd = 'Test1234' # default: neo4j or 1234 or test1234
-user = rcf.user
-passwd = rcf.passwd
+user = 'neo4j' # default: neo4j
+passwd = 'Test1234' # default: neo4j or 1234 or test1234
+#user = rcf.user
+#passwd = rcf.passwd
 
 # names for neo4j databases
 #db_name_temporal = 'modeltemporal' # name of temporal graph
-#db_name_light = 'modellight' # name of smashed graph
 db_name_temporal = rcf.db_name_temporal
-db_name_light = rcf.db_name_light
+db_name_light = 'modellight' # name of smashed graph; deprecated
+
 
 # define threshold for intensity trend 
 #upper_limit = 0.025 # above considered as increasing intensity
