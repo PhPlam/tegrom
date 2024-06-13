@@ -82,13 +82,10 @@ tested on Manjaro Linux (20. october 2023)
 
 ## Temporal graph model
 
-### Prepare dataset
+### Prepare data
 
-* add data for preprocessing
-* add your files to path: “models/files_for_model” (see chapter “Project Structure”)
-    * if necessary delete all existing files in folder 
+* molecular data file structure
     * molecules and properties 
-        * rename to “molecule_formulas.csv”
         * delimiter = ‘,’ or ‘;’
         * requires ascending order of measurements
             * e.g. measurement id 1, measurement id 2, …
@@ -105,7 +102,6 @@ tested on Manjaro Linux (20. october 2023)
             * “O” : Integer
             * “S” : Integer
     * transformation units 
-        * rename to “transformations_handwritten.csv”
         * delimiter = ‘,’ or ‘;’
         * columns:
             * “element” : String
@@ -116,26 +112,6 @@ tested on Manjaro Linux (20. october 2023)
             * “S” : Integer
             * “plus” : Boolean (0,1) → photo addition
             * “minus” : Boolean (0,1) → photo elimination
-  
-* preprocess data for temporal graph
-    * execute Bash script “P099_run_preprocessing_scripts.sh”  
-    $ sh models/data_preprocessing/P099_run_preprocessing_scripts.sh
 
-### Create temporal graph
-
-* start scripts to create temporal graph
-    * adjust parameters in “models/variables/V001_variables.py”
-        * host (default: bolt://localhost:7687) -> see in Neo4j Desktop “Details”
-        * user (default: neo4j)
-        * passwd -> see “Setup Neo4j Desktop”
-        * (optional) db_name -> names for databases
-        * (optional) limits -> threshold for intensity trends
-    * execute Bash script “C099_run_graph_scripts.sh”  
-    $ sh models/create_models/C099_run_graph_scripts.sh
-
-### Analyze graph 
-
-* start scripts to analyze graph
-    * execute Bash script “A099_run_analysis.sh”  
-    $ sh models/analyze/A099_run_analysis.sh
-
+### Execute tegrom
+- to execute tegrom follow the 'instructions.txt' in 'EXECUTE_TEGROM'
