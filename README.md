@@ -1,7 +1,7 @@
 # A snapshot-based graph model for multivariate time series in Neo4j
 
 Authors: Philipp Plamper, Oliver J. Lechtenfeld, Anika Groß  
-Date: 13. june 2023  
+Date: 25. june 2023  
 
 This project contains our implementation and source code for a snapshot-based knowledge graph model. 
 The novel approach is based on a temporal graph and is able to predict interactions between nodes in succeeding snapshots. 
@@ -14,18 +14,18 @@ The experimental data from FT-ICR-MS used in this project were originally used i
 ![graph_model_v4](https://user-images.githubusercontent.com/91727135/223053780-73f2dbd3-be5c-4022-8868-0edfa99d8e7b.png)
 
 # Instructions to set up temporal graph in a Neo4j Desktop instance
-tested on Manjaro Linux (20. october 2023)
+tested on Manjaro Linux (25. june 2024)
 
 ## Project
 
 ### Software Versions
 
 - Neo4j Desktop [Link](https://neo4j.com/download/) 
-> Desktop version 1.5.7 (21. april 2023)  
-> Database version 5.3.0 (21. april 2023)
-- Python version 3.10.9 
+> Desktop version 1.6.0 (25. june 2024)  
+> Database version 5.20.0 (25. june 2024)
+- Python version 3.12.3 (25. june 2024) 
 - neo4j (Python driver) [Link](https://neo4j.com/docs/api/python-driver/current/)
-> version 5.6.0 (21. april 2023) 
+> version 5.20.0 (25. june 2024) 
 
 ### Project structure
 

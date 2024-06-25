@@ -7,7 +7,7 @@
 db_name_temporal = 'modeltemporal' # name of temporal graph, default: modeltemporal
 
 ###name of files_________________________________________
-file_molecules = 'molecule_formulas.csv' # assigned molecular formulas by mass spectrometry, default: molecule_formulas.csv
+file_molecules = '2022_Sobolev_Bachelor_FLOEK_formulas.soas.avg_2023-09-09.csv' # assigned molecular formulas by mass spectrometry, default: molecule_formulas.csv
 file_transformation_units = 'transformations_handwritten.csv' # transformation units, default: transformations_handwritten.csv
 
 ###threshold for intensity trend_________________________
