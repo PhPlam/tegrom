@@ -1,7 +1,7 @@
 # A snapshot-based graph model for multivariate time series in Neo4j
 
 Authors: Philipp Plamper, Oliver J. Lechtenfeld, Anika Groß  
-Date: 25. june 2023  
+Date: 25. june 2024
 
 This project contains our implementation and source code for a snapshot-based knowledge graph model. 
 The novel approach is based on a temporal graph and is able to predict interactions between nodes in succeeding snapshots. 
@@ -50,7 +50,7 @@ tested on Manjaro Linux (25. june 2024)
    
 3. Go to project and add a new local database
     * Name: e.g. MoleculeGraph
-    * Password: e.g. test1234  
+    * Password: e.g. test1234 (choose the same password in 'models/variables/V001_variables.py' at 'passwd') 
     * “Create”
     
     ![add_local_db](https://user-images.githubusercontent.com/91727135/227484203-404f2b6c-9543-4043-87ad-dc966b0aab42.png)

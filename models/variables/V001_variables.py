@@ -13,7 +13,7 @@ host = 'bolt://localhost:7687' # default: bolt://localhost:7687
 
 # username and password for neo4j instance
 user = 'neo4j' # default: neo4j
-passwd = 'Test1234' # default: neo4j or 1234 or test1234
+passwd = 'test1234' # choose the password from 'README.md' at 'Setup Neo4j Desktop' default: test1234
 #user = rcf.user
 #passwd = rcf.passwd
 
@@ -24,10 +24,10 @@ db_name_light = 'modellight' # name of smashed graph; deprecated
 
 
 # define threshold for intensity trend 
-#upper_limit = 0.025 # above considered as increasing intensity
-#lower_limit = -0.025 # below considered as decreasing intensity
-upper_limit = rcf.upper_limit
-lower_limit = rcf.lower_limit
+upper_limit = 0.025 # above considered as increasing intensity
+lower_limit = -0.025 # below considered as decreasing intensity
+#upper_limit = rcf.upper_limit
+#lower_limit = rcf.lower_limit
 
 # belongs the data to a photolysis experiment
 # changes the functionality if set to wrong parameter

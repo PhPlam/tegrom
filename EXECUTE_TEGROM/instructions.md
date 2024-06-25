@@ -1,5 +1,5 @@
 # Instruction to start Tegrom
-Date: 13. june 2024  
+Date: 25. june 2024  
 author: Philipp Plamper
 
 ## General
@@ -23,13 +23,11 @@ author: Philipp Plamper
 - change the name of the temporal database at 'db_name_temporal'
     - this is the final name of the database inside neo4j
     - choose a name that reflects the data/sample/project
-    - fist character ASCII alphabetic character, subsequent ASCII alphabetic or numeric characters (no whitespace, no special characters)
+    - fist character ASCII alphabetic character, subsequent ASCII alphabetic or numeric characters (no whitespace, no special characters, no underscores)
 - change the name of the molecule data at 'file_molecules'
     - it must be the same name as the molecular data in step 1
 - change the name of the considered transformation data at 'file_transformation_units'
     - it must be the same name as the chemical transformation data in step 1
-- in 'upper_limit' and 'lower_limit' you can change the threshold for the intensity trend detection
-    - you only need to change this if you know what you are doing
 
 ## Step 3: Start Tegrom
 - execute the script 'execute_setup_scripts.sh'
