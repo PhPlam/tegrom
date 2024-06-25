@@ -30,9 +30,9 @@ author: Philipp Plamper
     - it must be the same name as the chemical transformation data in step 1
 
 ## Step 3: Start Tegrom
-- execute the script 'execute_setup_scripts.sh'
+- execute the script 'execute_setup_scripts.sh' with command line
     - in linux: ```$ bash execute_setup_scripts.sh``` 
-    - in windows: ```todo```
+    - in windows: try with ```.\execute_setup_scripts.sh```
 - the script asks you for the location of the data, use the name of the folder created in step 1 
 - The script then asks you whether you also want to create the light graph. The default value is no.  
     - Only choose yes if you know what you are doing
